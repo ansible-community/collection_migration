@@ -353,6 +353,7 @@ misc:
     - netscaler.py
     - nios.py
     - ovirt.py
+    - ovirt_info.py
     - ovirt_facts.py
     - oneview.py
     - online.py
