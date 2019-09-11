@@ -1,0 +1,7 @@
+sros:
+    doc_fragments:
+    - sros.py
+    modules:
+    - network/sros/*
+    module_utils:
+    - network/sros/sros.py

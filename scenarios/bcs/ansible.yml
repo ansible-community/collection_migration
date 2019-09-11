@@ -1,0 +1,1048 @@
+_core:
+    action:
+    - normal.py
+    - copy.py
+    - package.py
+    - service.py
+    - reboot.py
+    - template.py
+    callback:
+    - default.py
+    - minimal.py
+    - oneline.py
+    - tree.py
+    connection:
+    - ssh.py
+    - local.py
+    doc_fragments:
+    - default_callback.py
+    - decrypt.py
+    - files.py
+    - shell_common.py
+    - url.py
+    - validate.py
+    inventory:
+    - advanced_host_list.py
+    - auto.py
+    - constructed.py
+    - generator.py
+    - host_list.py
+    - ini.py
+    - script.py
+    - toml.py
+    - yaml.py
+    lookups:
+    - fileglob.py
+    - first_found.py
+    - inventory_hostnames.py
+    - items.py
+    - link.py
+    - nested.py
+    - sequence.py
+    - subelements.py
+    - together.py
+    module_utils:
+    - _text.py
+    - ansible_release.py
+    - api.py
+    - basic.py
+    - connection.py
+    - common.py
+    - common/*
+    - common/text/*
+    - facts.py
+    - facts/packages.py
+    - facts/system/service_mgr.py
+    - facts/utils.py
+    - json_utils.py
+    - parsing/convert_bool.py
+    - service.py
+    - six.py
+    - six/*
+    - six/moves/*
+    - six/moves/urllib/*
+    - urls.py
+    shell:
+    - sh.py
+a10:
+    doc_fragments:
+    - a10.py
+    module_utils:
+    - network/a10/*
+    modules:
+    - network/a10/*
+acme:
+    doc_fragments:
+    - acme.py
+    module_utils:
+    - acme.py
+    modules:
+    - crypto/acme/*
+aireos:
+    action:
+    - aireos.py
+    cliconf:
+    - aireos.py
+    doc_fragments:
+    - aireos.py
+    module_utils:
+    - network/aireos/*
+    modules:
+    - network/aireos/*
+    terminal:
+    - aireos.py
+alicloud:
+    doc_fragments:
+    - alicloud.py
+    modules:
+    - cloud/alicloud/*
+    module_utils:
+    - alicloud_ecs.py
+amazon:
+    action:
+    - aws_s3.py
+    doc_fragments:
+    - aws.py
+    - aws_credentials.py
+    - aws_region.py
+    - ec2.py
+    callback:
+    - aws_resource_actions.py
+    inventory:
+    - aws_ec2.py
+    - aws_rds.py
+    module_utils:
+    - ec2.py
+    - aws/*
+    modules:
+    - cloud/amazon/*
+    lookups:
+    - aws_account_attribute.py
+    - aws_secret.py
+    - aws_service_ip_ranges.py
+    - aws_ssm.py
+aruba:
+    action:
+    - aruba.py
+    cliconf:
+    - aruba.py
+    doc_fragments:
+    - aruba.py
+    module_utils:
+    - network/aruba/*
+    modules:
+    - network/aruba/*
+    terminal:
+    - aruba.py
+asa:
+    action:
+    - asa.py
+    cliconf:
+    - asa.py
+    doc_fragments:
+    - asa.py
+    module_utils:
+    - network/asa/asa.py
+    modules:
+    - network/asa/*
+    terminal:
+    - asa.py
+avi:
+    doc_fragments:
+    - avi.py
+    lookup:
+    - avi.py
+    module_utils:
+    - network/avi/*
+    modules:
+    - network/avi/*
+cloudstack:
+    doc_fragments:
+    - cloudstack.py
+    module_utils:
+    - cloudstack.py
+    modules:
+    - cloud/cloudstack/*
+cloudscale:
+    doc_fragments:
+    - cloudscale.py
+    inventory:
+    - cloudscale.py
+    module_utils:
+    - cloudscale.py
+    modules:
+    - cloud/cloudscale/*
+cnos:
+    action:
+    - cnos.py
+    cliconf:
+    - cnos.py
+    doc_fragments:
+    - cnos.py
+    module_utils:
+    - network/cnos/*
+    modules:
+    - network/cnos/*
+    terminal:
+    - cnos.py
+dellos:
+    action:
+    - dellos6.py
+    - dellos9.py
+    - dellos10.py
+    cliconf:
+    - dellos6.py
+    - dellos9.py
+    - dellos10.py
+    doc_fragments:
+    - dellos6.py
+    - dellos9.py
+    - dellos10.py
+    module_utils:
+    - network/dellos6/dellos6.py
+    - network/dellos9/dellos9.py
+    - network/dellos10/dellos10.py
+    modules:
+    - network/dellos6/*
+    - network/dellos9/*
+    - network/dellos10/*
+    terminal:
+    - dellos6.py
+    - dellos9.py
+    - dellos10.py
+digital_ocean:
+    doc_fragments:
+    - digital_ocean.py
+    module_utils:
+    - digital_ocean.py
+    modules:
+    - cloud/digital_ocean/*
+dimensiondata:
+    doc_fragments:
+    - dimensiondata.py
+    - dimensiondata_wait.py
+    module_utils:
+    - dimensiondata.py
+    modules:
+    - cloud/dimensiondata/*
+docker:
+    doc_fragments:
+    - docker.py
+    connection:
+    - docker.py
+    inventory:
+    - docker_swarm.py
+    - docker_machine.py
+    module_utils:
+    - docker/common.py
+    - docker/swarm.py
+    modules:
+    - cloud/docker/*
+emc:
+    doc_fragments:
+    - emc.py
+    module_utils:
+    - storage/emc/*
+    modules:
+    - storage/emc/*
+enos:
+    action:
+    - enos.py
+    cliconf:
+    - enos.py
+    doc_fragments:
+    - enos.py
+    modules:
+    - network/enos/*
+    terminal:
+    - enos.py
+exoscale:
+    doc_fragments:
+    - exoscale.py
+    module_utils:
+    - exoscale.py
+    modules:
+    - net_tools/exoscale/*
+eos:
+    action:
+    - eos.py
+    cliconf:
+    - eos.py
+    doc_fragments:
+    - eos.py
+    httpapi:
+    - eos.py
+    modules:
+    - network/eos/*
+    module_utils:
+    - network/eos/*
+    - network/eos/*/*
+    - network/eos/*/*/*
+    - network/eos/*/*/*/*
+    terminal:
+    - eos.py
+frr:
+    cliconf:
+    - frr.py
+    modules:
+    - network/frr/*
+    module_utils:
+    - network/frr/*
+    - network/frr/*/*/*
+    - network/frr/*/*/*/*
+    terminal:
+    - frr.py
+fortios:
+    action:
+    - fortios_config.py
+    doc_fragments:
+    - fortios.py
+    httpapi:
+    - fortios.py
+    module_utils:
+    - network/fortios/*
+    modules:
+    - network/fortios/*
+gitlab:
+    modules:
+    - source_control/_gitlab_hooks.py
+    - source_control/gitlab_*
+hetzner:
+    doc_fragments:
+    - hcloud.py
+    - hetzner.py
+    inventory:
+    - hcloud.py
+    module_utils:
+    - hcloud.py
+    - hetzner.py
+    modules:
+    - cloud/hcloud/*
+    - net_tools/hetzner_*
+layer2:
+    modules:
+    - network/layer2/*
+layer3:
+    modules:
+    - network/layer3/*
+misc:
+    become:
+    - dzdo.py
+    - pbrun.py
+    - pmrun.py
+    - sesu.py
+    doc_fragments:
+    - auth_basic.py
+    - hpe3par.py
+    - ibm_storage.py
+    - infinibox.py
+    - influxdb.py
+    - ingate.py
+    - intersight.py
+    - ipa.py
+    - ironware.py
+    - k8s_*.py
+    - keycloak.py
+    - kubevirt_*.py
+    - ldap.py
+    - lxca_common.py
+    - manageiq.py
+    - meraki.py
+    - mysql.py
+    - netapp.py
+    - netscaler.py
+    - nios.py
+    - ovirt.py
+    - ovirt_facts.py
+    - oneview.py
+    - online.py
+    - onyx.py
+    - opennebula.py
+    - openstack.py
+    - oracle.py
+    - oracle_*.py
+    - panos.py
+    - postgres.py
+    - proxysql.py
+    - purestorage.py
+    - rabbitmq.py
+    - rackspace.py
+    - scaleway.py
+    - service_now.py
+    - template_common.py
+    - ucs.py
+    - utm.py
+    - vca.py
+    - vexata.py
+    - xenserver.py
+    - zabbix.py
+    callback:
+    - actionable.py
+    - context_demo.py
+    - counter_enabled.py
+    - debug.py
+    - dense.py
+    - foreman.py
+    - full_skip.py
+    - grafana_annotations.py
+    - hipchat.py
+    - jabber.py
+    - json.py
+    - junit.py
+    - log_plays.py
+    - logdna.py
+    - logentries.py
+    - logstash.py
+    - mail.py
+    - nrdp.py
+    - 'null.py'
+    - osx_say.py
+    - profile_roles.py
+    - say.py
+    - selective.py
+    - skippy.py
+    - slack.py
+    - splunk.py
+    - stderr.py
+    - sumologic.py
+    - syslog_json.py
+    - timer.py
+    - unixy.py
+    - yaml.py
+    connection:
+    - buildah.py
+    - lxc.py
+    - lxd.py
+    - funcd.py
+    - kubectl.py
+    - qubes.py
+    - iocage.py
+    - podman.py
+    - libvirt_lxc.py
+    lookup:
+    - _openshift.py
+    - chef_databag.py
+    - conjur_variable.py
+    - consul_kv.py
+    - cpm_metering.py
+    - cpm_status.py
+    - credstash.py
+    - csvfile.py
+    - cyberarkpassword.py
+    - dict.py
+    - etcd.py
+    - filetree.py
+    - grafana_dashboard.py
+    - hashi_vault.py
+    - hiera.py
+    - ini.py
+    - k8s.py
+    - laps_password.py
+    - lastpass.py
+    - manifold.py
+    - mongodb.py
+    - nios.py
+    - nios_next_ip.py
+    - nios_next_network.py
+    - onepassword.py
+    - onepassword_raw.py
+    - password.py
+    - passwordstore.py
+    - rabbitmq.py
+    - random_choice.py
+    - redis.py
+    filter:
+    - json_query.py
+    - k8s.py
+    modules:
+    - cloud/atomic/*
+    - cloud/centurylink/*
+    - cloud/heroku/heroku_collaborator.py
+    - cloud/kubevirt/*
+    - cloud/linode/*
+    - cloud/lx?/*
+    - cloud/memset/*
+    - cloud/misc/*
+    - cloud/oneandone/*
+    - cloud/online/*
+    - cloud/opennebula/*
+    - cloud/openstack/*
+    - cloud/oracle/oci_vcn.py
+    - cloud/ovh/ovh_ip_failover.py
+    - cloud/ovh/ovh_ip_loadbalancing_backend.py
+    - cloud/ovirt/*
+    - cloud/packet/packet_device.py
+    - cloud/packet/packet_sshkey.py
+    - cloud/podman/*
+    - cloud/profitbricks/*
+    - cloud/pubnub/pubnub_blocks.py
+    - cloud/rackspace/*
+    - cloud/scaleway/*
+    - cloud/smartos/*
+    - cloud/softlayer/sl_vm.py
+    - cloud/spotinst/spotinst_aws_elastigroup.py
+    - cloud/univention/*
+    - cloud/webfaction/*
+    - cloud/xenserver/*
+    - clustering/consul*
+    - clustering/etcd3.py
+    - clustering/k8s/*
+    - clustering/openshift/*
+    - clustering/pacemaker_cluster.py
+    - clustering/znode.py
+    - commands/expect.py
+    - commands/psexec.py
+    - commands/telnet.py
+    - crypto/certificate_complete_chain.py
+    - crypto/get_certificate.py
+    - crypto/luks_device.py
+    - crypto/openssh_cert.py
+    - crypto/openssh_keypair.py
+    - crypto/openssl_*
+    - database/aerospike/aerospike_migrations.py
+    - database/influxdb/*
+    - database/misc/elasticsearch_plugin.py
+    - database/misc/kibana_plugin.py
+    - database/misc/redis.py
+    - database/misc/riak.py
+    - database/mongodb/*
+    - database/mssql/*
+    - database/postgresql/*
+    - database/proxysql/*
+    - database/vertica/*
+    - files/archive.py
+    - files/ini_file.py
+    - files/iso_extract.py
+    - files/read_csv.py
+    - files/replace.py
+    - files/xml.py
+    - identity/ipa/*
+    - identity/keycloak/*
+    - identity/_onepassword_facts.py
+    - identity/onepassword_info.py
+    - identity/opendj/opendj_backendprop.py
+    - messaging/rabbitmq/*
+    - monitoring/airbrake_deployment.py
+    - monitoring/bigpanda.py
+    - monitoring/circonus_annotation.py
+    - monitoring/datadog_*
+    - monitoring/grafana_*
+    - monitoring/honeybadger_deployment.py
+    - monitoring/icinga2_*
+    - monitoring/librato_annotation.py
+    - monitoring/logentries.py
+    - monitoring/logicmonitor.py
+    - monitoring/logicmonitor_facts.py
+    - monitoring/logstash_plugin.py
+    - monitoring/monit.py
+    - monitoring/nagios.py
+    - monitoring/newrelic_deployment.py
+    - monitoring/pagerduty.py
+    - monitoring/pagerduty_alert.py
+    - monitoring/pingdom.py
+    - monitoring/rollbar_deployment.py
+    - monitoring/sensu_*.py
+    - monitoring/spectrum_device.py
+    - monitoring/stackdriver.py
+    - monitoring/statusio_maintenance.py
+    - monitoring/uptimerobot.py
+    - monitoring/zabbix/*
+    - net_tools/cloudflare_dns.py
+    - net_tools/dnsimple.py
+    - net_tools/dnsmadeeasy.py
+    - net_tools/haproxy.py
+    - net_tools/hetzner_failover_ip.py
+    - net_tools/hetzner_failover_ip_info.py
+    - net_tools/infinity/infinity.py
+    - net_tools/ip_netns.py
+    - net_tools/ipify_facts.py
+    - net_tools/ipinfoio_facts.py
+    - net_tools/ldap/*
+    - net_tools/lldp.py
+    - net_tools/netbox/*
+    - net_tools/netcup_dns.py
+    - net_tools/nsupdate.py
+    - net_tools/omapi_host.py
+    - net_tools/snmp_facts.py
+    - network/aos/*
+    - network/bigswitch/bcf_switch.py
+    - network/bigswitch/bigmon_chain.py
+    - network/bigswitch/bigmon_policy.py
+    - network/citrix/_netscaler.py
+    - network/cumulus/*
+    - network/edgeos/*
+    - network/edgeswitch/edgeswitch_facts.py
+    - network/edgeswitch/edgeswitch_vlan.py
+    - network/eric_eccli/eric_eccli_command.py
+    - network/exos/*
+    - network/fortimanager/*
+    - network/ftd/ftd_configuration.py
+    - network/ftd/ftd_file_download.py
+    - network/ftd/ftd_file_upload.py
+    - network/ftd/ftd_install.py
+    - network/icx/icx_banner.py
+    - network/illumos/*
+    - network/ingate/ig_config.py
+    - network/ingate/ig_unit_information.py
+    - network/ironware/ironware_command.py
+    - network/ironware/ironware_config.py
+    - network/ironware/ironware_facts.py
+    - network/itential/iap_start_workflow.py
+    - network/itential/iap_token.py
+    - network/meraki/*
+    - network/netscaler/*
+    - network/netvisor/*
+    - network/nos/*
+    - network/nuage/nuage_vspk.py
+    - network/onyx/*
+    - network/opx/opx_cps.py
+    - network/ordnance/ordnance_config.py
+    - network/ordnance/ordnance_facts.py
+    - network/panos/*
+    - network/radware/vdirect_commit.py
+    - network/radware/vdirect_file.py
+    - network/radware/vdirect_runnable.py
+    - network/routeros/routeros_command.py
+    - network/routeros/routeros_facts.py
+    - network/slxos/*
+    - network/voss/voss_command.py
+    - network/voss/voss_config.py
+    - network/voss/voss_facts.py
+    - notification/_osx_say.py
+    - notification/bearychat.py
+    - notification/campfire.py
+    - notification/catapult.py
+    - notification/cisco_spark.py
+    - notification/flowdock.py
+    - notification/grove.py
+    - notification/hall.py
+    - notification/hipchat.py
+    - notification/irc.py
+    - notification/jabber.py
+    - notification/logentries_msg.py
+    - notification/mail.py
+    - notification/matrix.py
+    - notification/mattermost.py
+    - notification/mqtt.py
+    - notification/nexmo.py
+    - notification/office_365_connector_card.py
+    - notification/pushbullet.py
+    - notification/pushover.py
+    - notification/rabbitmq_publish.py
+    - notification/rocketchat.py
+    - notification/say.py
+    - notification/sendgrid.py
+    - notification/slack.py
+    - notification/snow_record.py
+    - notification/snow_record_find.py
+    - notification/syslogger.py
+    - notification/telegram.py
+    - notification/twilio.py
+    - notification/typetalk.py
+    - packaging/language/bower.py
+    - packaging/language/bundler.py
+    - packaging/language/composer.py
+    - packaging/language/cpanm.py
+    - packaging/language/easy_install.py
+    - packaging/language/gem.py
+    - packaging/language/maven_artifact.py
+    - packaging/language/npm.py
+    - packaging/language/pear.py
+    - packaging/language/pip_package_info.py
+    - packaging/language/yarn.py
+    - packaging/os/apk.py
+    - packaging/os/apt_repo.py
+    - packaging/os/apt_rpm.py
+    - packaging/os/dpkg_selections.py
+    - packaging/os/flatpak.py
+    - packaging/os/flatpak_remote.py
+    - packaging/os/homebrew.py
+    - packaging/os/homebrew_cask.py
+    - packaging/os/homebrew_tap.py
+    - packaging/os/installp.py
+    - packaging/os/layman.py
+    - packaging/os/macports.py
+    - packaging/os/openbsd_pkg.py
+    - packaging/os/opkg.py
+    - packaging/os/package_facts.py
+    - packaging/os/pacman.py
+    - packaging/os/pkg5.py
+    - packaging/os/pkg5_publisher.py
+    - packaging/os/pkgin.py
+    - packaging/os/pkgng.py
+    - packaging/os/pkgutil.py
+    - packaging/os/portage.py
+    - packaging/os/portinstall.py
+    - packaging/os/pulp_repo.py
+    - packaging/os/redhat_subscription.py
+    - packaging/os/rhn_channel.py
+    - packaging/os/rhn_register.py
+    - packaging/os/rhsm_release.py
+    - packaging/os/rhsm_repository.py
+    - packaging/os/slackpkg.py
+    - packaging/os/snap.py
+    - packaging/os/sorcery.py
+    - packaging/os/svr4pkg.py
+    - packaging/os/swdepot.py
+    - packaging/os/swupd.py
+    - packaging/os/urpmi.py
+    - packaging/os/xbps.py
+    - packaging/os/zypper.py
+    - packaging/os/zypper_repository.py
+    - remote_management/cobbler/cobbler_sync.py
+    - remote_management/cobbler/cobbler_system.py
+    - remote_management/cpm/cpm_plugconfig.py
+    - remote_management/cpm/cpm_plugcontrol.py
+    - remote_management/cpm/cpm_serial_port_config.py
+    - remote_management/cpm/cpm_serial_port_info.py
+    - remote_management/cpm/cpm_user.py
+    - remote_management/dellemc/idrac_firmware.py
+    - remote_management/dellemc/idrac_server_config_profile.py
+    - remote_management/dellemc/ome_device_info.py
+    - remote_management/foreman/_foreman.py
+    - remote_management/foreman/_katello.py
+    - remote_management/hpilo/_hpilo_facts.py
+    - remote_management/hpilo/hpilo_boot.py
+    - remote_management/hpilo/hpilo_info.py
+    - remote_management/hpilo/hponcfg.py
+    - remote_management/imc/imc_rest.py
+    - remote_management/intersight/_intersight_facts.py
+    - remote_management/intersight/intersight_info.py
+    - remote_management/intersight/intersight_rest_api.py
+    - remote_management/ipmi/ipmi_boot.py
+    - remote_management/ipmi/ipmi_power.py
+    - remote_management/lxca/lxca_cmms.py
+    - remote_management/lxca/lxca_nodes.py
+    - remote_management/manageiq/*
+    - remote_management/oneview/*
+     remote_management/redfish/*
+    - remote_management/stacki/stacki_host.py
+    - remote_management/ucs/*
+    - remote_management/wakeonlan.py
+    - source_control/_github_hooks.py
+    - source_control/_github_webhook_facts.py
+    - source_control/bitbucket/*
+    - source_control/bzr.py
+    - source_control/git_config.py
+    - source_control/github_*
+    - source_control/hg.py
+    - storage/glusterfs/_gluster_heal_facts.py
+    - storage/glusterfs/gluster_heal_info.py
+    - storage/glusterfs/gluster_peer.py
+    - storage/glusterfs/gluster_volume.py
+    - storage/hpe3par/ss_3par_cpg.py
+    - storage/ibm/ibm_sa_domain.py
+    - storage/ibm/ibm_sa_host.py
+    - storage/ibm/ibm_sa_host_ports.py
+    - storage/ibm/ibm_sa_pool.py
+    - storage/ibm/ibm_sa_vol.py
+    - storage/ibm/ibm_sa_vol_map.py
+    - storage/infinidat/infini_export.py
+    - storage/infinidat/infini_export_client.py
+    - storage/infinidat/infini_fs.py
+    - storage/infinidat/infini_host.py
+    - storage/infinidat/infini_pool.py
+    - storage/infinidat/infini_vol.py
+    - storage/netapp/*
+    - storage/purestorage/*
+    - storage/vexata/vexata_eg.py
+    - storage/vexata/vexata_volume.py
+    - storage/zfs/zfs.py
+    - storage/zfs/zfs_delegate_admin.py
+    - storage/zfs/zfs_facts.py
+    - storage/zfs/zpool_facts.py
+    - system/_python_requirements_facts.py
+    - system/awall.py
+    - system/beadm.py
+    - system/dconf.py
+    - system/facter.py
+    - system/hostname.py
+    - system/interfaces_file.py
+    - system/java_cert.py
+    - system/java_keystore.py
+    - system/kernel_blacklist.py
+    - system/make.py
+    - system/mksysb.py
+    - system/nosh.py
+    - system/ohai.py
+    - system/open_iscsi.py
+    - system/pamd.py
+    - system/parted.py
+    - system/pids.py
+    - system/puppet.py
+    - system/python_requirements_info.py
+    - system/sefcontext.py
+    - system/selinux_permissive.py
+    - system/selogin.py
+    - system/service_facts.py
+    - system/syspatch.py
+    - system/timezone.py
+    - system/vdo.py
+    - system/xfconf.py
+    - utilities/helper/_accelerate.py
+    - utilities/logic/set_stats.py
+    - web_infrastructure/_jenkins_job_facts.py
+    - web_infrastructure/_nginx_status_facts.py
+    - web_infrastructure/apache2_mod_proxy.py
+    - web_infrastructure/apache2_module.py
+    - web_infrastructure/deploy_helper.py
+    - web_infrastructure/django_manage.py
+    - web_infrastructure/ejabberd_user.py
+    - web_infrastructure/gunicorn.py
+    - web_infrastructure/htpasswd.py
+    - web_infrastructure/jboss.py
+    - web_infrastructure/jenkins_job.py
+    - web_infrastructure/jenkins_job_info.py
+    - web_infrastructure/jenkins_plugin.py
+    - web_infrastructure/jenkins_script.py
+    - web_infrastructure/jira.py
+    - web_infrastructure/nginx_status_info.py
+    - web_infrastructure/rundeck_acl_policy.py
+    - web_infrastructure/rundeck_project.py
+    - web_infrastructure/sophos_utm/*
+    - web_infrastructure/supervisorctl.py
+    - web_infrastructure/taiga_issue.py
+    module_utils:
+    - cloud.py
+    - crypto.py
+    - database.py
+    - linode.py
+    - lxd.py
+    - mysql.py
+    - oneandone.py
+    - online.py
+    - opennebula.py
+    - openstack.py
+    - oracle/*
+    - ovirt.py
+    - podman/common.py
+    - postgres.py
+    - pure.py
+    - rax.py
+    - rabbitmq.py
+    - redfish_utils.py
+    - remote_management/dellemc/*
+    - remote_management/intersight.py
+    - remote_management/lxca/*
+    - remote_management/ucs.py
+    - scaleway.py
+    - service_now.py
+    - source_control/bitbucket.py
+    - storage/hpe3par/*
+    - univention_umc.py
+    - utm_utils.py
+    - vca.py
+    - vexata.py
+    - xenserver.py
+network:
+    action:
+    - telnet.py
+    become:
+    - enable.py
+    connection:
+    - network_cli.py
+    - httpapi.py
+    doc_fragments:
+    - network_agnostic.py
+    filter:
+    - network.py
+    httpapi:
+    - exos.py
+    - fortimanager.py
+    - ftd.py
+    - nxos.py
+    - qradar.py
+    - restconf.py
+    - splunk.py
+    inventory:
+    - nmap.py
+    modules:
+    - network/cli/cli_command.py
+    - network/cli/cli_config.py
+    - network/files/net_get.py
+    - network/files/net_put.py
+    - network/interface/_net_*.py
+    - network/protocol/_net_lldp.py
+    - network/restconf/restconf_config.py
+    - network/restconf/restconf_get.py
+    - network/routing/_net_static_route.py
+    - network/system/_net_*.py
+    module_utils:
+    - compat/ipaddress.py
+    - compat/paramiko.py
+    - network/common/*
+    - network/common/*/*
+    netconf:
+    - default.py
+    - sros.py
+    terminal:
+    - edgeos.py
+    - edgeswitch.py
+    - eric_eccli.py
+    - exos.py
+    - icx.py
+    - ios.py
+    - ironware.py
+    - netvisor.py
+    - nos.py
+    - nxos.py
+    - onyx.py
+    - routeros.py
+    - slxos.py
+    - sros.py
+    - voss.py
+nso:
+    doc_fragments:
+    - nso.py
+    modules:
+    - network/nso/*
+    module_utils:
+    - network/nso/nso.py
+ovs:
+    modules:
+    - network/ovs/*
+skydive:
+    doc_fragments:
+    - skydive.py
+    modules:
+    - network/skydive/*
+    module_utils:
+    - network/skydive/*
+    lookups:
+    - skydive.py
+tower:
+    doc_fragments:
+    - tower.py
+    inventory:
+    - tower.py
+    modules:
+    - web_infrastructure/ansible_tower/*
+    module_utils:
+    - ansible_tower.py
+unix:
+    action:
+    - assemble.py
+    - patch.py
+    - synchronize.py
+    become:
+    - doas.py
+    - ksu.py
+    - machinectl.py
+    - pfexec.py
+    connection:
+    - chroot.py
+    - jail.py
+    - zone.py
+    lookup:
+    - dig.py
+    - dnstxt.py
+    - keyring.py
+    - shelvefile.py
+    modules:
+    - files/acl.py
+    - files/assemble.py
+    - files/blockinfile.py
+    - files/lineinfile.py
+    - files/unarchive.py
+    - files/xattr.py
+    - files/synchronize.py
+    - files/tempfile.py
+    - files/patch.py
+    - net_tools/nmcli.py
+    - net_tools/basics/get_url.py
+    - net_tools/basics/uri.py
+    - system/alternatives.py
+    - system/aix_*.py
+    - system/at.py
+    - system/authorized_key.py
+    - system/capabilities.py
+    - system/cron.py
+    - system/cronvar.py
+    - system/debconf.py
+    - system/filesystem.py
+    - system/firewalld.py
+    - system/gconftool2.py
+    - system/iptables.py
+    - system/known_hosts.py
+    - system/locale_gen.py
+    - system/lvg.py
+    - system/lvol.py
+    - system/modprobe.py
+    - system/mount.py
+    - system/openwrt_init.py
+    - system/pam_limits.py
+    - system/osx_defaults.py
+    - system/runit.py
+    - system/svc.py
+    - system/selinux.py
+    - system/seboolean.py
+    - system/seport.py
+    - system/solaris_zone.py
+    - system/sysctl.py
+    - system/ufw.py
+    - system/xfs_quota.py
+    module_utils:
+    - compat/__init__.py
+    - distro/__init__.py
+    - firewalld.py
+    - ismount.py
+    - redhat.py
+    shell:
+    - csh.py
+    - fish.py
+vmware:
+    connection:
+    - vmware_tools.py
+    doc_fragments:
+    - vmware.py
+    - vmware_rest_client.py
+    inventory:
+    - vmware_vm_inventory.py
+    modules:
+    - cloud/vmware/*
+    module_utils:
+    - vmware.py
+    - vmware_rest_client.py
+    - vmware_spbm.py
+vultr:
+    doc_fragments:
+    - vultr.py
+    inventory:
+    - vultr.py
+    module_utils:
+    - vultr.py
+    modules:
+    - cloud/vultr/*
+vyos:
+    action:
+    - vyos.py
+    cliconf:
+    - vyos.py
+    doc_fragments:
+    - vyos.py
+    modules:
+    - network/vyos/*
+    module_utils:
+    - network/vyos/*
+    - network/vyos/*/*
+    - network/vyos/*/*/*
+    terminal:
+    - vyos.py
+windows:
+    action:
+    - win_*
+    become:
+    - runas.py
+    connection:
+    - psrp.py
+    - winrm.py
+    doc_fragments:
+    - '*_windows.py'
+    modules:
+    - windows/*
+    module_utils:
+    - csharp/*
+    - powershell/*
+    shell:
+    - cmd.py
+    - powershell.py

@@ -1,0 +1,27 @@
+common:
+    doc_fragments:
+    - f5.py
+    module_utils:
+    - network/f5/common.py
+    - network/f5/compare.py
+    - network/f5/icontrol.py
+    - network/f5/ipaddress.py
+    - network/f5/iworkflow.py
+    - network/f5/legacy.py
+    - network/f5/urls.py
+bigip:
+    action:
+    - bigip.py
+    modules:
+    - network/f5/bigip_*
+    module_utils:
+    - network/f5/bigip.py
+    terminal:
+    - bigip.py
+bigiq:
+    action:
+    - bigiq.py
+    module_utils:
+    - network/f5/bigiq.py
+    modules:
+    - network/f5/bigiq_*
