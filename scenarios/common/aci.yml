@@ -1,8 +1,0 @@
-aci:
-  doc_fragments:
-  - aci.py
-  - mso.py
-  modules:
-  - network/aci/*
-  module_utils:
-  - network/aci/*
