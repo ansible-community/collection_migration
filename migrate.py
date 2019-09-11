@@ -15,7 +15,7 @@ import textwrap
 import yaml
 
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from importlib import import_module
 from string import Template
 
@@ -448,7 +448,7 @@ def assemble_collections(spec, args):
         shutil.rmtree(collections_base_dir)
 
     # make initial YAML transformation to minimize the diff
-    mark_moved_resources(checkout_path, 'init', set())
+    mark_moved_resources(checkout_path, 'N/A', 'init', set())
 
     seen = {}
     migrated_to_collection = defaultdict(set)
@@ -634,15 +634,13 @@ def assemble_collections(spec, args):
             )
 
             mark_moved_resources(
-                checkout_path, collection, migrated_to_collection[collection],
+                checkout_path, namespace, collection, migrated_to_collection[collection],
             )
 
 
-def mark_moved_resources(checkout_dir, collection, migrated_to_collection):
+def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
     """Mark migrated paths in botmeta."""
-    moved_collection_url = (
-        f'https://github.com/ansible-collections/{collection}'
-    )
+    migrated_to = '.'.join((namespace, collection))
     botmeta_rel_path = '.github/BOTMETA.yml'
     botmeta_checkout_path = os.path.join(checkout_dir, botmeta_rel_path)
     close_related_issues = False
@@ -674,7 +672,7 @@ def mark_moved_resources(checkout_dir, collection, migrated_to_collection):
             }
 
         migrated_secion['close'] = close_related_issues
-        migrated_secion['moved'] = moved_collection_url
+        migrated_secion['migrated_to'] = migrated_to
 
     write_yaml_into_file_as_is(botmeta_checkout_path, botmeta)
 
