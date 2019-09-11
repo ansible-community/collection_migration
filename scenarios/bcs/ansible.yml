@@ -551,8 +551,6 @@ misc:
     - net_tools/dnsimple.py
     - net_tools/dnsmadeeasy.py
     - net_tools/haproxy.py
-    - net_tools/hetzner_failover_ip.py
-    - net_tools/hetzner_failover_ip_info.py
     - net_tools/infinity/infinity.py
     - net_tools/ip_netns.py
     - net_tools/ipify_facts.py
