@@ -36,7 +36,7 @@ jobs:
       run: >-
         python -m
         pip install
-        git+https://github.com/ansible/ansible.git
+        git+https://github.com/ansible/ansible.git@devel
         logzero
         redbaron
         --user
