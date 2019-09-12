@@ -838,8 +838,9 @@ network:
     become:
     - enable.py
     connection:
-    - network_cli.py
     - httpapi.py
+    - paramiko_ssh.py
+    - network_cli.py
     doc_fragments:
     - network_agnostic.py
     filter:
