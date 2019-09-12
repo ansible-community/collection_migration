@@ -1,0 +1,61 @@
+name: Collection migration smoke test suite
+
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron: 1 0 * * *  # Run daily at 0:01 UTC
+
+jobs:
+  tests:
+    name: 👷
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # max-parallel: 5
+      matrix:
+        python-version:
+        - 3.7
+        os:
+        - ubuntu-18.04
+        # - ubuntu-16.04
+        # - macOS-10.14
+        # - windows-2019
+        # - windows-2016
+        migration-scenario:
+        - bcs
+        - newworld
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        version: ${{ matrix.python-version }}
+    - name: Install migration script deps
+      run: >-
+        python -m
+        pip install
+        git+https://github.com/ansible/ansible.git
+        logzero
+        redbaron
+        --user
+    - name: Configure user settings in Git
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+    - name: Run migration scenario ${{ matrix.migration-scenario }}
+      run: >-
+        python -m
+        migrate
+        -s "scenarios/${{ matrix.migration-scenario }}"
+    - name: Run migration scenario ${{ matrix.migration-scenario }}
+      run: |
+          for coll_dir in `ls .cache/collections/*/*/* -d`
+          do
+              (
+                  echo "Testing ${coll_dir}..."
+                  cd "${coll_dir}"
+                  ansible-test units --python "${{ matrix.python-version }}" -vvv
+              )
+          done
