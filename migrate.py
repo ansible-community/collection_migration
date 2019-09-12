@@ -729,7 +729,9 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 full_path = os.path.join(dirpath, filename)
                 logger.debug(full_path)
 
-                dest_dir = os.path.join(collection_dir, os.path.relpath(dirpath, checkout_dir))
+                dest_dir = os.path.join(collection_dir,
+                                        'tests',
+                                        os.path.relpath(dirpath, os.path.join(checkout_dir, 'test')))
                 if not os.path.exists(dest_dir):
                     os.makedirs(dest_dir)
                 dest = os.path.join(dest_dir, filename)
