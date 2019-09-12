@@ -714,7 +714,7 @@ misc:
     - remote_management/lxca/lxca_nodes.py
     - remote_management/manageiq/*
     - remote_management/oneview/*
-     remote_management/redfish/*
+    - remote_management/redfish/*
     - remote_management/stacki/stacki_host.py
     - remote_management/ucs/*
     - remote_management/wakeonlan.py
