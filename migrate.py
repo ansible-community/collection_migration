@@ -199,7 +199,6 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
         if fragment_collection.startswith('_'):
             fragment_collection = fragment_collection[1:]
 
-        # TODO what if it's in a different namespace (different spec)? do we care?
         new_fragment = get_plugin_fqcn(fragment_namespace, fragment_collection, fragment)
 
         # `doc_val` holds a baron representation of the string node
@@ -269,10 +268,18 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
         except LookupError:
             continue  # no matching imports
 
-        if len(imp.find_all('name_as_name', value='g:*Base*')) > 0:
+        if not imp.find('name', value='g:*module_utils*') and imp.find_all('name_as_name', value='g:*Base*'):
+            # from ansible.plugins.lookup import LookupBase
+            # NOT 'from ansible.module_utils.azure_rm_common import AzureRMModuleBase'
             continue  # Skip imports of Base classes
-        if len(imp.find_all('name_as_name', value='g:*loader*')) > 0:
-            continue  # Skip imports of ansible.plugin.loader.py
+
+        if imp.find('name_as_name', value='g:*loader*'):
+            continue
+
+        if imp.find('name_as_name', value=('AnsiblePlugin', 'PluginLoader')):
+            # from ansible.plugins import AnsiblePlugin
+            # from ansible.plugins.loader import PluginLoader
+            continue
 
         if imp_src[0].value == 'units':
             imp_src[:token_length] = exchange  # replace the import
@@ -290,10 +297,13 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
                 plugin_type = imp_src[2].value
                 plugin_name = imp_src[3].value
             except IndexError:
-                # FIXME logging an error to investigate for now
-                # one example I found is: from ansible.plugins.cache import CachePluginAdjudicator as CacheObject
-                logger.error('Could not get plugin type or name from ' + str(imp) + '. Is this expected?')
-                continue
+                if len(imp.targets) == 1:
+                    # from ansible.plugins.connection import winrm
+                    plugin_name = imp.targets[0].value
+                else:
+                    # FIXME
+                    logger.error('Could not get plugin type or name from ' + str(imp) + '. Is this expected?')
+                    continue
         else:
             raise Exception('BUG: Could not process import: ' + str(imp))
 
