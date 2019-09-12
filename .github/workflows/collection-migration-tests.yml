@@ -38,6 +38,8 @@ jobs:
         pip install
         git+https://github.com/ansible/ansible.git@devel
         logzero
+        pytest
+        pytest-xdist
         redbaron
         --user
     - name: Configure user settings in Git
