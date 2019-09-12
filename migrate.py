@@ -138,7 +138,7 @@ def get_plugin_collection(plugin_name, plugin_type, spec):
             if spec[ns][collection]: # avoid empty collections
                 plugins = spec[ns][collection].get(plugin_type, [])
                 if plugin_name + '.py' in plugins:
-                    return collection
+                    return ns, collection
 
     # keep info
     plugin_name = plugin_name.replace('/', '.')
@@ -187,7 +187,7 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
         # some doc_fragments use subsections (e.g. vmware.vcenter_documentation)
         fragment_name, _dot, _rest = fragment.partition('.')
         try:
-            fragment_collection = get_plugin_collection(fragment_name, 'doc_fragments', spec)
+            fragment_namespace, fragment_collection = get_plugin_collection(fragment_name, 'doc_fragments', spec)
         except LookupError:
             # plugin not in spec, assuming it stays in core and leaving as is
             continue
@@ -200,7 +200,7 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
             fragment_collection = fragment_collection[1:]
 
         # TODO what if it's in a different namespace (different spec)? do we care?
-        new_fragment = get_plugin_fqcn(namespace, fragment_collection, fragment)
+        new_fragment = get_plugin_fqcn(fragment_namespace, fragment_collection, fragment)
 
         # `doc_val` holds a baron representation of the string node
         # of type 'string' or 'raw_string'. Updating its `.value`
@@ -224,8 +224,8 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
             str_val=doc_txt.replace(fragment, new_fragment),
         )
 
-        if collection != fragment_collection:
-            deps.append(fragment_collection)
+        if (namespace, collection) != (fragment_namespace, fragment_collection):
+            deps.append((fragment_namespace, fragment_collection))
 
     return deps
 
@@ -241,7 +241,7 @@ def rewrite_imports(mod_fst, collection, spec, namespace):
         ('units', ): unit_tests_path,
     }
 
-    return rewrite_imports_in_fst(mod_fst, import_map, collection, spec)
+    return rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace)
 
 
 def match_import_src(imp_src, import_map):
@@ -256,7 +256,7 @@ def match_import_src(imp_src, import_map):
     raise LookupError(f"Couldn't find a replacement for {imp_src!s}")
 
 
-def rewrite_imports_in_fst(mod_fst, import_map, collection, spec):
+def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
     """Replace imports in the python module FST."""
     deps = []
     for imp in mod_fst.find_all(('import', 'from_import')):
@@ -298,7 +298,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec):
             raise Exception('BUG: Could not process import: ' + str(imp))
 
         try:
-            plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
+            plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
         except LookupError as e:
             # plugin not in spec, assuming it stays in core and skipping
             continue
@@ -311,9 +311,9 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec):
             plugin_collection = plugin_collection[1:]
 
         imp_src[:token_length] = exchange  # replace the import
-        if plugin_collection != collection:
+        if (plugin_namespace, plugin_collection) != (namespace, collection):
             imp_src[2] = plugin_collection
-            deps.append(plugin_collection)
+            deps.append((plugin_namespace, plugin_collection))
 
     return deps
 
@@ -576,10 +576,10 @@ def assemble_collections(spec, args):
                     plugin_data_new = mod_fst.dumps()
 
                     if mod_src_text != plugin_data_new:
-                        for dep in docs_dependencies + import_dependencies:
-                            dep_collection = '%s.%s' % (namespace, dep)
+                        for dep_ns, dep_coll in docs_dependencies + import_dependencies:
+                            dep = '%s.%s' % (dep_ns, dep_coll)
                             # FIXME hardcoded version
-                            galaxy_metadata['dependencies'][dep_collection] = '>=1.0'
+                            galaxy_metadata['dependencies'][dep] = '>=1.0'
                         logger.info('rewriting plugin references in %s' % dest)
 
                     write_text_into_file(dest, plugin_data_new)
@@ -611,10 +611,11 @@ def assemble_collections(spec, args):
                 logger.error(e)
 
             global integration_tests_deps
-            for dep in integration_tests_deps:
-                dep_collection = '%s.%s' % (namespace, dep)
+            for dep_ns, dep_coll in integration_tests_deps:
+                # FIXME duplicite code, see dep handling above
+                dep = '%s.%s' % (dep_ns, dep_coll)
                 # FIXME hardcoded version
-                galaxy_metadata['dependencies'][dep_collection] = '>=1.0'
+                galaxy_metadata['dependencies'][dep] = '>=1.0'
 
             integration_test_dirs = []
             integration_tests_deps = set()
@@ -816,7 +817,7 @@ def integration_tests_add_to_deps(collection, dep_collection):
 
     global integration_tests_deps
     integration_tests_deps.add(dep_collection)
-    logger.debug("Adding " + dep_collection + " as a dep for " + collection)
+    logger.debug("Adding %s.%s as a dep for %s.%s" % (dep_collection[0], dep_collection[1], collection[0], collection[1]))
 
 
 def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name):
@@ -945,9 +946,9 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
         new_plugin_names = []
         for plugin_name in plugin_names:
             try:
-                plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
+                plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
                 new_plugin_names.append(get_plugin_fqcn(namespace, plugin_collection, plugin_name))
-                integration_tests_add_to_deps(collection, plugin_collection)
+                integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 new_plugin_names.append(plugin_name)
 
@@ -1002,9 +1003,9 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec):
                 continue
             plugin_name = key[prefix_len:]
             try:
-                plugin_collection = get_plugin_collection(plugin_name, 'lookup', spec)
+                plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, 'lookup', spec)
                 translate.append((prefix + get_plugin_fqcn(namespace, plugin_collection, plugin_name), key))
-                integration_tests_add_to_deps(collection, plugin_collection)
+                integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 pass
 
@@ -1035,9 +1036,9 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec):
             continue
 
         try:
-            plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
+            plugin_namespace, plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
             el[key] = get_plugin_fqcn(namespace, plugin_collection, el[key])
-            integration_tests_add_to_deps(collection, plugin_collection)
+            integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
         except LookupError:
             if '{{' in el[key]:
                 add_manual_check(key, el[key])
