@@ -750,8 +750,8 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                         logger.info('%s in %s', err, full_path)
                     plugin_data_new = mod_fst.dumps()
 
-                    for dep in docs_dependencies + import_dependencies:
-                        integration_tests_add_to_deps(collection, dep)
+                    for dep_ns, deps_coll in docs_dependencies + import_dependencies:
+                        integration_tests_add_to_deps((namespace, collection), (dep_ns, dep_coll))
 
                     write_text_into_file(dest, plugin_data_new)
                 elif ext in ('.ps1',):
@@ -783,16 +783,17 @@ def rewrite_sh(full_path, dest, namespace, collection, spec):
     for key, plugin_type in sh_key_map.items():
         if not contents.find(key):
             continue
-        for coll in spec[namespace].keys():
-            plugins = get_plugins_from_collection(namespace, coll, plugin_type, spec)
-            for plugin_name in plugins:
-                if not contents.find(plugin_name):
-                    continue
-                # FIXME list
-                new_plugin_name = get_plugin_fqcn(namespace, coll, plugin_name)
-                contents = contents.replace(key + '=' + plugin_name, key + '=' + new_plugin_name)
-                contents = contents.replace(key + ' ' + plugin_name, key + ' ' + new_plugin_name)
-                integration_tests_add_to_deps(collection, coll)
+        for ns in spec.keys():
+            for coll in spec[ns].keys():
+                plugins = get_plugins_from_collection(ns, coll, plugin_type, spec)
+                for plugin_name in plugins:
+                    if not contents.find(plugin_name):
+                        continue
+                    # FIXME list
+                    new_plugin_name = get_plugin_fqcn(ns, coll, plugin_name)
+                    contents = contents.replace(key + '=' + plugin_name, key + '=' + new_plugin_name)
+                    contents = contents.replace(key + ' ' + plugin_name, key + ' ' + new_plugin_name)
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     write_text_into_file(dest, contents)
     shutil.copystat(full_path, dest)
@@ -898,18 +899,19 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec):
             except LookupError:
                 pass
 
-        for coll in spec[namespace].keys():
-            try:
-                modules_in_collection = get_plugins_from_collection(namespace, coll, 'modules', spec)
-            except LookupError:
-                continue
-
-            for module in modules_in_collection:
-                if key != module:
+        for ns in spec.keys():
+            for coll in spec[ns].keys():
+                try:
+                    modules_in_collection = get_plugins_from_collection(ns, coll, 'modules', spec)
+                except LookupError:
                     continue
-                new_module_name = get_plugin_fqcn(namespace, coll, key)
-                translate.append((new_module_name, key))
-                integration_tests_add_to_deps(collection, coll)
+
+                for module in modules_in_collection:
+                    if key != module:
+                        continue
+                    new_module_name = get_plugin_fqcn(ns, coll, key)
+                    translate.append((new_module_name, key))
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     for new_key, old_key in translate:
         el[new_key] = el.pop(old_key)
@@ -946,10 +948,11 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec):
                     _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec)
                 else:
                     if key == 'module_blacklist':
-                        for coll in spec[namespace].keys():
-                            if item in get_plugins_from_collection(namespace, coll, 'modules', spec):
-                                el[key][idx] = get_plugin_fqcn(namespace, coll, el[key][idx])
-                                integration_tests_add_to_deps(collection, coll)
+                        for ns in spec.keys():
+                            for coll in spec[ns].keys():
+                                if item in get_plugins_from_collection(ns, coll, 'modules', spec):
+                                    el[key][idx] = get_plugin_fqcn(ns, coll, el[key][idx])
+                                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
                     if isinstance(el[key][idx], str):
                         # FIXME move to a func
                         el[key][idx] = _rewrite_yaml_lookup(el[key][idx], namespace, collection, spec)
@@ -965,12 +968,13 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec):
     if not ('lookup(' in value or 'query(' in value or 'q(' in value):
         return value
 
-    for coll in spec[namespace].keys():
-        for plugin_name in get_plugins_from_collection(namespace, coll, 'lookup', spec):
-            if plugin_name not in value:
-                continue
-            value = value.replace(plugin_name, get_plugin_fqcn(namespace, coll, plugin_name))
-            integration_tests_add_to_deps(collection, coll)
+    for ns in spec.keys():
+        for coll in spec[ns].keys():
+            for plugin_name in get_plugins_from_collection(ns, coll, 'lookup', spec):
+                if plugin_name not in value:
+                    continue
+                value = value.replace(plugin_name, get_plugin_fqcn(ns, coll, plugin_name))
+                integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     return value
 
@@ -978,20 +982,20 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec):
 def _rewrite_yaml_filter(value, namespace, collection, spec):
     if '|' not in value:
         return value
-
-    for coll in spec[namespace].keys():
-        for filter_plugin_name in get_plugins_from_collection(namespace, coll, 'filter', spec):
-            imported_module = import_module('ansible.plugins.filter.' + filter_plugin_name)
-            fm = getattr(imported_module, 'FilterModule', None)
-            # FIXME import once
-            if fm is None:
-                continue
-            filters = fm().filters().keys()
-            for found_filter in (match[5] for match in FILTER_RE.findall(value)):
-                if found_filter not in filters:
+    for ns in spec.keys():
+        for coll in spec[ns].keys():
+            for filter_plugin_name in get_plugins_from_collection(ns, coll, 'filter', spec):
+                imported_module = import_module('ansible.plugins.filter.' + filter_plugin_name)
+                fm = getattr(imported_module, 'FilterModule', None)
+                # FIXME import once
+                if fm is None:
                     continue
-                value = value.replace(found_filter, get_plugin_fqcn(namespace, coll, found_filter))
-                integration_tests_add_to_deps(collection, coll)
+                filters = fm().filters().keys()
+                for found_filter in (match[5] for match in FILTER_RE.findall(value)):
+                    if found_filter not in filters:
+                        continue
+                    value = value.replace(found_filter, get_plugin_fqcn(ns, coll, found_filter))
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     return value
 
@@ -999,20 +1003,20 @@ def _rewrite_yaml_filter(value, namespace, collection, spec):
 def _rewrite_yaml_test(value, namespace, collection, spec):
     if ' is ' not in value:
         return value
-
-    for coll in spec[namespace].keys():
-        for test_plugin_name in get_plugins_from_collection(namespace, coll, 'test', spec):
-            imported_module = import_module('ansible.plugins.test.' + test_plugin_name)
-            tm = getattr(imported_module, 'TestModule', None)
-            # FIXME import once
-            if tm is None:
-                continue
-            tests = tm().tests().keys()
-            for found_test in (match[5] for match in TEST_RE.findall(value)):
-                if found_test not in tests:
+    for ns in spec.keys():
+        for coll in spec[ns].keys():
+            for test_plugin_name in get_plugins_from_collection(ns, coll, 'test', spec):
+                imported_module = import_module('ansible.plugins.test.' + test_plugin_name)
+                tm = getattr(imported_module, 'TestModule', None)
+                # FIXME import once
+                if tm is None:
                     continue
-                value = value.replace(found_test, get_plugin_fqcn(namespace, coll, found_test))
-                integration_tests_add_to_deps(collection, coll)
+                tests = tm().tests().keys()
+                for found_test in (match[5] for match in TEST_RE.findall(value)):
+                    if found_test not in tests:
+                        continue
+                    value = value.replace(found_test, get_plugin_fqcn(ns, coll, found_test))
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     return value
 
