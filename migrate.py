@@ -297,7 +297,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
                 plugin_type = imp_src[2].value
                 plugin_name = imp_src[3].value
             except IndexError:
-                if len(imp.targets) == 1:
+                if len(getattr(imp, 'targets', [])) == 1:
                     # from ansible.plugins.connection import winrm
                     plugin_name = imp.targets[0].value
                 else:
