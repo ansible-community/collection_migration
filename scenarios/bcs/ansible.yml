@@ -614,7 +614,6 @@ misc:
     - notification/cisco_spark.py
     - notification/flowdock.py
     - notification/grove.py
-    - notification/hall.py
     - notification/hipchat.py
     - notification/irc.py
     - notification/jabber.py
