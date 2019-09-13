@@ -72,6 +72,6 @@ jobs:
                   cd "${coll_dir}"
                   [[ ! -d "tests/unit" ]] && >&2 echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
-                  ansible-test units --python "${{ matrix.python-version }}" -vvv
+                  ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
               )
           done
