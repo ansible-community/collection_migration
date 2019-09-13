@@ -34,7 +34,7 @@ jobs:
         version: ${{ matrix.python-version }}
     - name: Uninstall previously installed Ansible via Apt
       run: >-
-        apt remove --yes ansible
+        sudo apt remove --yes ansible
     - name: Uninstall previously installed Ansible via Pip
       run: >-
         python -m
