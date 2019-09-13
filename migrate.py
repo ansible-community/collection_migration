@@ -494,7 +494,7 @@ def assemble_collections(spec, args):
                 'license_file': None,
                 'tags': None,
                 'dependencies': {},
-                'repository': None,
+                'repository': f'git@github.com:ansible-collections/{namespace}.{collection}.git',
                 'documentation': None,
                 'homepage': None,
                 'issues': None
@@ -646,6 +646,10 @@ def assemble_collections(spec, args):
             subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
             subprocess.check_call(
                 ('git', 'commit', '-m', 'Initial commit', '--allow-empty'),
+                cwd=collection_dir,
+            )
+            subprocess.check_call(
+                ('git', 'push', galaxy_metadata['repository'], 'HEAD:master'),
                 cwd=collection_dir,
             )
 
