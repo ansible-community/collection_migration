@@ -632,14 +632,33 @@ def assemble_collections(spec, args):
                 ('git', 'commit', '-m', 'Initial commit', '--allow-empty'),
                 cwd=collection_dir,
             )
-            subprocess.check_call(
-                ('git', 'push', galaxy_metadata['repository'], 'HEAD:master'),
-                cwd=collection_dir,
-            )
 
             mark_moved_resources(
                 checkout_path, namespace, collection, migrated_to_collection[collection],
             )
+
+
+def publish_to_github(collections_target_dir, spec):
+    """Push all migrated collections to their Git remotes."""
+    collections_base_dir = os.path.join(collections_target_dir, 'collections')
+    collections_root_dir = os.path.join(
+        collections_base_dir,
+        'ansible_collections',
+    )
+    collection_paths_except_core = (
+        os.path.join(collections_root_dir, ns, coll)
+        for ns, ns_val in spec.items()
+        for coll in ns_val.keys()
+        if not coll.startswith('_')
+    )
+    for collection_dir in collection_paths_except_core:
+        git_repo_url = read_yaml_file(
+            os.path.join(collection_dir, 'galaxy.yml'),
+        )['repository']
+        subprocess.check_call(
+            ('git', 'push', git_repo_url, 'HEAD:master'),
+            cwd=collection_dir,
+        )
 
 
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
@@ -1039,6 +1058,14 @@ def main():
                         help='target directory for resulting collections and rpm')
     parser.add_argument('-p', '--preserve-module-subdirs', action='store_true', dest='preserve_module_subdirs', default=False,
                         help='preserve module subdirs per spec')
+    parser.add_argument(
+        '-P',
+        '--publish-to-github',
+        action='store_true',
+        dest='publish_to_github',
+        default=False,
+        help='preserve module subdirs per spec',
+    )
 
     args = parser.parse_args()
 
@@ -1056,6 +1083,9 @@ def main():
 
     # doeet
     assemble_collections(spec, args)
+
+    if args.publish_to_github:
+        publish_to_github(args.vardir, spec)
 
     global core
     print('======= Assumed stayed in core =======\n')
