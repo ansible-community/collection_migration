@@ -57,6 +57,7 @@ jobs:
               (
                   echo "Testing ${coll_dir}..."
                   cd "${coll_dir}"
+                  ansible-test --help
                   ansible-test units --python "${{ matrix.python-version }}" -vvv
               )
           done
