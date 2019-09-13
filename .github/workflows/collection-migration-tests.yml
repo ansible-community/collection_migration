@@ -41,7 +41,6 @@ jobs:
         pytest
         pytest-xdist
         redbaron
-        --user
     - name: Configure user settings in Git
       run: |
         git config --global user.email "you@example.com"
