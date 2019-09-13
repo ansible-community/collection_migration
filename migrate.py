@@ -656,7 +656,7 @@ def publish_to_github(collections_target_dir, spec):
             os.path.join(collection_dir, 'galaxy.yml'),
         )['repository']
         subprocess.check_call(
-            ('git', 'push', git_repo_url, 'HEAD:master'),
+            ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
             cwd=collection_dir,
         )
 
