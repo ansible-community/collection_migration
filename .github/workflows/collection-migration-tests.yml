@@ -58,11 +58,6 @@ jobs:
         python -m
         migrate
         -s "scenarios/${{ matrix.migration-scenario }}"
-    - name: Install migrated collection test deps
-      run: >-
-        python -m
-        pip install
-        mock
     - name: Run unit tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
@@ -72,6 +67,8 @@ jobs:
                   cd "${coll_dir}"
                   [[ ! -d "tests/unit" ]] && >&2 echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
+                  >&2 echo Injecting unit test requirements into "'${col_dir}/tests/unit/requirements.txt'"...
+                  curl -o tests/unit/requirements.txt -sL https://raw.githubusercontent.com/ansible/ansible/devel/test/units/requirements.txt
                   ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
               )
           done
