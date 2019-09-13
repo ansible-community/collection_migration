@@ -58,7 +58,7 @@ jobs:
         python -m
         migrate
         -s "scenarios/${{ matrix.migration-scenario }}"
-    - name: Run migration scenario ${{ matrix.migration-scenario }}
+    - name: Run unit tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
           do
