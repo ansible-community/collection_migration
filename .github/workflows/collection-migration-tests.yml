@@ -65,7 +65,7 @@ jobs:
               (
                   echo "Testing ${coll_dir}..."
                   cd "${coll_dir}"
-                  [[ ! -d "tests/unit" ]] && >&2 echo This collection doesn't have unit tests. Skipping... && continue
+                  [[ ! -d "tests/unit" ]] && >&2 echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
                   ansible-test units --python "${{ matrix.python-version }}" -vvv
               )
