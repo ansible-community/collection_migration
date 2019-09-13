@@ -6,6 +6,7 @@ import argparse
 import configparser
 import glob
 import itertools
+import logging
 import os
 import re
 import shutil
@@ -20,6 +21,7 @@ from importlib import import_module
 from string import Template
 
 from ansible.vars.reserved import is_reserved_name
+import logzero
 from logzero import logger
 
 from baron.parser import ParsingError
@@ -40,6 +42,9 @@ PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib
 
 RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
+
+
+logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.ERROR)
 
 
 core = {}
