@@ -593,12 +593,13 @@ def assemble_collections(spec, args):
             inject_init_into_tree(
                 os.path.join(collection_dir, 'tests', 'unit'),
             )
+            unit_deps = []
             for file_path in itertools.chain.from_iterable(
                     (os.path.join(dp, f) for f in fn if f.endswith('.py'))
                     for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
             ):
                 _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
-                import_dependencies += rewrite_imports(unit_test_module_fst, collection, spec, namespace)
+                unit_deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace)
                 write_text_into_file(file_path, unit_test_module_fst.dumps())
 
             # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
@@ -608,7 +609,7 @@ def assemble_collections(spec, args):
                 logger.error(e)
 
             global integration_tests_deps
-            for dep_ns, dep_coll in integration_tests_deps:
+            for dep_ns, dep_coll in integration_tests_deps.union(set(unit_deps)):
                 # FIXME duplicite code, see dep handling above
                 dep = '%s.%s' % (dep_ns, dep_coll)
                 # FIXME hardcoded version
@@ -616,6 +617,7 @@ def assemble_collections(spec, args):
 
             integration_test_dirs = []
             integration_tests_deps = set()
+            unit_deps = []
 
             # write collection metadata
             write_yaml_into_file_as_is(
