@@ -44,6 +44,7 @@ RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
 
 
+os.makedirs(VARDIR, exist_ok=True)
 logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.ERROR)
 
 
