@@ -71,7 +71,7 @@ jobs:
                   ansible-test --help
                   echo Injecting sanity test requirements into "'${coll_dir}/tests/sanity/requirements.txt'"...
                   mkdir -pv tests/sanity/
-                  cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/sanity/requirements.txt" "${coll_dir}/tests/sanity/requirements.txt"
+                  cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/sanity/requirements.txt" tests/sanity/requirements.txt
                   ansible-test sanity --requirements --python "${{ matrix.python-version }}" -vvv || :
               )
           done
@@ -92,7 +92,7 @@ jobs:
                   # HACK:
                   # f5 deps unconditionally depend on enum34 which
                   # breaks on Pythons that have enum module in stdlib
-                  grep -vE ^f5- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee "${coll_dir}/tests/unit/requirements.txt"
+                  grep -vE ^f5- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
                   ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
               )
           done
