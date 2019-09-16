@@ -10,6 +10,7 @@ _core:
     - default.py
     - minimal.py
     - oneline.py
+    - junit.py
     - tree.py
     connection:
     - ssh.py
@@ -185,6 +186,22 @@ cnos:
     - network/cnos/*
     terminal:
     - cnos.py
+containers:
+    connection:
+    - buildah.py
+    - lxc.py
+    - lxd.py
+    - libvirt_lxc.py
+    - qubes.py
+    - iocage.py
+    - podman.py
+    module_utils:
+    - lxd.py
+    - podman/common.py
+    modules:
+    - cloud/lxc/*
+    - cloud/lxd/*
+    - cloud/podman/*
 dellos:
     action:
     - dellos6.py
@@ -256,13 +273,6 @@ enos:
     - network/enos/*
     terminal:
     - enos.py
-exoscale:
-    doc_fragments:
-    - exoscale.py
-    module_utils:
-    - exoscale.py
-    modules:
-    - net_tools/exoscale/*
 eos:
     action:
     - eos.py
@@ -281,6 +291,13 @@ eos:
     - network/eos/*/*/*/*
     terminal:
     - eos.py
+exoscale:
+    doc_fragments:
+    - exoscale.py
+    module_utils:
+    - exoscale.py
+    modules:
+    - net_tools/exoscale/*
 frr:
     cliconf:
     - frr.py
@@ -319,6 +336,55 @@ hetzner:
     modules:
     - cloud/hcloud/*
     - net_tools/hetzner_*
+infoblox:
+    doc_fragments:
+    - nios.py
+    lookup:
+    - nios.py
+    - nios_next_ip.py
+    - nios_next_network.py
+ironware:
+    doc_fragments:
+    - ironware.py
+    module_utils:
+    - network/ironware/ironware.py
+    modules:
+    - network/ironware/*
+    terminal:
+    - ironware.py
+kubernetes:
+    doc_fragments:
+    - k8s_*.py
+    - kubevirt_*.py
+    connection:
+    - kubectl.py
+    filter:
+    - k8s.py
+    inventory:
+    - k8s.py
+    - kubevirt.py
+    lookups:
+    - k8s.py
+    module_utils:
+    - k8s/*
+    - kubevirt.py
+    modules:
+    - clustering/k8s/*
+    - cloud/kubevirt/*
+intersight:
+    doc_fragments:
+    - intersight.py
+    module_utils:
+    - remote_management/intersight.py
+    modules:
+    - remote_management/intersight/*
+keycloak:
+    doc_fragments:
+    - keycloak.py
+    module_utils:
+    - identity/keycloak/
+    modules:
+    - identity/keycloak/*
 layer2:
     modules:
     - network/layer2/*
@@ -333,17 +399,9 @@ misc:
     - sesu.py
     doc_fragments:
     - auth_basic.py
-    - hpe3par.py
-    - ibm_storage.py
     - infinibox.py
-    - influxdb.py
     - ingate.py
-    - intersight.py
     - ipa.py
-    - ironware.py
-    - k8s_*.py
-    - keycloak.py
-    - kubevirt_*.py
     - ldap.py
     - lxca_common.py
     - manageiq.py
@@ -351,7 +409,6 @@ misc:
     - mysql.py
     - netapp.py
     - netscaler.py
-    - nios.py
     - ovirt.py
     - ovirt_info.py
     - ovirt_facts.py
@@ -389,37 +446,23 @@ misc:
     - hipchat.py
     - jabber.py
     - json.py
-    - junit.py
     - log_plays.py
     - logdna.py
     - logentries.py
     - logstash.py
-    - mail.py
     - nrdp.py
     - 'null.py'
-    - osx_say.py
     - profile_roles.py
-    - say.py
     - selective.py
     - skippy.py
     - slack.py
     - splunk.py
     - stderr.py
     - sumologic.py
-    - syslog_json.py
     - timer.py
-    - unixy.py
     - yaml.py
     connection:
-    - buildah.py
-    - lxc.py
-    - lxd.py
     - funcd.py
-    - kubectl.py
-    - qubes.py
-    - iocage.py
-    - podman.py
-    - libvirt_lxc.py
     lookup:
     - _openshift.py
     - chef_databag.py
@@ -437,14 +480,10 @@ misc:
     - hashi_vault.py
     - hiera.py
     - ini.py
-    - k8s.py
     - laps_password.py
     - lastpass.py
     - manifold.py
     - mongodb.py
-    - nios.py
-    - nios_next_ip.py
-    - nios_next_network.py
     - onepassword.py
     - onepassword_raw.py
     - password.py
@@ -454,14 +493,11 @@ misc:
     - redis.py
     filter:
     - json_query.py
-    - k8s.py
     modules:
     - cloud/atomic/*
     - cloud/centurylink/*
     - cloud/heroku/heroku_collaborator.py
-    - cloud/kubevirt/*
     - cloud/linode/*
-    - cloud/lx?/*
     - cloud/memset/*
     - cloud/misc/*
     - cloud/oneandone/*
@@ -474,7 +510,6 @@ misc:
     - cloud/ovirt/*
     - cloud/packet/packet_device.py
     - cloud/packet/packet_sshkey.py
-    - cloud/podman/*
     - cloud/profitbricks/*
     - cloud/pubnub/pubnub_blocks.py
     - cloud/rackspace/*
@@ -487,7 +522,6 @@ misc:
     - cloud/xenserver/*
     - clustering/consul*
     - clustering/etcd3.py
-    - clustering/k8s/*
     - clustering/openshift/*
     - clustering/pacemaker_cluster.py
     - clustering/znode.py
@@ -501,7 +535,6 @@ misc:
     - crypto/openssh_keypair.py
     - crypto/openssl_*
     - database/aerospike/aerospike_migrations.py
-    - database/influxdb/*
     - database/misc/elasticsearch_plugin.py
     - database/misc/kibana_plugin.py
     - database/misc/redis.py
@@ -518,7 +551,6 @@ misc:
     - files/replace.py
     - files/xml.py
     - identity/ipa/*
-    - identity/keycloak/*
     - identity/_onepassword_facts.py
     - identity/onepassword_info.py
     - identity/opendj/opendj_backendprop.py
@@ -573,7 +605,6 @@ misc:
     - network/edgeswitch/edgeswitch_facts.py
     - network/edgeswitch/edgeswitch_vlan.py
     - network/eric_eccli/eric_eccli_command.py
-    - network/exos/*
     - network/fortimanager/*
     - network/ftd/ftd_configuration.py
     - network/ftd/ftd_file_download.py
@@ -583,9 +614,6 @@ misc:
     - network/illumos/*
     - network/ingate/ig_config.py
     - network/ingate/ig_unit_information.py
-    - network/ironware/ironware_command.py
-    - network/ironware/ironware_config.py
-    - network/ironware/ironware_facts.py
     - network/itential/iap_start_workflow.py
     - network/itential/iap_token.py
     - network/meraki/*
@@ -604,10 +632,6 @@ misc:
     - network/routeros/routeros_command.py
     - network/routeros/routeros_facts.py
     - network/slxos/*
-    - network/voss/voss_command.py
-    - network/voss/voss_config.py
-    - network/voss/voss_facts.py
-    - notification/_osx_say.py
     - notification/bearychat.py
     - notification/campfire.py
     - notification/catapult.py
@@ -628,7 +652,6 @@ misc:
     - notification/pushover.py
     - notification/rabbitmq_publish.py
     - notification/rocketchat.py
-    - notification/say.py
     - notification/sendgrid.py
     - notification/slack.py
     - notification/snow_record.py
@@ -648,45 +671,6 @@ misc:
     - packaging/language/pear.py
     - packaging/language/pip_package_info.py
     - packaging/language/yarn.py
-    - packaging/os/apk.py
-    - packaging/os/apt_repo.py
-    - packaging/os/apt_rpm.py
-    - packaging/os/dpkg_selections.py
-    - packaging/os/flatpak.py
-    - packaging/os/flatpak_remote.py
-    - packaging/os/homebrew.py
-    - packaging/os/homebrew_cask.py
-    - packaging/os/homebrew_tap.py
-    - packaging/os/installp.py
-    - packaging/os/layman.py
-    - packaging/os/macports.py
-    - packaging/os/openbsd_pkg.py
-    - packaging/os/opkg.py
-    - packaging/os/package_facts.py
-    - packaging/os/pacman.py
-    - packaging/os/pkg5.py
-    - packaging/os/pkg5_publisher.py
-    - packaging/os/pkgin.py
-    - packaging/os/pkgng.py
-    - packaging/os/pkgutil.py
-    - packaging/os/portage.py
-    - packaging/os/portinstall.py
-    - packaging/os/pulp_repo.py
-    - packaging/os/redhat_subscription.py
-    - packaging/os/rhn_channel.py
-    - packaging/os/rhn_register.py
-    - packaging/os/rhsm_release.py
-    - packaging/os/rhsm_repository.py
-    - packaging/os/slackpkg.py
-    - packaging/os/snap.py
-    - packaging/os/sorcery.py
-    - packaging/os/svr4pkg.py
-    - packaging/os/swdepot.py
-    - packaging/os/swupd.py
-    - packaging/os/urpmi.py
-    - packaging/os/xbps.py
-    - packaging/os/zypper.py
-    - packaging/os/zypper_repository.py
     - remote_management/cobbler/cobbler_sync.py
     - remote_management/cobbler/cobbler_system.py
     - remote_management/cpm/cpm_plugconfig.py
@@ -704,9 +688,6 @@ misc:
     - remote_management/hpilo/hpilo_info.py
     - remote_management/hpilo/hponcfg.py
     - remote_management/imc/imc_rest.py
-    - remote_management/intersight/_intersight_facts.py
-    - remote_management/intersight/intersight_info.py
-    - remote_management/intersight/intersight_rest_api.py
     - remote_management/ipmi/ipmi_boot.py
     - remote_management/ipmi/ipmi_power.py
     - remote_management/lxca/lxca_cmms.py
@@ -728,13 +709,6 @@ misc:
     - storage/glusterfs/gluster_heal_info.py
     - storage/glusterfs/gluster_peer.py
     - storage/glusterfs/gluster_volume.py
-    - storage/hpe3par/ss_3par_cpg.py
-    - storage/ibm/ibm_sa_domain.py
-    - storage/ibm/ibm_sa_host.py
-    - storage/ibm/ibm_sa_host_ports.py
-    - storage/ibm/ibm_sa_pool.py
-    - storage/ibm/ibm_sa_vol.py
-    - storage/ibm/ibm_sa_vol_map.py
     - storage/infinidat/infini_export.py
     - storage/infinidat/infini_export_client.py
     - storage/infinidat/infini_fs.py
@@ -805,7 +779,6 @@ misc:
     - crypto.py
     - database.py
     - linode.py
-    - lxd.py
     - mysql.py
     - oneandone.py
     - online.py
@@ -813,20 +786,17 @@ misc:
     - openstack.py
     - oracle/*
     - ovirt.py
-    - podman/common.py
     - postgres.py
     - pure.py
     - rax.py
     - rabbitmq.py
     - redfish_utils.py
     - remote_management/dellemc/*
-    - remote_management/intersight.py
     - remote_management/lxca/*
     - remote_management/ucs.py
     - scaleway.py
     - service_now.py
     - source_control/bitbucket.py
-    - storage/hpe3par/*
     - univention_umc.py
     - utm_utils.py
     - vca.py
@@ -846,7 +816,6 @@ network:
     filter:
     - network.py
     httpapi:
-    - exos.py
     - fortimanager.py
     - ftd.py
     - nxos.py
@@ -878,10 +847,8 @@ network:
     - edgeos.py
     - edgeswitch.py
     - eric_eccli.py
-    - exos.py
     - icx.py
     - ios.py
-    - ironware.py
     - netvisor.py
     - nos.py
     - nxos.py
@@ -889,7 +856,6 @@ network:
     - routeros.py
     - slxos.py
     - sros.py
-    - voss.py
 nso:
     doc_fragments:
     - nso.py
@@ -928,6 +894,12 @@ unix:
     - ksu.py
     - machinectl.py
     - pfexec.py
+    callback:
+    - mail.py
+    - osx_say.py
+    - say.py
+    - syslog_json.py
+    - unixy.py
     connection:
     - chroot.py
     - jail.py
@@ -950,6 +922,43 @@ unix:
     - net_tools/nmcli.py
     - net_tools/basics/get_url.py
     - net_tools/basics/uri.py
+    - notification/_osx_say.py
+    - notification/say.py
+    - packaging/os/flatpak.py
+    - packaging/os/flatpak_remote.py
+    - packaging/os/homebrew.py
+    - packaging/os/homebrew_cask.py
+    - packaging/os/homebrew_tap.py
+    - packaging/os/installp.py
+    - packaging/os/layman.py
+    - packaging/os/macports.py
+    - packaging/os/openbsd_pkg.py
+    - packaging/os/opkg.py
+    - packaging/os/package_facts.py
+    - packaging/os/pacman.py
+    - packaging/os/pkg5.py
+    - packaging/os/pkg5_publisher.py
+    - packaging/os/pkgin.py
+    - packaging/os/pkgng.py
+    - packaging/os/pkgutil.py
+    - packaging/os/portage.py
+    - packaging/os/portinstall.py
+    - packaging/os/pulp_repo.py
+    - packaging/os/redhat_subscription.py
+    - packaging/os/rhn_channel.py
+    - packaging/os/rhn_register.py
+    - packaging/os/rhsm_release.py
+    - packaging/os/rhsm_repository.py
+    - packaging/os/slackpkg.py
+    - packaging/os/snap.py
+    - packaging/os/sorcery.py
+    - packaging/os/svr4pkg.py
+    - packaging/os/swdepot.py
+    - packaging/os/swupd.py
+    - packaging/os/urpmi.py
+    - packaging/os/xbps.py
+    - packaging/os/zypper.py
+    - packaging/os/zypper_repository.py
     - system/alternatives.py
     - system/aix_*.py
     - system/at.py

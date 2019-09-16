@@ -1,0 +1,5 @@
+influxdb:
+    doc_fragments:
+    - influxdb.py
+    modules:
+    - database/influxdb/*
