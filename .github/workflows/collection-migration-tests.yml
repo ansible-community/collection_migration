@@ -84,7 +84,13 @@ jobs:
                   [[ ! -d "tests/unit" ]] && >&2 echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
                   >&2 echo Injecting unit test requirements into "'${col_dir}/tests/unit/requirements.txt'"...
-                  cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" tests/unit/requirements.txt
+                  # cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" tests/unit/requirements.txt
+                  # HACK:
+                  # f5 deps unconditionally depend on enum34 which
+                  # breaks on Pythons that have enum module in stdlib
+                  grep -vE ^f5- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" > tests/unit/requirements.txt
+                  pip install f5-sdk f5-icontrol-rest
+                  pip uninstall --yes enum34
                   ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
               )
           done
