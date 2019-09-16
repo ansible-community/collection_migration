@@ -241,6 +241,7 @@ def rewrite_imports(mod_fst, collection, spec, namespace):
     tests_path = ('ansible_collections', namespace, collection, 'tests')
     unit_tests_path = tests_path + ('unit', )
     import_map = {
+        ('ansible', 'modules'): plugins_path + ('modules', ),
         ('ansible', 'module_utils'): plugins_path + ('module_utils', ),
         ('ansible', 'plugins'): plugins_path,
         ('units', ): unit_tests_path,
@@ -310,6 +311,15 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
                     # FIXME
                     logger.error('Could not get plugin type or name from ' + str(imp) + '. Is this expected?')
                     continue
+        elif imp_src[1].value == 'modules':
+            # in unit tests
+            # from ansible.modules.network.nxos import nxos_bgp
+            plugin_type = 'modules'
+            try:
+                plugin_name = '/'.join([t.value for t in imp_src[token_length:]] + [imp.targets[0].value])
+            except AttributeError:
+                # from import ansible.modules.cloud.amazon.aws_api_gateway as agw
+                plugin_name = '/'.join(t.value for t in imp_src[token_length:])
         else:
             raise Exception('BUG: Could not process import: ' + str(imp))
 
