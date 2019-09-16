@@ -67,6 +67,7 @@ jobs:
               (
                   echo "Sanity-testing ${coll_dir}..."
                   cd "${coll_dir}"
+                  pwd
                   ansible-test --help
                   echo Injecting sanity test requirements into "'${coll_dir}/tests/sanity/requirements.txt'"...
                   mkdir -pv tests/sanity/
@@ -83,6 +84,7 @@ jobs:
               (
                   echo "Unit-testing ${coll_dir}..."
                   cd "${coll_dir}"
+                  pwd
                   [[ ! -d "tests/unit" ]] && echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
                   echo Injecting unit test requirements into "'${coll_dir}/tests/unit/requirements.txt'"...
