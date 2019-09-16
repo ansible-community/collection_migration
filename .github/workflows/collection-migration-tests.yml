@@ -77,7 +77,7 @@ jobs:
           done
     - name: Run unit tests against all migrated collections, one by one
       run: |
-          pip install f5-sdk f5-icontrol-rest
+          pip install solidfire-sdk-python
           pip uninstall --yes enum34
           for coll_dir in `ls .cache/collections/*/*/* -d`
           do
@@ -92,7 +92,7 @@ jobs:
                   # HACK:
                   # f5 deps unconditionally depend on enum34 which
                   # breaks on Pythons that have enum module in stdlib
-                  grep -vE ^f5- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
+                  grep -vE ^solidfire-sdk- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
                   ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
               )
           done
