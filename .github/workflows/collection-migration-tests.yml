@@ -68,7 +68,7 @@ jobs:
                   echo "Sanity-testing ${coll_dir}..."
                   cd "${coll_dir}"
                   ansible-test --help
-                  >&2 echo Injecting sanity test requirements into "'${col_dir}/tests/sanity/requirements.txt'"...
+                  echo Injecting sanity test requirements into "'${col_dir}/tests/sanity/requirements.txt'"...
                   mkdir -pv tests/sanity/
                   cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/sanity/requirements.txt" tests/sanity/requirements.txt
                   ansible-test sanity --requirements --python "${{ matrix.python-version }}" -vvv || :
@@ -81,9 +81,9 @@ jobs:
               (
                   echo "Unit-testing ${coll_dir}..."
                   cd "${coll_dir}"
-                  [[ ! -d "tests/unit" ]] && >&2 echo This collection does not have unit tests. Skipping... && continue
+                  [[ ! -d "tests/unit" ]] && echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
-                  >&2 echo Injecting unit test requirements into "'${col_dir}/tests/unit/requirements.txt'"...
+                  echo Injecting unit test requirements into "'${col_dir}/tests/unit/requirements.txt'"...
                   # cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" tests/unit/requirements.txt
                   # HACK:
                   # f5 deps unconditionally depend on enum34 which
