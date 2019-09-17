@@ -362,6 +362,7 @@ kubernetes:
     - kubevirt_*.py
     connection:
     - kubectl.py
+    - oc.py
     filter:
     - k8s.py
     inventory:

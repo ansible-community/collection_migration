@@ -3,6 +3,8 @@ gcp:
     - gcp.py
     inventory:
     - gcp_compute.py
+    filters:
+    - gcp_kms_filters.py
     modules:
     - cloud/google/*
     module_utils:
