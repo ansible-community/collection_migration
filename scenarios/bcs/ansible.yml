@@ -51,6 +51,9 @@ _core:
     - common.py
     - common/*
     - common/text/*
+    - compat/__init__.py
+    - compat/paramiko.py
+    - distro/__init__.py
     - facts.py
     - facts/packages.py
     - facts/system/service_mgr.py
@@ -64,6 +67,7 @@ _core:
     - six/moves/urllib/*
     - urls.py
     shell:
+    - powershell.py
     - sh.py
 a10:
     doc_fragments:
@@ -363,7 +367,9 @@ kubernetes:
     inventory:
     - k8s.py
     - kubevirt.py
+    - openshift.py
     lookups:
+    - _openshift.py
     - k8s.py
     module_utils:
     - k8s/*
@@ -371,6 +377,7 @@ kubernetes:
     modules:
     - clustering/k8s/*
     - cloud/kubevirt/*
+    - clustering/openshift/*
 intersight:
     doc_fragments:
     - intersight.py
@@ -382,7 +389,7 @@ keycloak:
     doc_fragments:
     - keycloak.py
     module_utils:
-    - identity/keycloak/
+    - identity/keycloak/*
     modules:
     - identity/keycloak/*
 layer2:
@@ -464,7 +471,6 @@ misc:
     connection:
     - funcd.py
     lookup:
-    - _openshift.py
     - chef_databag.py
     - conjur_variable.py
     - consul_kv.py
@@ -522,7 +528,6 @@ misc:
     - cloud/xenserver/*
     - clustering/consul*
     - clustering/etcd3.py
-    - clustering/openshift/*
     - clustering/pacemaker_cluster.py
     - clustering/znode.py
     - commands/expect.py
@@ -837,7 +842,6 @@ network:
     - network/system/_net_*.py
     module_utils:
     - compat/ipaddress.py
-    - compat/paramiko.py
     - network/common/*
     - network/common/*/*
     netconf:
@@ -990,8 +994,6 @@ unix:
     - system/ufw.py
     - system/xfs_quota.py
     module_utils:
-    - compat/__init__.py
-    - distro/__init__.py
     - firewalld.py
     - ismount.py
     - redhat.py
@@ -1053,4 +1055,3 @@ windows:
     - powershell/*
     shell:
     - cmd.py
-    - powershell.py
