@@ -16,9 +16,11 @@ _core:
     - ssh.py
     - local.py
     doc_fragments:
+    - constructed.py
     - default_callback.py
     - decrypt.py
     - files.py
+    - inventory_cache.py
     - shell_common.py
     - url.py
     - validate.py
@@ -32,7 +34,7 @@ _core:
     - script.py
     - toml.py
     - yaml.py
-    lookups:
+    lookup:
     - fileglob.py
     - first_found.py
     - inventory_hostnames.py
@@ -813,6 +815,8 @@ network:
     - telnet.py
     become:
     - enable.py
+    cliconf:
+    - nxos.py
     connection:
     - httpapi.py
     - paramiko_ssh.py

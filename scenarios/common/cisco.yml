@@ -7,6 +7,8 @@ aci:
     module_utils:
     - network/aci/*
 ios:
+    cliconf:
+    - ios.py
     doc_fragments:
     - ios.py
     modules:
