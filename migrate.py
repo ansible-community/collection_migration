@@ -364,6 +364,17 @@ def inject_init_into_tree(target_dir):
         write_text_into_file(initpath, '')
 
 
+def inject_gitignore_into_tests(collection_dir):
+    """Generate a ``.gitignore`` file for the collection tests dir."""
+    os.makedirs(os.path.join(collection_dir, 'tests'), exist_ok=True)
+    write_text_into_file(
+        os.path.join(collection_dir, 'tests', '.gitignore'),
+        textwrap.dedent('''
+        output/
+        ''').lstrip('\n'),
+    )
+
+
 def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
     """Find all unit tests and related artifacts for the given plugin.
 
@@ -611,6 +622,8 @@ def assemble_collections(spec, args):
                 _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
                 unit_deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace)
                 write_text_into_file(file_path, unit_test_module_fst.dumps())
+
+            inject_gitignore_into_tests(collection_dir)
 
             # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
             try:
