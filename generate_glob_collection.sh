@@ -12,7 +12,7 @@ if [ -d $1 ]; then
 		files+=$(find $t -type f|grep -v '.pyc'|grep -v '.pyo')
 	done
 
-	category = ''
+	category=''
 	echo 'glob:'
 	for f in ${files}
 	do
