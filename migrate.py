@@ -35,6 +35,8 @@ TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
+MIGRATED_DEVEL_URL = 'git@github.com:ansible/migratedcore.git'
+
 
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 COLLECTION_NAMESPACE = 'test_migrate_ns'
@@ -781,6 +783,20 @@ def publish_to_github(collections_target_dir, spec):
         )
 
 
+def push_migrated_core(vardir):
+    releases_dir = os.path.join(vardir, 'releases')
+    devel_path = os.path.join(releases_dir, 'migrated_core.git')
+
+    if not os.path.exists(devel_path):
+        subprocess.check_call(('git', 'clone', MIGRATED_DEVEL_URL, 'migrated_core.git'), cwd=releases_dir)
+    else:
+        subprocess.check_call(('git', 'checkout', DEVEL_BRANCH), cwd=devel_path)
+        subprocess.check_call(('git', 'pull', '--rebase'), cwd=devel_path)
+
+    # NOTE assumes the repo is not used and/or is locked while migration is running
+    subprocess.check_call(('git', 'push', '--force', 'origin', DEVEL_BRANCH), cwd=devel_path)
+
+
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
     """Mark migrated paths in botmeta."""
     migrated_to = '.'.join((namespace, collection))
@@ -1186,10 +1202,12 @@ def main():
         action='store_true',
         dest='publish_to_github',
         default=False,
-        help='preserve module subdirs per spec',
+        help='Push all migrated collections to their Git remotes'
     )
     parser.add_argument('-m', '--move-plugins', action='store_true', dest='move_plugins', default=False,
                         help='remove plugins from source instead of just copying them')
+    parser.add_argument('-M', '--push-migrated-core', action='store_true', dest='push_migrated_core', default=False,
+                        help='Push migrated core to the Git repo')
 
     args = parser.parse_args()
 
@@ -1210,6 +1228,9 @@ def main():
 
     if args.publish_to_github:
         publish_to_github(args.vardir, spec)
+
+    if args.push_migrated_core:
+        push_migrated_core(args.vardir)
 
     global core
     print('======= Assumed stayed in core =======\n')
