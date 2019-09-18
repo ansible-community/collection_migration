@@ -908,7 +908,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                         logger.info('%s in %s', err, full_path)
                     plugin_data_new = mod_fst.dumps()
 
-                    for dep_ns, deps_coll in docs_dependencies + import_dependencies:
+                    for dep_ns, dep_coll in docs_dependencies + import_dependencies:
                         integration_tests_add_to_deps((namespace, collection), (dep_ns, dep_coll))
 
                     write_text_into_file(dest, plugin_data_new)
