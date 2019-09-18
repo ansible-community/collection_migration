@@ -7,6 +7,7 @@ _core:
     - group_by.py
     - normal.py
     - package.py
+    - patch.py
     - pause.py
     - raw.py
     - shell.py
@@ -127,6 +128,7 @@ _core:
     - commands/raw.py
     - commands/script.py
     - commands/shell.py
+    - files/blockinfile.py
     - files/copy.py
     - files/fetch.py
     - files/file.py
@@ -161,13 +163,10 @@ _core:
     - source_control/subversion.py
     - system/cron.py
     - system/debconf.py
-    - system/filesystem.py
-    - system/firewalld.py
     - system/gather_facts.py
     - system/getent.py
     - system/group.py
     - system/hostname.py
-    - system/iptables.py
     - system/ping.py
     - system/reboot.py
     - system/service.py
@@ -671,7 +670,6 @@ misc:
     - clustering/etcd3.py
     - clustering/pacemaker_cluster.py
     - clustering/znode.py
-    - commands/expect.py
     - commands/psexec.py
     - commands/telnet.py
     - crypto/certificate_complete_chain.py
@@ -694,7 +692,6 @@ misc:
     - files/ini_file.py
     - files/iso_extract.py
     - files/read_csv.py
-    - files/replace.py
     - files/xml.py
     - identity/ipa/*
     - identity/_onepassword_facts.py
@@ -788,7 +785,6 @@ misc:
     - notification/irc.py
     - notification/jabber.py
     - notification/logentries_msg.py
-    - notification/mail.py
     - notification/matrix.py
     - notification/mattermost.py
     - notification/mqtt.py
@@ -874,7 +870,6 @@ misc:
     - system/beadm.py
     - system/dconf.py
     - system/facter.py
-    - system/hostname.py
     - system/interfaces_file.py
     - system/java_cert.py
     - system/java_keystore.py
@@ -892,9 +887,7 @@ misc:
     - system/sefcontext.py
     - system/selinux_permissive.py
     - system/selogin.py
-    - system/service_facts.py
     - system/syspatch.py
-    - system/timezone.py
     - system/vdo.py
     - system/xfconf.py
     - utilities/helper/_accelerate.py
@@ -1034,7 +1027,6 @@ tower:
 unix:
     action:
     - assemble.py
-    - patch.py
     - synchronize.py
     become:
     - doas.py
@@ -1059,13 +1051,10 @@ unix:
     modules:
     - files/acl.py
     - files/assemble.py
-    - files/blockinfile.py
-    - files/lineinfile.py
     - files/unarchive.py
     - files/xattr.py
     - files/synchronize.py
     - files/tempfile.py
-    - files/patch.py
     - net_tools/nmcli.py
     - notification/_osx_say.py
     - notification/say.py
@@ -1079,7 +1068,6 @@ unix:
     - packaging/os/macports.py
     - packaging/os/openbsd_pkg.py
     - packaging/os/opkg.py
-    - packaging/os/package_facts.py
     - packaging/os/pacman.py
     - packaging/os/pkg5.py
     - packaging/os/pkg5_publisher.py
@@ -1111,7 +1099,6 @@ unix:
     - system/capabilities.py
     - system/cron.py
     - system/cronvar.py
-    - system/debconf.py
     - system/filesystem.py
     - system/firewalld.py
     - system/gconftool2.py
