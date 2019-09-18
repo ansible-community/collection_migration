@@ -334,12 +334,12 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
                     continue
         elif imp_src[1].value == 'modules':
             # in unit tests
-            # from ansible.modules.network.nxos import nxos_bgp
             plugin_type = 'modules'
             try:
+                # from ansible.modules.network.nxos import nxos_bgp
                 plugin_name = '/'.join([t.value for t in imp_src[token_length:]] + [imp.targets[0].value])
             except AttributeError:
-                # from import ansible.modules.cloud.amazon.aws_api_gateway as agw
+                # import ansible.modules.cloud.amazon.aws_api_gateway as agw
                 plugin_name = '/'.join(t.value for t in imp_src[token_length:])
         else:
             raise Exception('BUG: Could not process import: ' + str(imp))
@@ -347,8 +347,18 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
         try:
             plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
         except LookupError as e:
-            # plugin not in spec, assuming it stays in core and skipping
-            continue
+            if plugin_type != 'modules':
+                # plugin not in spec, assuming it stays in core and skipping
+                continue
+
+            # from ansible.modules.cloud.amazon.aws_netapp_cvs_FileSystems import AwsCvsNetappFileSystem as fileSystem_module
+            # in this case aws_netapp_cvs_FileSystems is the module, not AwsCvsNetappFileSystem
+            try:
+                plugin_name = '/'.join(plugin_name.split('/')[:-1])
+                plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
+            except LookupError as e:
+                # plugin not in spec, assuming it stays in core and skipping
+                continue
 
         if plugin_collection == '_core':
             # skip rewrite
