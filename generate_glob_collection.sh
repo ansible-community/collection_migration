@@ -1,14 +1,17 @@
 #!/bin/bash
 
+set -eux
+
 if [ -d $1 ]; then
 
 	pullfrom=()
 	pullfrom+=$(find $1/lib/ansible/plugins/* -maxdepth 1 -type d |grep -v __)
-	pullfrom+=("$1/lib/ansible/modules" "$1/lib/ansible/module_utils")
+	#pullfrom+=("$1/lib/ansible/modules" "$1/lib/ansible/module_utils")
 
 	files=()
 	for t in ${pullfrom[@]}
 	do
+		files+=" "
 		files+=$(find $t -type f|grep -v '.pyc'|grep -v '.pyo')
 	done
 
