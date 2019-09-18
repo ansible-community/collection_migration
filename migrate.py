@@ -4,6 +4,7 @@
 
 import argparse
 import configparser
+import contextlib
 import glob
 import itertools
 import logging
@@ -395,6 +396,43 @@ def inject_gitignore_into_tests(collection_dir):
     )
 
 
+def generate_converted_ignore_contents(original_ignore_contents, file_map):
+    """Emit lines for the converted sanity test ignore file."""
+    for line in original_ignore_contents.splitlines():
+        file_path, sep, ignored_rules = line.partition(' ')
+        with contextlib.suppress(KeyError):
+            yield sep.join((file_map[file_path], ignored_rules))
+
+
+def inject_ignore_into_sanity_tests(
+        checkout_path, collection_dir, migrated_files_map,
+):
+    """Inject sanity test ignore lists into collection sanity tests."""
+    coll_sanity_tests_dir = os.path.join(collection_dir, 'tests', 'sanity')
+    original_ignore_contents = read_text_from_file(
+        os.path.join(checkout_path, 'test', 'sanity', 'ignore.txt'),
+    )
+    converted_ignore_contents = '\n'.join(
+        generate_converted_ignore_contents(
+            original_ignore_contents,
+            migrated_files_map,
+        ),
+    )
+
+    if not converted_ignore_contents:
+        return
+
+    os.makedirs(coll_sanity_tests_dir, exist_ok=True)
+    write_text_into_file(  # PyPI
+        os.path.join(coll_sanity_tests_dir, 'ignore-2.9.txt'),
+        converted_ignore_contents,
+    )
+    write_text_into_file(  # devel
+        os.path.join(coll_sanity_tests_dir, 'ignore-2.10.txt'),
+        converted_ignore_contents,
+    )
+
+
 def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
     """Find all unit tests and related artifacts for the given plugin.
 
@@ -498,13 +536,14 @@ def assemble_collections(spec, args):
     mark_moved_resources(checkout_path, 'N/A', 'init', set())
 
     seen = {}
-    migrated_to_collection = defaultdict(set)
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
 
             if collection.startswith('_'):
                 # these are info only collections
                 continue
+
+            migrated_to_collection = {}
 
             collection_dir = os.path.join(collections_base_dir, 'ansible_collections', namespace, collection)
 
@@ -561,7 +600,9 @@ def assemble_collections(spec, args):
                     # TODO: currently requires 'full name of file', but should work w/o extension?
                     src = os.path.join(checkout_path, src_plugin_base, plugin)
 
-                    migrated_to_collection[collection].add(os.path.join(src_plugin_base, plugin))
+                    migrated_to_collection[os.path.join(src_plugin_base, plugin)] = (
+                        os.path.join('plugins', plugin_type, os.path.basename(plugin))
+                    )
                     remove(src)
 
                     if plugin_type in ('modules',) and '/' in plugin:
@@ -661,6 +702,10 @@ def assemble_collections(spec, args):
 
             inject_gitignore_into_tests(collection_dir)
 
+            inject_ignore_into_sanity_tests(
+                checkout_path, collection_dir, migrated_to_collection,
+            )
+
             # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
             try:
                 rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec)
@@ -693,7 +738,7 @@ def assemble_collections(spec, args):
             )
 
             mark_moved_resources(
-                checkout_path, namespace, collection, migrated_to_collection[collection],
+                checkout_path, namespace, collection, migrated_to_collection,
             )
 
             if args.move_plugins:
