@@ -1067,8 +1067,6 @@ unix:
     - files/tempfile.py
     - files/patch.py
     - net_tools/nmcli.py
-    - net_tools/basics/get_url.py
-    - net_tools/basics/uri.py
     - notification/_osx_say.py
     - notification/say.py
     - packaging/os/flatpak.py
