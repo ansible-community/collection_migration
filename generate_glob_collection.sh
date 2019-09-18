@@ -1,12 +1,12 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 if [ -d $1 ]; then
 
 	pullfrom=()
 	pullfrom+=$(find $1/lib/ansible/plugins/* -maxdepth 1 -type d |grep -v __)
-	#pullfrom+=("$1/lib/ansible/modules" "$1/lib/ansible/module_utils")
+	pullfrom+=("$1/lib/ansible/modules" "$1/lib/ansible/module_utils")
 
 	files=()
 	for t in ${pullfrom[@]}
