@@ -1,29 +1,54 @@
 _core:
     action:
-    - normal.py
     - copy.py
+    - debug.py
+    - command.py
+    - gather_facts.py
+    - group_by.py
+    - normal.py
     - package.py
+    - pause.py
+    - raw.py
+    - shell.py
     - service.py
     - reboot.py
     - template.py
+    - uri.py
+    - yum.py
+    become:
+    - su.py
+    - sudo.py
+    cache:
+    - jsonfile.py
+    - memcached.py
+    - memory.py
+    - pickle.py
     callback:
+    - base.py  # has base classes
     - default.py
     - minimal.py
     - oneline.py
     - junit.py
     - tree.py
     connection:
-    - ssh.py
     - local.py
+    - paramiko_ssh.py
+    - ssh.py
     doc_fragments:
+    - backup.py
     - constructed.py
     - default_callback.py
     - decrypt.py
     - files.py
     - inventory_cache.py
+    - return_common.py
     - shell_common.py
     - url.py
     - validate.py
+    filter:
+    - core.py
+    - mathstuff.py
+    - urlsplit.py
     inventory:
     - advanced_host_list.py
     - auto.py
@@ -35,15 +60,28 @@ _core:
     - toml.py
     - yaml.py
     lookup:
+    - config.py
+    - csvfile.py
+    - dict.py
+    - env.py
+    - file.py
     - fileglob.py
     - first_found.py
+    - indexed_items.py
     - inventory_hostnames.py
     - items.py
     - link.py
+    - lines.py
+    - list.py
     - nested.py
+    - password.py
+    - pipe.py
+    - random_choice.py
     - sequence.py
     - subelements.py
     - together.py
+    - varnames.py
+    - vars.py
     module_utils:
     - _text.py
     - ansible_release.py
@@ -57,20 +95,120 @@ _core:
     - compat/paramiko.py
     - distro/__init__.py
     - facts.py
+    - facts/__init__.py
+    - facts/ansible_collector.py
+    - facts/collector.py
+    - facts/compat.py
+    - facts/default_collectors.py
+    - facts/hardware/*
+    - facts/namespace.py
+    - facts/network/*
+    - facts/other/*
+    - facts/system/*
+    - facts/sysctl.py
     - facts/packages.py
     - facts/system/service_mgr.py
+    - facts/timeout.py
     - facts/utils.py
+    - facts/virtual/*
     - json_utils.py
-    - parsing/convert_bool.py
+    - parsing/*
     - service.py
+    - splitter.py
     - six.py
     - six/*
     - six/moves/*
     - six/moves/urllib/*
     - urls.py
+    - yumdnf.py
+    modules:
+    - commands/command.py
+    - commands/expect.py
+    - commands/raw.py
+    - commands/script.py
+    - commands/shell.py
+    - files/copy.py
+    - files/fetch.py
+    - files/file.py
+    - files/find.py
+    - files/lineinfile.py
+    - files/patch.py
+    - files/replace.py
+    - files/stat.py
+    - inventory/add_host.py
+    - inventory/group_by.py
+    - net_tools/basics/get_url.py
+    - net_tools/basics/slurp.py
+    - net_tools/basics/uri.py
+    - notification/irc.py
+    - notification/jabber.py
+    - notification/mail.py
+    - packaging/language/pip.py
+    - packaging/os/apt.py
+    - packaging/os/apt_key.py
+    - packaging/os/apt_repo.py
+    - packaging/os/apt_repository.py
+    - packaging/os/dpkg_selections.py
+    - packaging/os/dnf.py
+    - packaging/os/package.py
+    - packaging/os/package_facts.py
+    - packaging/os/rpm_key.py
+    - packaging/os/yum.py
+    - packaging/os/yum_repository.py
+    - remote_management/ipmi/ipmi_boot.py
+    - remote_management/ipmi/ipmi_power.py
+    - source_control/git.py
+    - source_control/subversion.py
+    - system/cron.py
+    - system/debconf.py
+    - system/filesystem.py
+    - system/firewalld.py
+    - system/gather_facts.py
+    - system/getent.py
+    - system/group.py
+    - system/hostname.py
+    - system/iptables.py
+    - system/ping.py
+    - system/reboot.py
+    - system/service.py
+    - system/service_facts.py
+    - system/setup.py
+    - system/systemd.py
+    - system/sysvinit.py
+    - system/timezone.py
+    - system/user.py
+    - utilities/helper/_accelerate.py
+    - utilities/helper/meta.py
+    - utilities/logic/assert.py
+    - utilities/logic/async_status.py
+    - utilities/logic/async_wrapper.py
+    - utilities/logic/debug.py
+    - utilities/logic/fail.py
+    - utilities/logic/import_playbook.py
+    - utilities/logic/import_role.py
+    - utilities/logic/import_tasks.py
+    - utilities/logic/include.py
+    - utilities/logic/include_role.py
+    - utilities/logic/include_tasks.py
+    - utilities/logic/include_vars.py
+    - utilities/logic/pause.py
+    - utilities/logic/set_fact.py
+    - utilities/logic/set_stats.py
+    - utilities/logic/wait_for.py
+    - utilities/logic/wait_for_connection.py
     shell:
     - powershell.py
     - sh.py
+    strategy:
+    - debug.py
+    - free.py
+    - host_pinned.py
+    - linear.py
+    test:
+    - core.py
+    - mathstuff.py
+    vars:
+    - host_group_vars.py
 a10:
     doc_fragments:
     - a10.py
