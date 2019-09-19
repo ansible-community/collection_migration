@@ -46,6 +46,9 @@ COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'lookups': 'lib/ansible/plugins/lookup'}
 
 
+COLLECTION_SKIP_REWRITE = ('_core',)
+
+
 RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
 
@@ -200,6 +203,10 @@ def get_plugin_fqcn(namespace, collection, plugin_name):
     return '%s.%s.%s' % (namespace, collection, plugin_name)
 
 
+def get_rewritable_collections(namespace, spec):
+    return (collection for collection in spec[namespace].keys() if collection not in COLLECTION_SKIP_REWRITE)
+
+
 # ===== REWRITE FUNCTIONS =====
 def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
     try:
@@ -234,7 +241,7 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace):
             # plugin not in spec, assuming it stays in core and leaving as is
             continue
 
-        if fragment_collection == '_core':
+        if fragment_collection in COLLECTION_SKIP_REWRITE:
             # skip rewrite
             continue
 
@@ -375,7 +382,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace):
                 # plugin not in spec, assuming it stays in core and skipping
                 continue
 
-        if plugin_collection == '_core':
+        if plugin_collection in COLLECTION_SKIP_REWRITE:
             # skip rewrite
             continue
 
@@ -957,7 +964,7 @@ def rewrite_sh(full_path, dest, namespace, collection, spec):
         if not contents.find(key):
             continue
         for ns in spec.keys():
-            for coll in spec[ns].keys():
+            for coll in get_rewritable_collections(ns, spec):
                 plugins = get_plugins_from_collection(ns, coll, plugin_type, spec)
                 for plugin_name in plugins:
                     if not contents.find(plugin_name):
@@ -1010,6 +1017,8 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
         for plugin_name in plugin_names:
             try:
                 plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
+                if plugin_collection in COLLECTION_SKIP_REWRITE:
+                    raise LookupError
                 new_plugin_names.append(get_plugin_fqcn(namespace, plugin_collection, plugin_name))
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
@@ -1067,13 +1076,14 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec):
             plugin_name = key[prefix_len:]
             try:
                 plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, 'lookup', spec)
-                translate.append((prefix + get_plugin_fqcn(namespace, plugin_collection, plugin_name), key))
-                integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
+                if plugin_collection not in COLLECTION_SKIP_REWRITE:
+                    translate.append((prefix + get_plugin_fqcn(namespace, plugin_collection, plugin_name), key))
+                    integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 pass
 
         for ns in spec.keys():
-            for coll in spec[ns].keys():
+            for coll in get_rewritable_collections(ns, spec):
                 try:
                     modules_in_collection = get_plugins_from_collection(ns, coll, 'modules', spec)
                 except LookupError:
@@ -1101,6 +1111,8 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec):
 
         try:
             plugin_namespace, plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
+            if plugin_collection in COLLECTION_SKIP_REWRITE:
+                continue
             el[key] = get_plugin_fqcn(namespace, plugin_collection, el[key])
             integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
         except LookupError:
@@ -1122,7 +1134,7 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec):
                 else:
                     if key == 'module_blacklist':
                         for ns in spec.keys():
-                            for coll in spec[ns].keys():
+                            for coll in get_rewritable_collections(ns, spec):
                                 if item in get_plugins_from_collection(ns, coll, 'modules', spec):
                                     el[key][idx] = get_plugin_fqcn(ns, coll, el[key][idx])
                                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
@@ -1142,7 +1154,7 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec):
         return value
 
     for ns in spec.keys():
-        for coll in spec[ns].keys():
+        for coll in get_rewritable_collections(ns, spec):
             for plugin_name in get_plugins_from_collection(ns, coll, 'lookup', spec):
                 if plugin_name not in value:
                     continue
@@ -1156,7 +1168,7 @@ def _rewrite_yaml_filter(value, namespace, collection, spec):
     if '|' not in value:
         return value
     for ns in spec.keys():
-        for coll in spec[ns].keys():
+        for coll in get_rewritable_collections(ns, spec):
             for filter_plugin_name in get_plugins_from_collection(ns, coll, 'filter', spec):
                 imported_module = import_module('ansible.plugins.filter.' + filter_plugin_name)
                 fm = getattr(imported_module, 'FilterModule', None)
@@ -1177,7 +1189,7 @@ def _rewrite_yaml_test(value, namespace, collection, spec):
     if ' is ' not in value:
         return value
     for ns in spec.keys():
-        for coll in spec[ns].keys():
+        for coll in get_rewritable_collections(ns, spec):
             for test_plugin_name in get_plugins_from_collection(ns, coll, 'test', spec):
                 imported_module = import_module('ansible.plugins.test.' + test_plugin_name)
                 tm = getattr(imported_module, 'TestModule', None)
