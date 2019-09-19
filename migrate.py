@@ -956,7 +956,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 elif ext in ('.yml', '.yaml'):
                     rewrite_yaml(full_path, dest, namespace, collection, spec)
                 elif ext in ('.sh',):
-                    rewrite_sh(full_path, dest, namespace, collection, spec)
+                    rewrite_sh(full_path, dest, namespace, collection, spec, args)
                 elif filename == 'ansible.cfg':
                     rewrite_ini(full_path, dest, namespace, collection, spec)
                 else:
@@ -965,7 +965,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 remove(full_path)
 
 
-def rewrite_sh(full_path, dest, namespace, collection, spec):
+def rewrite_sh(full_path, dest, namespace, collection, spec, args):
     sh_key_map = {
         'ANSIBLE_CACHE_PLUGIN': 'cache',
         'ANSIBLE_CALLBACK_WHITELIST': 'callback',
@@ -1051,9 +1051,12 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
 
 
 def rewrite_yaml(src, dest, namespace, collection, spec):
-    contents = read_ansible_yaml_file(src)
-    _rewrite_yaml(contents, namespace, collection, spec)
-    write_ansible_yaml_into_file_as_is(dest, contents)
+    try:
+        contents = read_ansible_yaml_file(src)
+        _rewrite_yaml(contents, namespace, collection, spec)
+        write_ansible_yaml_into_file_as_is(dest, contents)
+    except Exception as e:
+        logger.error('Skipping bad YAML in %s' % src)
 
 
 def _rewrite_yaml(contents, namespace, collection, spec):
