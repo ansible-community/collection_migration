@@ -25,7 +25,7 @@ _core:
     - memory.py
     - pickle.py
     callback:
-    - base.py  # has base classes
+    - __init__.py  # has base classes
     - default.py
     - minimal.py
     - oneline.py
@@ -71,7 +71,6 @@ _core:
     - indexed_items.py
     - inventory_hostnames.py
     - items.py
-    - link.py
     - lines.py
     - list.py
     - nested.py
@@ -89,13 +88,11 @@ _core:
     - api.py
     - basic.py
     - connection.py
-    - common.py
     - common/*
     - common/text/*
     - compat/__init__.py
     - compat/paramiko.py
     - distro/__init__.py
-    - facts.py
     - facts/__init__.py
     - facts/ansible_collector.py
     - facts/collector.py
@@ -108,7 +105,6 @@ _core:
     - facts/system/*
     - facts/sysctl.py
     - facts/packages.py
-    - facts/system/service_mgr.py
     - facts/timeout.py
     - facts/utils.py
     - facts/virtual/*
@@ -116,10 +112,7 @@ _core:
     - parsing/*
     - service.py
     - splitter.py
-    - six.py
     - six/*
-    - six/moves/*
-    - six/moves/urllib/*
     - urls.py
     - yumdnf.py
     modules:
