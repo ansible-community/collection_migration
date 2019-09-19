@@ -954,11 +954,11 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                     # FIXME
                     pass
                 elif ext in ('.yml', '.yaml'):
-                    rewrite_yaml(full_path, dest, namespace, collection, spec)
+                    rewrite_yaml(full_path, dest, namespace, collection, spec, args)
                 elif ext in ('.sh',):
                     rewrite_sh(full_path, dest, namespace, collection, spec, args)
                 elif filename == 'ansible.cfg':
-                    rewrite_ini(full_path, dest, namespace, collection, spec)
+                    rewrite_ini(full_path, dest, namespace, collection, spec, args)
                 else:
                     shutil.copy2(full_path, dest)
 
@@ -1000,7 +1000,7 @@ def rewrite_sh(full_path, dest, namespace, collection, spec, args):
     shutil.copystat(full_path, dest)
 
 
-def rewrite_ini(src, dest, namespace, collection, spec):
+def rewrite_ini(src, dest, namespace, collection, spec, args):
     ini_key_map = {
         'defaults': {
             'callback_whitelist': 'callback',
@@ -1018,7 +1018,7 @@ def rewrite_ini(src, dest, namespace, collection, spec):
     config.read(src)
     for section in config.sections():
         try:
-            rewrite_ini_section(config, ini_key_map, section, namespace, collection, spec)
+            rewrite_ini_section(config, ini_key_map, section, namespace, collection, spec, args)
         except KeyError:
             continue
 
@@ -1026,7 +1026,7 @@ def rewrite_ini(src, dest, namespace, collection, spec):
         config.write(cf)
 
 
-def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
+def rewrite_ini_section(config, key_map, section, namespace, collection, spec, args):
     for keyword, plugin_type in key_map[section].items():
         try:
             # FIXME diff input format than csv?
@@ -1050,29 +1050,29 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
         config.set(section, keyword, ','.join(new_plugin_names))
 
 
-def rewrite_yaml(src, dest, namespace, collection, spec):
+def rewrite_yaml(src, dest, namespace, collection, spec, args):
     try:
         contents = read_ansible_yaml_file(src)
         _rewrite_yaml(contents, namespace, collection, spec)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
-        logger.error('Skipping bad YAML in %s' % src)
+        logger.error('Skipping bad YAML in %s: %s' % (src, str(e)))
 
 
-def _rewrite_yaml(contents, namespace, collection, spec):
+def _rewrite_yaml(contents, namespace, collection, spec, args):
     if isinstance(contents, list):
         for el in contents:
-            _rewrite_yaml(el, namespace, collection, spec)
+            _rewrite_yaml(el, namespace, collection, spec, args)
     elif isinstance(contents, Mapping):
-        _rewrite_yaml_mapping(contents, namespace, collection, spec)
+        _rewrite_yaml_mapping(contents, namespace, collection, spec, args)
 
 
-def _rewrite_yaml_mapping(el, namespace, collection, spec):
+def _rewrite_yaml_mapping(el, namespace, collection, spec, args):
     assert isinstance(el, Mapping)
 
-    _rewrite_yaml_mapping_keys(el, namespace, collection, spec)
-    _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec)
-    _rewrite_yaml_mapping_values(el, namespace, collection, spec)
+    _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args)
+    _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args)
+    _rewrite_yaml_mapping_values(el, namespace, collection, spec, args)
 
 
 KEYWORD_TO_PLUGIN_MAP = {
@@ -1087,7 +1087,7 @@ KEYWORD_TO_PLUGIN_MAP = {
 }
 
 
-def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec):
+def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
     translate = []
     for key in el.keys():
         if is_reserved_name(key):
@@ -1132,7 +1132,7 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec):
         el[new_key] = el.pop(old_key)
 
 
-def _rewrite_yaml_mapping_keys(el, namespace, collection, spec):
+def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args):
     for key in el.keys():
         if is_reserved_name(key):
             continue
@@ -1155,7 +1155,7 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec):
                 add_manual_check(key, el[key])
 
 
-def _rewrite_yaml_mapping_values(el, namespace, collection, spec):
+def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args):
     for key, value in el.items():
         if isinstance(value, Mapping):
             if key == 'vars':
@@ -1187,7 +1187,7 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec):
             el[key] = _rewrite_yaml_test(el[key], namespace, collection, spec)
 
 
-def _rewrite_yaml_lookup(value, namespace, collection, spec):
+def _rewrite_yaml_lookup(value, namespace, collection, spec, args):
     if not ('lookup(' in value or 'query(' in value or 'q(' in value):
         return value
 
@@ -1205,7 +1205,7 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec):
     return value
 
 
-def _rewrite_yaml_filter(value, namespace, collection, spec):
+def _rewrite_yaml_filter(value, namespace, collection, spec, args):
     if '|' not in value:
         return value
     for ns in spec.keys():
@@ -1229,7 +1229,7 @@ def _rewrite_yaml_filter(value, namespace, collection, spec):
     return value
 
 
-def _rewrite_yaml_test(value, namespace, collection, spec):
+def _rewrite_yaml_test(value, namespace, collection, spec, args):
     if ' is ' not in value:
         return value
     for ns in spec.keys():
