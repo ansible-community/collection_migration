@@ -21,7 +21,10 @@ from collections.abc import Mapping
 from importlib import import_module
 from string import Template
 
+from ansible.parsing.yaml.dumper import AnsibleDumper
+from ansible.parsing.yaml.loader import AnsibleLoader
 from ansible.vars.reserved import is_reserved_name
+
 import logzero
 from logzero import logger
 
@@ -111,8 +114,18 @@ def read_yaml_file(path):
         return yaml.safe_load(yaml_file)
 
 
+def read_ansible_yaml_file(path):
+    with open(path, 'rb') as yaml_file:
+        return AnsibleLoader(yaml_file.read(), file_name=path).get_single_data()
+
+
 def write_yaml_into_file_as_is(path, data):
-    yaml_text = yaml.dump(data, default_flow_style=False, sort_keys=False)
+    yaml_text = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    write_text_into_file(path, yaml_text)
+
+
+def write_ansible_yaml_into_file_as_is(path, data):
+    yaml_text = yaml.dump(data, Dumper=AnsibleDumper, allow_unicode=True, default_flow_style=False, sort_keys=False)
     write_text_into_file(path, yaml_text)
 
 
@@ -1006,9 +1019,9 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec):
 
 
 def rewrite_yaml(src, dest, namespace, collection, spec):
-    contents = read_yaml_file(src)
+    contents = read_ansible_yaml_file(src)
     _rewrite_yaml(contents, namespace, collection, spec)
-    write_yaml_into_file_as_is(dest, contents)
+    write_ansible_yaml_into_file_as_is(dest, contents)
 
 
 def _rewrite_yaml(contents, namespace, collection, spec):
