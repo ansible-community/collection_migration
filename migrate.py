@@ -31,6 +31,8 @@ from logzero import logger
 from baron.parser import ParsingError
 import redbaron
 
+from gh import GitHubOrgClient
+
 
 # https://github.com/ansible/ansible/blob/100fe52860f45238ee8ca9e3019d1129ad043c68/hacking/fix_test_syntax.py#L62
 FILTER_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)\|(\s*)(\w+))')
@@ -563,7 +565,7 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
 
 # ===== MAKE COLLECTIONS =====
-def assemble_collections(spec, args):
+def assemble_collections(spec, args, target_github_org):
     # NOTE releases_dir is already created by checkout_repo(), might want to move all that to something like ensure_dirs() ...
     releases_dir = os.path.join(args.vardir, 'releases')
     checkout_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
@@ -615,7 +617,7 @@ def assemble_collections(spec, args):
                 'license_file': None,
                 'tags': None,
                 'dependencies': {},
-                'repository': f'git@github.com:ansible-collections/{namespace}.{collection}.git',
+                'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
                 'documentation': None,
                 'homepage': None,
                 'issues': None
@@ -798,7 +800,7 @@ def assemble_collections(spec, args):
             REMOVE = set()
 
 
-def publish_to_github(collections_target_dir, spec):
+def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app_key_path):
     """Push all migrated collections to their Git remotes."""
     collections_base_dir = os.path.join(collections_target_dir, 'collections')
     collections_root_dir = os.path.join(
@@ -806,15 +808,22 @@ def publish_to_github(collections_target_dir, spec):
         'ansible_collections',
     )
     collection_paths_except_core = (
-        os.path.join(collections_root_dir, ns, coll)
+        (os.path.join(collections_root_dir, ns, coll), f'{ns}.{coll}')
         for ns, ns_val in spec.items()
         for coll in ns_val.keys()
         if not coll.startswith('_')
     )
-    for collection_dir in collection_paths_except_core:
+    github_api = GitHubOrgClient(gh_app_id, gh_app_key_path, gh_org)
+    for collection_dir, repo_name in collection_paths_except_core:
         git_repo_url = read_yaml_file(
             os.path.join(collection_dir, 'galaxy.yml'),
         )['repository']
+        with contextlib.suppress(LookupError):
+            git_repo_url = github_api.get_git_repo_write_uri(repo_name)
+        logger.debug(
+            'Using %s...%s Git URL for push',
+            git_repo_url[:5], git_repo_url[-5:],
+        )
         subprocess.check_call(
             ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
             cwd=collection_dir,
@@ -1269,6 +1278,30 @@ def main():
     parser.add_argument('-p', '--preserve-module-subdirs', action='store_true', dest='preserve_module_subdirs', default=False,
                         help='preserve module subdirs per spec')
     parser.add_argument(
+        '--github-app-id',
+        action='store',
+        type=int,
+        dest='github_app_id',
+        default=41435,
+        help='Use this GitHub App ID for GH auth',
+    )
+    parser.add_argument(
+        '--github-app-key-path',
+        action='store',
+        type=str,
+        dest='github_app_key_path',
+        default='~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
+        help='Use this PEM key file for GH auth',
+    )
+    parser.add_argument(
+        '--target-github-org',
+        action='store',
+        type=str,
+        dest='target_github_org',
+        default='ansible-collections',
+        help='Push migrated collections to this GH org',
+    )
+    parser.add_argument(
         '-P',
         '--publish-to-github',
         action='store_true',
@@ -1298,10 +1331,15 @@ def main():
     checkout_repo(args.vardir, args.refresh)
 
     # doeet
-    assemble_collections(spec, args)
+    assemble_collections(spec, args, args.target_github_org)
 
     if args.publish_to_github:
-        publish_to_github(args.vardir, spec)
+        publish_to_github(
+            args.vardir, spec,
+            gh_org=args.target_github_org,
+            gh_app_id=args.github_app_id,
+            gh_app_key_path=args.github_app_key_path,
+        )
 
     if args.push_migrated_core:
         push_migrated_core(args.vardir)
