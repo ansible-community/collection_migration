@@ -1053,7 +1053,7 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
 def rewrite_yaml(src, dest, namespace, collection, spec, args):
     try:
         contents = read_ansible_yaml_file(src)
-        _rewrite_yaml(contents, namespace, collection, spec)
+        _rewrite_yaml(contents, namespace, collection, spec, args)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
         logger.error('Skipping bad YAML in %s: %s' % (src, str(e)))
@@ -1159,13 +1159,13 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args):
     for key, value in el.items():
         if isinstance(value, Mapping):
             if key == 'vars':
-                _rewrite_yaml_mapping_keys(el[key], namespace, collection, spec)
+                _rewrite_yaml_mapping_keys(el[key], namespace, collection, spec, args)
             if key != 'vars':
-                _rewrite_yaml_mapping_keys_non_vars(el[key], namespace, collection, spec)
+                _rewrite_yaml_mapping_keys_non_vars(el[key], namespace, collection, spec, args)
         elif isinstance(value, list):
             for idx, item in enumerate(value):
                 if isinstance(item, Mapping):
-                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec)
+                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec, args)
                 else:
                     if key == 'module_blacklist':
                         for ns in spec.keys():
@@ -1178,13 +1178,13 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args):
                                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
                     if isinstance(el[key][idx], str):
                         # FIXME move to a func
-                        el[key][idx] = _rewrite_yaml_lookup(el[key][idx], namespace, collection, spec)
-                        el[key][idx] = _rewrite_yaml_filter(el[key][idx], namespace, collection, spec)
-                        el[key][idx] = _rewrite_yaml_test(el[key][idx], namespace, collection, spec)
+                        el[key][idx] = _rewrite_yaml_lookup(el[key][idx], namespace, collection, spec, args)
+                        el[key][idx] = _rewrite_yaml_filter(el[key][idx], namespace, collection, spec, args)
+                        el[key][idx] = _rewrite_yaml_test(el[key][idx], namespace, collection, spec, args)
         elif isinstance(value, str):
-            el[key] = _rewrite_yaml_lookup(el[key], namespace, collection, spec)
-            el[key] = _rewrite_yaml_filter(el[key], namespace, collection, spec)
-            el[key] = _rewrite_yaml_test(el[key], namespace, collection, spec)
+            el[key] = _rewrite_yaml_lookup(el[key], namespace, collection, spec, args)
+            el[key] = _rewrite_yaml_filter(el[key], namespace, collection, spec, args)
+            el[key] = _rewrite_yaml_test(el[key], namespace, collection, spec, args)
 
 
 def _rewrite_yaml_lookup(value, namespace, collection, spec, args):
