@@ -481,6 +481,24 @@ def inject_ignore_into_sanity_tests(
     )
 
 
+def inject_requirements_into_integration_tests(checkout_path, collection_dir):
+    """Inject integration tests Python dependencies into collection."""
+    coll_integration_tests_dir = os.path.join(
+        collection_dir, 'tests', 'integration',
+    )
+    original_integration_tests_req_file = os.path.join(
+        checkout_path, 'test', 'integration', 'requirements.txt',
+    )
+
+    os.makedirs(coll_integration_tests_dir, exist_ok=True)
+    shutil.copy(
+        original_integration_tests_req_file,
+        coll_integration_tests_dir,
+    )
+
+    logger.info('Integration tests deps injected into collection')
+
+
 def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
     """Find all unit tests and related artifacts for the given plugin.
 
@@ -770,6 +788,8 @@ def assemble_collections(spec, args, target_github_org):
                 dep = '%s.%s' % (dep_ns, dep_coll)
                 # FIXME hardcoded version
                 galaxy_metadata['dependencies'][dep] = '>=1.0'
+
+            inject_requirements_into_integration_tests(checkout_path, collection_dir)
 
             integration_test_dirs = []
             integration_tests_deps = set()
