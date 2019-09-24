@@ -521,15 +521,15 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
     # Narrow down the search area
     type_base_subdir = os.path.join(unit_tests_root, type_subdir)
 
+    # Figure out what to copy and where
+    copy_map = defaultdict(lambda: defaultdict(set))
+
     # Find all test modules with the same ending as the current plugin
     plugin_dir, plugin_mod = os.path.split(plugin)
     matching_test_modules = glob.glob(os.path.join(type_base_subdir, plugin_dir, f'*{plugin_mod}'))
     if not matching_test_modules:
         logger.info('No tests matching %s/%s found', plugin_type, plugin)
-        return
-
-    # Figure out what to copy and where
-    copy_map = defaultdict(lambda: defaultdict(set))
+        return copy_map
 
     # Inject unit test helper packages
     copy_map[unit_tests_root]['to'] = collection_unit_tests_root
