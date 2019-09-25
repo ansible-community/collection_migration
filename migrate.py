@@ -56,7 +56,7 @@ STR_TMPL = "'''{str_val}'''"
 
 
 os.makedirs(VARDIR, exist_ok=True)
-logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.ERROR)
+logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.WARNING)
 
 
 core = {}
