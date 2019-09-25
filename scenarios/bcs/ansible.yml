@@ -258,6 +258,15 @@ amazon:
     - aws_secret.py
     - aws_service_ip_ranges.py
     - aws_ssm.py
+apconos:
+    cliconf:
+    - apoconos.py
+    module_utils:
+    - network/apconos/*
+    modules:
+    - network/apconos/*
+    terminal:
+    - apconos.py
 aruba:
     action:
     - aruba.py
@@ -550,8 +559,8 @@ misc:
     - netapp.py
     - netscaler.py
     - ovirt.py
-    - ovirt_info.py
     - ovirt_facts.py
+    - ovirt_info.py
     - oneview.py
     - online.py
     - onyx.py
@@ -1127,14 +1136,22 @@ vmware:
     doc_fragments:
     - vmware.py
     - vmware_rest_client.py
+    - VmwareRestModule.py
+    - VmwareRestModule_filters.py
+    - VmwareRestModule_full.py
+    - VmwareRestModule_state.py
     inventory:
     - vmware_vm_inventory.py
     modules:
     - cloud/vmware/*
+    - cloud/vmware_httpapi/*
     module_utils:
     - vmware.py
     - vmware_rest_client.py
     - vmware_spbm.py
+    - vmware_httpapi/*
+    httpapi:
+    - vmware.py
 vultr:
     doc_fragments:
     - vultr.py
