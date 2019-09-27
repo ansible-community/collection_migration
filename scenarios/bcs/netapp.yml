@@ -1,0 +1,8 @@
+netapp:
+    doc_fragments:
+    - netapp.py
+    module_utils:
+    - netapp.py
+    - netapp_module.py
+    modules:
+    - storage/netapp/*

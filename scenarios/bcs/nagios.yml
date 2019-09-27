@@ -1,0 +1,5 @@
+nagios:
+    callback:
+    - nrdp.py
+    modules:
+    - monitoring/nagios.py

@@ -1,0 +1,13 @@
+common:
+    doc_fragments:
+    - purestorage.py
+    module_utils:
+    - pure.py
+array:
+    modules:
+    - storage/purestorage/_purefa_*
+    - storage/purestorage/purefa_*
+blade:
+    modules:
+    - storage/purestorage/_purefb_*
+    - storage/purestorage/purefb_*

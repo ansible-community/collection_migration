@@ -260,7 +260,7 @@ amazon:
     - aws_ssm.py
 apconos:
     cliconf:
-    - apoconos.py
+    - apconos.py
     module_utils:
     - network/apconos/*
     modules:
@@ -347,31 +347,6 @@ containers:
     - cloud/lxc/*
     - cloud/lxd/*
     - cloud/podman/*
-dellos:
-    action:
-    - dellos6.py
-    - dellos9.py
-    - dellos10.py
-    cliconf:
-    - dellos6.py
-    - dellos9.py
-    - dellos10.py
-    doc_fragments:
-    - dellos6.py
-    - dellos9.py
-    - dellos10.py
-    module_utils:
-    - network/dellos6/dellos6.py
-    - network/dellos9/dellos9.py
-    - network/dellos10/dellos10.py
-    modules:
-    - network/dellos6/*
-    - network/dellos9/*
-    - network/dellos10/*
-    terminal:
-    - dellos6.py
-    - dellos9.py
-    - dellos10.py
 digital_ocean:
     doc_fragments:
     - digital_ocean.py
@@ -418,24 +393,6 @@ enos:
     - network/enos/*
     terminal:
     - enos.py
-eos:
-    action:
-    - eos.py
-    cliconf:
-    - eos.py
-    doc_fragments:
-    - eos.py
-    httpapi:
-    - eos.py
-    modules:
-    - network/eos/*
-    module_utils:
-    - network/eos/*
-    - network/eos/*/*
-    - network/eos/*/*/*
-    - network/eos/*/*/*/*
-    terminal:
-    - eos.py
 exoscale:
     doc_fragments:
     - exoscale.py
@@ -548,7 +505,6 @@ misc:
     - sesu.py
     doc_fragments:
     - auth_basic.py
-    - infinibox.py
     - ingate.py
     - ipa.py
     - ldap.py
@@ -556,7 +512,6 @@ misc:
     - manageiq.py
     - meraki.py
     - mysql.py
-    - netapp.py
     - netscaler.py
     - ovirt.py
     - ovirt_facts.py
@@ -571,7 +526,6 @@ misc:
     - panos.py
     - postgres.py
     - proxysql.py
-    - purestorage.py
     - rabbitmq.py
     - rackspace.py
     - scaleway.py
@@ -599,7 +553,6 @@ misc:
     - logdna.py
     - logentries.py
     - logstash.py
-    - nrdp.py
     - 'null.py'
     - profile_roles.py
     - selective.py
@@ -713,7 +666,6 @@ misc:
     - monitoring/logicmonitor_facts.py
     - monitoring/logstash_plugin.py
     - monitoring/monit.py
-    - monitoring/nagios.py
     - monitoring/newrelic_deployment.py
     - monitoring/pagerduty.py
     - monitoring/pagerduty_alert.py
@@ -729,7 +681,6 @@ misc:
     - net_tools/dnsimple.py
     - net_tools/dnsmadeeasy.py
     - net_tools/haproxy.py
-    - net_tools/infinity/infinity.py
     - net_tools/ip_netns.py
     - net_tools/ipify_facts.py
     - net_tools/ipinfoio_facts.py
@@ -853,14 +804,6 @@ misc:
     - storage/glusterfs/gluster_heal_info.py
     - storage/glusterfs/gluster_peer.py
     - storage/glusterfs/gluster_volume.py
-    - storage/infinidat/infini_export.py
-    - storage/infinidat/infini_export_client.py
-    - storage/infinidat/infini_fs.py
-    - storage/infinidat/infini_host.py
-    - storage/infinidat/infini_pool.py
-    - storage/infinidat/infini_vol.py
-    - storage/netapp/*
-    - storage/purestorage/*
     - storage/vexata/vexata_eg.py
     - storage/vexata/vexata_volume.py
     - storage/zfs/zfs.py
@@ -928,7 +871,6 @@ misc:
     - oracle/*
     - ovirt.py
     - postgres.py
-    - pure.py
     - rax.py
     - rabbitmq.py
     - redfish_utils.py
