@@ -481,6 +481,19 @@ def inject_ignore_into_sanity_tests(
     )
 
 
+def inject_requirements_into_unit_tests(checkout_path, collection_dir):
+    """Inject unit tests dependencies into collection."""
+    coll_unit_tests_dir = os.path.join(collection_dir, 'tests', 'unit')
+    original_unit_tests_req_file = os.path.join(
+        checkout_path, 'test', 'units', 'requirements.txt',
+    )
+
+    os.makedirs(coll_unit_tests_dir, exist_ok=True)
+    shutil.copy(original_unit_tests_req_file, coll_unit_tests_dir)
+
+    logger.info('Unit tests deps injected into collection')
+
+
 def inject_requirements_into_integration_tests(checkout_path, collection_dir):
     """Inject integration tests Python dependencies into collection."""
     coll_integration_tests_dir = os.path.join(
@@ -574,6 +587,8 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
         for d in dirs:
             shutil.rmtree(os.path.join(dest, d), ignore_errors=True)
             shutil.copytree(os.path.join(test_dir, d), os.path.join(dest, d))
+
+    inject_requirements_into_unit_tests(checkout_path, collection_dir)
 
     logger.info('Unit tests copied for %s/%s', plugin_type, plugin)
     return copy_map
