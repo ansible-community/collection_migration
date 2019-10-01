@@ -1,3 +1,4 @@
 ansible
+logzero
 gidgethub
 redbaron
