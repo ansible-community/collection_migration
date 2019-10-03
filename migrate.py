@@ -222,18 +222,17 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
     except AttributeError:
         raise LookupError('No DOCUMENTATION found')
 
-    doc_str_tmpl = RAW_STR_TMPL if doc_val.type == 'raw_string' else STR_TMPL
-    # Turn `'strng'` into `strng` and  `r'strng'` into `strng`
-    # so that we don't feed a quoted string into the YAML parser:
-    doc_txt = doc_val.to_python()
-
-    docs_parsed = yaml.safe_load(doc_txt.strip('\n'))
+    docs_parsed = yaml.safe_load(doc_val.to_python().strip('\n'))
 
     fragments = docs_parsed.get('extends_documentation_fragment', [])
+    if not fragments:
+        return []
+
     if not isinstance(fragments, list):
         fragments = [fragments]
 
     deps = []
+    new_fragments = []
     for fragment in fragments:
         # some doc_fragments use subsections (e.g. vmware.vcenter_documentation)
         fragment_name, _dot, _rest = fragment.partition('.')
@@ -241,10 +240,12 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
             fragment_namespace, fragment_collection = get_plugin_collection(fragment_name, 'doc_fragments', spec)
         except LookupError:
             # plugin not in spec, assuming it stays in core and leaving as is
+            new_fragments.append(fragment)
             continue
 
         if fragment_collection in COLLECTION_SKIP_REWRITE:
             # skip rewrite
+            new_fragments.append(fragment)
             continue
 
         if fragment_collection.startswith('_'):
@@ -254,30 +255,34 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
         if args.fail_on_core_rewrite:
             raise RuntimeError('Rewriting to %s' % new_fragment)
 
-        # `doc_val` holds a baron representation of the string node
-        # of type 'string' or 'raw_string'. Updating its `.value`
-        # via assigning the new one replaces the node in FST.
-        # Also, in order to generate a string or raw-string literal,
-        # we need to wrap it with a corresponding pair of quotes.
-        # If we don't do this, we'd generate the following Python code
-        # ```
-        # DOCUMENTATION = some string value
-        # ```
-        # instead of the correct
-        # ```
-        # DOCUMENTATION = r'''some string value'''
-        # ```
-        # or
-        # ```
-        # DOCUMENTATION = '''some string value'''
-        # ```
-        # TODO figure out whether this can be improved
-        doc_val.value = doc_str_tmpl.format(
-            str_val=doc_txt.replace(fragment, new_fragment),
-        )
+        new_fragments.append(new_fragment)
 
         if (namespace, collection) != (fragment_namespace, fragment_collection):
             deps.append((fragment_namespace, fragment_collection))
+
+    docs_parsed['extends_documentation_fragment'] = new_fragments
+
+    doc_str_tmpl = RAW_STR_TMPL if doc_val.type == 'raw_string' else STR_TMPL
+    # `doc_val` holds a baron representation of the string node
+    # of type 'string' or 'raw_string'. Updating its `.value`
+    # via assigning the new one replaces the node in FST.
+    # Also, in order to generate a string or raw-string literal,
+    # we need to wrap it with a corresponding pair of quotes.
+    # If we don't do this, we'd generate the following Python code
+    # ```
+    # DOCUMENTATION = some string value
+    # ```
+    # instead of the correct
+    # ```
+    # DOCUMENTATION = r'''some string value'''
+    # ```
+    # or
+    # ```
+    # DOCUMENTATION = '''some string value'''
+    # ```
+    doc_val.value = doc_str_tmpl.format(
+        str_val=yaml.dump(docs_parsed),
+    )
 
     return deps
 
