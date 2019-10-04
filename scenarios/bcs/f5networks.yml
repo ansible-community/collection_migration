@@ -5,6 +5,8 @@ f5_modules:
     doc_fragments:
     - f5.py
     module_utils:
+    - network/f5/bigip.py
+    - network/f5/bigiq.py
     - network/f5/common.py
     - network/f5/compare.py
     - network/f5/icontrol.py
@@ -15,8 +17,5 @@ f5_modules:
     modules:
     - network/f5/bigip_*
     - network/f5/bigiq_*
-    module_utils:
-    - network/f5/bigip.py
-    - network/f5/bigiq.py
     terminal:
     - bigip.py
