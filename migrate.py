@@ -209,6 +209,35 @@ def get_rewritable_collections(namespace, spec):
 
 
 # ===== REWRITE FUNCTIONS =====
+def rewrite_class_property(mod_fst, collection, namespace):
+    rewrite_map = {
+        'BecomeModule': 'name',
+        'CallbackModule': 'CALLBACK_NAME',
+        'Connection': 'transport',
+        'InventoryModule': 'NAME',
+    }
+
+    for class_name, property_name in rewrite_map.items():
+        try:
+            val = (
+                mod_fst.
+                find('class', name=class_name).
+                find('name', value=property_name).parent.value
+            )
+        except AttributeError:
+            continue
+
+        try:
+            val.value = "'%s'" % get_plugin_fqcn(namespace,
+                                                 collection,
+                                                 val.to_python())
+        except ValueError as e:
+            # so this might be something like:
+            # transport = CONNECTION_TRANSPORT
+            logger.exception(e)
+            add_manual_check(property_name, val.value)
+
+
 def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
     try:
         doc_val = (
@@ -790,6 +819,9 @@ def assemble_collections(spec, args, target_github_org):
                     except LookupError as err:
                         docs_dependencies = []
                         logger.info('%s in %s', err, src)
+
+                    rewrite_class_property(mod_fst, collection, namespace)
+
                     plugin_data_new = mod_fst.dumps()
 
                     if mod_src_text != plugin_data_new:
