@@ -7,62 +7,62 @@ on:
   - cron: 1 0 * * *  # Run daily at 0:01 UTC
 
 jobs:
+  base:
+      name: common defs
+      matrix:
+        os:
+        - ubuntu-latest
+        python-version:
+        - 3.7
+        migration-scenario:
+        - minimal
+  reqs:
+    name: install prereqs
+    runs-on: ${{ jobs.base.matrix.os }}
+    strategy:
+      fail-fast: true
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ jobs.base.matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        version: ${{ jobs.base.matrix.python-version }}
+    - name: Uninstall previously installed Ansible via Apt
+      run: sudo apt remove --yes ansible
+    - name: Uninstall previously installed Ansible via Pip
+      run: python -m pip uninstall ansible
+    - name: Install migration script deps
+      run: python -m pip install -r requirements.txt
+    - name: Install Ansible==devel
+      run: python -m pip install git+https://github.com/ansible/ansible.git@devel
+
+  migration:
+    name: run migration
+    needs: reqs
+    runs-on: ${{ jobs.base.matrix.os }}
+    strategy:
+      fail-fast: true
+    steps:
+    - name: Configure user settings in Git
+      run: |
+        git config --global user.email "ansible_migration@example.com"
+        git config --global user.name "Poor B"
+    - name: Run migration scenario ${{ jobs.base.matrix.migration-scenario }}
+      run: python -m migrate -m -s "scenarios/${{ jobs.base.matrix.migration-scenario }}"
+
   tests:
-    name: 👷
-    runs-on: ${{ matrix.os }}
+    name: run sanity and unit tests
+    needs:
+    - reqs
+    - migration
+    runs-on: ${{ jobs.base.matrix.os }}
     strategy:
       fail-fast: false
       # max-parallel: 5
-      matrix:
-        python-version:
-        - 3.7
-        os:
-        - ubuntu-18.04
-        # - ubuntu-16.04
-        # - macOS-10.14
-        # - windows-2019
-        # - windows-2016
-        migration-scenario:
-        - minimal
-
     steps:
-    - uses: actions/checkout@master
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        version: ${{ matrix.python-version }}
-    - name: Uninstall previously installed Ansible via Apt
-      run: >-
-        sudo apt remove --yes ansible
-    - name: Uninstall previously installed Ansible via Pip
-      run: >-
-        python -m
-        pip uninstall
-        ansible
-    - name: Install migration script deps
-      run: >-
-        python -m
-        pip install
-        -r requirements.txt
-    - name: Install Ansible==devel
-      run: >-
-        python -m
-        pip install
-        git+https://github.com/ansible/ansible.git@devel
-    - name: Configure user settings in Git
-      run: |
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
-    - name: Run migration scenario ${{ matrix.migration-scenario }}
-      run: >-
-        python -m
-        migrate
-        -m -s "scenarios/${{ matrix.migration-scenario }}"
 
       # TODO: also use the ansible from the .cache
-    - name: >-
-        [NON-FAILING]
-        Run sanity tests against all migrated collections, one by one
+    - name: [NON-FAILING] Run sanity tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
           do
@@ -74,7 +74,7 @@ jobs:
                   echo Injecting sanity test requirements into "'${coll_dir}/tests/sanity/requirements.txt'"...
                   mkdir -pv tests/sanity/
                   cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/sanity/requirements.txt" tests/sanity/requirements.txt
-                  ansible-test sanity --requirements --python "${{ matrix.python-version }}" -vvv || :
+                  ansible-test sanity --requirements --python "${{ jobs.base.matrix.python-version }}" -vvv || :
               )
           done
     - name: Run unit tests against all migrated collections, one by one
@@ -95,6 +95,6 @@ jobs:
                   # f5 deps unconditionally depend on enum34 which
                   # breaks on Pythons that have enum module in stdlib
                   grep -vE ^solidfire-sdk- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
-                  ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
+                  ansible-test units --requirements --python "${{ jobs.base.matrix.python-version }}" -vvv
               )
           done
