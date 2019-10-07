@@ -440,6 +440,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
         imp_src[:token_length] = exchange  # replace the import
         if (plugin_namespace, plugin_collection) != (namespace, collection):
+            imp_src[1] = plugin_namespace
             imp_src[2] = plugin_collection
             deps.append((plugin_namespace, plugin_collection))
 
