@@ -1,4 +1,5 @@
 ansible
+gidgethub  # dependency of octomachinery but imported too
 logzero
-gidgethub
+octomachinery
 redbaron
