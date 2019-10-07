@@ -16,7 +16,6 @@ import sys
 import textwrap
 import yaml
 
-from collections import defaultdict
 from collections.abc import Mapping
 from importlib import import_module
 from string import Template
@@ -525,73 +524,104 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
         else os.path.join('plugins', plugin_type)
     )
 
-    unit_tests_root = os.path.join(
-        checkout_path, 'test', 'units',
-    )
+    unit_tests_relative_root = os.path.join('test', 'units')
 
-    collection_unit_tests_root = os.path.join(
-        collection_dir, 'tests', 'unit',
-    )
+    collection_unit_tests_relative_root = os.path.join('tests', 'unit')
 
     # Narrow down the search area
-    type_base_subdir = os.path.join(unit_tests_root, type_subdir)
+    type_base_subdir = os.path.join(
+        checkout_path, unit_tests_relative_root, type_subdir,
+    )
 
     # Figure out what to copy and where
-    copy_map = defaultdict(lambda: defaultdict(set))
+    copy_map = {}
 
     # Find all test modules with the same ending as the current plugin
     plugin_dir, plugin_mod = os.path.split(plugin)
     matching_test_modules = glob.glob(os.path.join(type_base_subdir, plugin_dir, f'*{plugin_mod}'))
+    # Path(matching_test_modules[0]).relative_to(Path(checkout_path))
+    # os.path.relpath(matching_test_modules[0], checkout_path)
     if not matching_test_modules:
         logger.info('No tests matching %s/%s found', plugin_type, plugin)
         return copy_map
 
+    def traverse_dir(path, relative_to):
+        rel_path = os.path.join(relative_to, path)
+        if not os.path.isdir(rel_path):
+            return {path}
+
+        matching_files = itertools.chain(
+            glob.iglob(
+                os.path.join(rel_path, '.**'),
+                recursive=True,
+            ),
+            glob.iglob(
+                os.path.join(rel_path, '**'),
+                recursive=True,
+            ),
+        )
+        return set(
+            os.path.relpath(p, relative_to)
+            for p in matching_files
+            if not os.path.isdir(p)
+        )
+
+    def replace_path_prefix(path):
+        return os.path.join(
+            collection_unit_tests_relative_root,
+            os.path.relpath(path, unit_tests_relative_root),
+        )
+
     # Inject unit test helper packages
-    copy_map[unit_tests_root]['to'] = collection_unit_tests_root
-
-    for hd in {'compat', 'mock'}:
-        copy_map[unit_tests_root]['dirs'].add(hd)
-
-    copy_map[os.path.join(unit_tests_root, 'modules')]['to'] = os.path.join(collection_unit_tests_root, 'modules')
-    copy_map[os.path.join(unit_tests_root, 'modules')]['files'].add('utils.py')
+    # TODO: figure out the bug with path maps
+    compat_mock_helpers = (
+        (
+            src_f,
+            replace_path_prefix(src_f),
+        )
+        for hd in {'compat', 'mock', 'modules/utils.py'}
+        for src_f in traverse_dir(
+            os.path.join(unit_tests_relative_root, hd),
+            checkout_path,
+        )
+    )
+    for src_f, dst_f in compat_mock_helpers:
+        copy_map[src_f] = dst_f
 
     # Add test modules along with related artifacts
     for td, tm in (os.path.split(p) for p in matching_test_modules):
-        copy_map[td]['files'].add(tm)
-        copy_map[td]['to'] = os.path.join(
-            collection_unit_tests_root,
+        relative_td = os.path.relpath(td, checkout_path)
+        copy_map_relative_td_to = os.path.join(
+            collection_unit_tests_relative_root,
             plugin_type, plugin_dir,
         )
+        copy_map[os.path.join(relative_td, tm)] = os.path.join(copy_map_relative_td_to, tm)
         # Add subdirs that may contain related test artifacts/fixtures
         # Also add important modules like conftest or __init__
         for path in os.listdir(td):
             is_dir = os.path.isdir(os.path.join(td, path))
             if not is_dir and path.startswith('test_'):
                 continue
-            copy_map[td]['dirs' if is_dir else 'files'].add(path)
+            for src_f in traverse_dir(
+                    os.path.join(relative_td, path),
+                    checkout_path,
+            ):
+                copy_map[src_f] = replace_path_prefix(src_f)
 
     # Actually copy tests
-    for test_dir, mapped_tests in copy_map.items():
-        dest = mapped_tests['to']
-        files = mapped_tests['files']
-        dirs = mapped_tests['dirs']
-
+    for src_f, dest_f in copy_map.items():
+        dest = os.path.join(collection_dir, dest_f)
         # Ensure target dir exists
-        os.makedirs(dest, exist_ok=True)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
 
-        for f in files:
-            src = os.path.join(test_dir, f)
-            shutil.copy(src, dest)
+        src = os.path.join(checkout_path, src_f)
+        shutil.copy(src, dest)
 
-            if src == '.cache/releases/devel.git/test/units/modules/utils.py':
-                # FIXME this appears to be bundled with each collection (above), so do not remove it, this should stay in core?
-                continue
+        if src == '.cache/releases/devel.git/test/units/modules/utils.py':
+            # FIXME this appears to be bundled with each collection (above), so do not remove it, this should stay in core?
+            continue
 
-            remove(src)
-
-        for d in dirs:
-            shutil.rmtree(os.path.join(dest, d), ignore_errors=True)
-            shutil.copytree(os.path.join(test_dir, d), os.path.join(dest, d))
+        remove(src)
 
     inject_requirements_into_unit_tests(checkout_path, collection_dir)
 
@@ -773,10 +803,11 @@ def assemble_collections(spec, args, target_github_org):
 
                     integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
                     # process unit tests
-                    copy_unit_tests(
+                    unit_tests_migrated_to_collection = copy_unit_tests(
                         checkout_path, collection_dir,
                         plugin_type, plugin, spec,
                     )
+                    migrated_to_collection.update(unit_tests_migrated_to_collection)
                     # TODO: sanity tests?
 
             inject_init_into_tree(
