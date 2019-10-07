@@ -234,8 +234,86 @@ def rewrite_class_property(mod_fst, collection, namespace):
         except ValueError as e:
             # so this might be something like:
             # transport = CONNECTION_TRANSPORT
-            logger.exception(e)
             add_manual_check(property_name, val.value)
+
+
+def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
+    # FIXME duplicate code from imports rewrite
+    plugins_path = ('ansible_collections', namespace, collection, 'plugins')
+    tests_path = ('ansible_collections', namespace, collection, 'tests')
+    unit_tests_path = tests_path + ('unit', )
+    import_map = {
+        ('ansible', 'modules'): plugins_path + ('modules', ),
+        ('ansible', 'module_utils'): plugins_path + ('module_utils', ),
+        ('ansible', 'plugins'): plugins_path,
+        ('units', ): unit_tests_path,
+    }
+
+    deps = []
+    for decorator in mod_fst('decorator', lambda x: x.dumps().startswith('@patch(')) + mod_fst('assignment', lambda x: 'patch(' in x.dumps())+ mod_fst('with', lambda x: 'patch(' in x.dumps()):
+        try:
+            value = decorator.call.value
+        except AttributeError:
+            continue
+
+        for el in value:
+            try:
+                val = el.value.to_python().split('.')
+            except IndentationError as e:
+                logger.error(e)
+                # FIXME add_manual_check
+                continue
+            except (AttributeError, TypeError, ValueError) as e:
+                # might be something else, like 'side_effect=...'
+                continue
+
+            for old, new in import_map.items():
+                token_length = len(old)
+                if tuple(val[:token_length]) != old:
+                    continue
+
+                if val[1] in ('modules', 'module_utils'):
+                    # FIXME account for preserve module subdirs
+                    plugin_type = val[1]
+
+                    # patch('ansible.modules.storage.netapp.na_ontap_nvme.NetAppONTAPNVMe.create_nvme')
+                    # look for module name
+                    for i in (len(val), -1, -2):
+                        plugin_name = '/'.join(val[2:i])
+                        try:
+                            found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
+                            break
+                        except LookupError:
+                            continue
+                    else:
+                        continue
+                elif val[1] == 'plugins':
+                    # patch('ansible.plugins.lookup.manifold.open_url')
+                    plugin_type = val[2]
+                    plugin_name = val[3]
+
+                    try:
+                        found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
+                    except LookupError:
+                        continue
+                else:
+                    continue
+
+                if found_coll in COLLECTION_SKIP_REWRITE:
+                    continue
+
+                if args.fail_on_core_rewrite:
+                    raise RuntimeError('Rewriting to %s' % '.'.join(val))
+
+                val[:token_length] = new
+                if (found_ns, found_coll) != (namespace, collection):
+                    val[1] = found_ns
+                    val[2] = found_coll
+                    deps.append((found_ns, found_coll))
+
+                el.value = "'%s'" % '.'.join(val)
+
+    return deps
 
 
 def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
@@ -812,6 +890,8 @@ def assemble_collections(spec, args, target_github_org):
                         shutil.copyfile(src, dest)
                         continue
 
+                    logger.info('Processing %s -> %s' % (src, dest))
+
                     mod_src_text, mod_fst = read_module_txt_n_fst(src)
 
                     import_dependencies = rewrite_imports(mod_fst, collection, spec, namespace, args)
@@ -853,6 +933,7 @@ def assemble_collections(spec, args, target_github_org):
             ):
                 _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
                 unit_deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
+                unit_deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
                 write_text_into_file(file_path, unit_test_module_fst.dumps())
 
             inject_gitignore_into_tests(collection_dir)
