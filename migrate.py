@@ -413,7 +413,6 @@ def match_import_src(imp_src, import_map):
     try:
         imp_src_tuple = tuple(t.value for t in imp_src)
     except AttributeError as e:
-        # FIXME
         # AttributeError("EllipsisNode instance has no attribute 'value' and 'value' is not a valid identifier of another node")
         # lib/ansible/modules/system/setup.py:
         # from ...module_utils.basic import AnsibleModule
@@ -475,7 +474,6 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
                     # from ansible.plugins.connection import winrm
                     plugin_name = imp.targets[0].value
                 else:
-                    # FIXME
                     logger.error('Could not get plugin type or name from ' + str(imp) + '. Is this expected?')
                     continue
         elif imp_src[1].value == 'modules':
@@ -759,6 +757,9 @@ def assemble_collections(spec, args, target_github_org):
     seen = {}
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
+            import_deps = []
+            docs_deps = []
+            unit_deps = []
 
             if args.fail_on_core_rewrite:
                 if collection != '_core':
@@ -894,11 +895,10 @@ def assemble_collections(spec, args, target_github_org):
 
                     mod_src_text, mod_fst = read_module_txt_n_fst(src)
 
-                    import_dependencies = rewrite_imports(mod_fst, collection, spec, namespace, args)
+                    import_deps += rewrite_imports(mod_fst, collection, spec, namespace, args)
                     try:
-                        docs_dependencies = rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
+                        docs_deps += rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
                     except LookupError as err:
-                        docs_dependencies = []
                         logger.info('%s in %s', err, src)
 
                     rewrite_class_property(mod_fst, collection, namespace, dest)
@@ -906,10 +906,6 @@ def assemble_collections(spec, args, target_github_org):
                     plugin_data_new = mod_fst.dumps()
 
                     if mod_src_text != plugin_data_new:
-                        for dep_ns, dep_coll in docs_dependencies + import_dependencies:
-                            dep = '%s.%s' % (dep_ns, dep_coll)
-                            # FIXME hardcoded version
-                            galaxy_metadata['dependencies'][dep] = '>=1.0'
                         logger.info('rewriting plugin references in %s' % dest)
 
                     write_text_into_file(dest, plugin_data_new)
@@ -926,7 +922,7 @@ def assemble_collections(spec, args, target_github_org):
             inject_init_into_tree(
                 os.path.join(collection_dir, 'tests', 'unit'),
             )
-            unit_deps = []
+
             for file_path in itertools.chain.from_iterable(
                     (os.path.join(dp, f) for f in fn if f.endswith('.py'))
                     for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
@@ -949,8 +945,7 @@ def assemble_collections(spec, args, target_github_org):
                 logger.error(e)
 
             global integration_tests_deps
-            for dep_ns, dep_coll in integration_tests_deps.union(set(unit_deps)):
-                # FIXME duplicite code, see dep handling above
+            for dep_ns, dep_coll in integration_tests_deps.union(import_deps + docs_deps + unit_deps):
                 dep = '%s.%s' % (dep_ns, dep_coll)
                 # FIXME hardcoded version
                 galaxy_metadata['dependencies'][dep] = '>=1.0'
@@ -959,7 +954,6 @@ def assemble_collections(spec, args, target_github_org):
 
             integration_test_dirs = []
             integration_tests_deps = set()
-            unit_deps = []
 
             # write collection metadata
             write_yaml_into_file_as_is(
