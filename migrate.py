@@ -16,6 +16,7 @@ import sys
 import textwrap
 import yaml
 
+from collections import defaultdict
 from collections.abc import Mapping
 from importlib import import_module
 from string import Template
@@ -59,7 +60,7 @@ logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.WARNING)
 
 
 core = {}
-manual_check = []
+manual_check = defaultdict(list)
 
 
 def add_core(ptype, name):
@@ -71,10 +72,9 @@ def add_core(ptype, name):
     core[ptype].add(name)
 
 
-def add_manual_check(key, value):
+def add_manual_check(key, value, filename):
     global manual_check
-    # FIXME add the file too
-    manual_check.append((key, value))
+    manual_check[filename].append((key, value))
 
 
 def checkout_repo(vardir=VARDIR, refresh=False):
@@ -209,7 +209,7 @@ def get_rewritable_collections(namespace, spec):
 
 
 # ===== REWRITE FUNCTIONS =====
-def rewrite_class_property(mod_fst, collection, namespace):
+def rewrite_class_property(mod_fst, collection, namespace, filename):
     rewrite_map = {
         'BecomeModule': 'name',
         'CallbackModule': 'CALLBACK_NAME',
@@ -234,10 +234,10 @@ def rewrite_class_property(mod_fst, collection, namespace):
         except ValueError as e:
             # so this might be something like:
             # transport = CONNECTION_TRANSPORT
-            add_manual_check(property_name, val.value)
+            add_manual_check(property_name, val.value, filename)
 
 
-def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
+def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filename):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
@@ -250,9 +250,9 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     }
 
     deps = []
-    for decorator in mod_fst('decorator', lambda x: x.dumps().startswith('@patch(')) + mod_fst('assignment', lambda x: 'patch(' in x.dumps())+ mod_fst('with', lambda x: 'patch(' in x.dumps()):
+    for patch in mod_fst('decorator', lambda x: x.dumps().startswith('@patch(')) + mod_fst('assignment', lambda x: 'patch(' in x.dumps())+ mod_fst('with', lambda x: 'patch(' in x.dumps()):
         try:
-            value = decorator.call.value
+            value = patch.call.value
         except AttributeError:
             continue
 
@@ -261,7 +261,7 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
                 val = el.value.to_python().split('.')
             except IndentationError as e:
                 logger.error(e)
-                # FIXME add_manual_check
+                add_manual_check(patch.dumps(), str(e), filename)
                 continue
             except (AttributeError, TypeError, ValueError) as e:
                 # might be something else, like 'side_effect=...'
@@ -901,7 +901,7 @@ def assemble_collections(spec, args, target_github_org):
                         docs_dependencies = []
                         logger.info('%s in %s', err, src)
 
-                    rewrite_class_property(mod_fst, collection, namespace)
+                    rewrite_class_property(mod_fst, collection, namespace, dest)
 
                     plugin_data_new = mod_fst.dumps()
 
@@ -933,7 +933,7 @@ def assemble_collections(spec, args, target_github_org):
             ):
                 _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
                 unit_deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-                unit_deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
+                unit_deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, file_path)
                 write_text_into_file(file_path, unit_test_module_fst.dumps())
 
             inject_gitignore_into_tests(collection_dir)
@@ -1111,7 +1111,6 @@ def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name
 
 
 def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args):
-    # FIXME move to diff file
     # FIXME module_defaults groups
 
     for test_dir in test_dirs:
@@ -1248,26 +1247,26 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
 def rewrite_yaml(src, dest, namespace, collection, spec, args):
     try:
         contents = read_ansible_yaml_file(src)
-        _rewrite_yaml(contents, namespace, collection, spec, args)
+        _rewrite_yaml(contents, namespace, collection, spec, args, dest)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
         logger.error('Skipping bad YAML in %s: %s' % (src, str(e)))
 
 
-def _rewrite_yaml(contents, namespace, collection, spec, args):
+def _rewrite_yaml(contents, namespace, collection, spec, args, dest):
     if isinstance(contents, list):
         for el in contents:
-            _rewrite_yaml(el, namespace, collection, spec, args)
+            _rewrite_yaml(el, namespace, collection, spec, args, dest)
     elif isinstance(contents, Mapping):
-        _rewrite_yaml_mapping(contents, namespace, collection, spec, args)
+        _rewrite_yaml_mapping(contents, namespace, collection, spec, args, dest)
 
 
-def _rewrite_yaml_mapping(el, namespace, collection, spec, args):
+def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest):
     assert isinstance(el, Mapping)
 
-    _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args)
+    _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest)
     _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args)
-    _rewrite_yaml_mapping_values(el, namespace, collection, spec, args)
+    _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest)
 
 
 KEYWORD_TO_PLUGIN_MAP = {
@@ -1327,7 +1326,7 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
         el[new_key] = el.pop(old_key)
 
 
-def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args):
+def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest):
     for key in el.keys():
         if is_reserved_name(key):
             continue
@@ -1347,20 +1346,20 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args):
             integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
         except LookupError:
             if '{{' in el[key]:
-                add_manual_check(key, el[key])
+                add_manual_check((key, el[key], dest))
 
 
-def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args):
+def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
     for key, value in el.items():
         if isinstance(value, Mapping):
             if key == 'vars':
-                _rewrite_yaml_mapping_keys(el[key], namespace, collection, spec, args)
+                _rewrite_yaml_mapping_keys(el[key], namespace, collection, spec, args, dest)
             if key != 'vars':
                 _rewrite_yaml_mapping_keys_non_vars(el[key], namespace, collection, spec, args)
         elif isinstance(value, list):
             for idx, item in enumerate(value):
                 if isinstance(item, Mapping):
-                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec, args)
+                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec, args, dest)
                 else:
                     if key == 'module_blacklist':
                         for ns in spec.keys():
@@ -1408,7 +1407,6 @@ def _rewrite_yaml_filter(value, namespace, collection, spec, args):
             for filter_plugin_name in get_plugins_from_collection(ns, coll, 'filter', spec):
                 imported_module = import_module('ansible.plugins.filter.' + filter_plugin_name)
                 fm = getattr(imported_module, 'FilterModule', None)
-                # FIXME import once
                 if fm is None:
                     continue
                 filters = fm().filters().keys()
@@ -1432,7 +1430,6 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args):
             for test_plugin_name in get_plugins_from_collection(ns, coll, 'test', spec):
                 imported_module = import_module('ansible.plugins.test.' + test_plugin_name)
                 tm = getattr(imported_module, 'TestModule', None)
-                # FIXME import once
                 if tm is None:
                     continue
                 tests = tm().tests().keys()
@@ -1536,8 +1533,7 @@ def main():
 
     global manual_check
     print('======= Could not rewrite the following, please check manually =======\n')
-    for key, value in manual_check:
-        print(key + ": " + value)
+    print(yaml.dump(manual_check))
 
 if __name__ == "__main__":
     main()
