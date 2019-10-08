@@ -40,7 +40,7 @@ jobs:
         git config --global user.email "ansible_migration@example.com"
         git config --global user.name "Poor B"
     - name: Run migration scenario ${{ jobs.base.matrix.migration-scenario }}
-      run: python -m migrate -m -s "scenarios/${{ jobs.base.matrix.migration-scenario }}"
+      run: 'python -m migrate -m -s "scenarios/${{ jobs.base.matrix.migration-scenario }}"'
     - name: [NON-FAILING] Run sanity tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
