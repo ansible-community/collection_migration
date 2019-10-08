@@ -16,11 +16,11 @@ jobs:
         - 3.7
         migration-scenario:
         - minimal
-  reqs:
+  test_migration:
     name: install prereqs
     runs-on: ${{ jobs.base.matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ jobs.base.matrix.python-version }}
@@ -35,31 +35,12 @@ jobs:
       run: python -m pip install -r requirements.txt
     - name: Install Ansible==devel
       run: python -m pip install git+https://github.com/ansible/ansible.git@devel
-
-  migration:
-    name: run migration
-    needs: reqs
-    runs-on: ${{ jobs.base.matrix.os }}
-    strategy:
-      fail-fast: true
-    steps:
     - name: Configure user settings in Git
       run: |
         git config --global user.email "ansible_migration@example.com"
         git config --global user.name "Poor B"
     - name: Run migration scenario ${{ jobs.base.matrix.migration-scenario }}
       run: python -m migrate -m -s "scenarios/${{ jobs.base.matrix.migration-scenario }}"
-
-  tests:
-    name: run sanity and unit tests
-    needs:
-    - reqs
-    - migration
-    runs-on: ${{ jobs.base.matrix.os }}
-    strategy:
-      fail-fast: false
-      # max-parallel: 5
-    steps:
     - name: [NON-FAILING] Run sanity tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
