@@ -60,8 +60,6 @@ jobs:
       fail-fast: false
       # max-parallel: 5
     steps:
-
-      # TODO: also use the ansible from the .cache
     - name: [NON-FAILING] Run sanity tests against all migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
