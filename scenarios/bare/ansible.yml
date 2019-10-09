@@ -149,6 +149,7 @@ community:
     - yaml.py
   cliconf:
     - aireos.py
+    - apconos.py
     - aruba.py
     - asa.py
     - ce.py
@@ -424,6 +425,7 @@ community:
     - lastpass.py
     - lines.py
     - list.py
+    - lmdb_kv.py
     - manifold.py
     - mongodb.py
     - nested.py
@@ -466,6 +468,7 @@ community:
     - linear.py
   terminal:
     - aireos.py
+    - apconos.py
     - aruba.py
     - asa.py
     - bigip.py
@@ -676,6 +679,7 @@ community:
     - cloud/amazon/iam_saml_federation.py
     - cloud/amazon/iam_server_certificate_info.py
     - cloud/amazon/iam_user.py
+    - cloud/amazon/iam_user_info.py
     - cloud/amazon/kinesis_stream.py
     - cloud/amazon/lambda.py
     - cloud/amazon/lambda_alias.py
@@ -1078,7 +1082,15 @@ community:
     - cloud/google/gcp_compute_interconnect_attachment.py
     - cloud/google/gcp_compute_interconnect_attachment_info.py
     - cloud/google/gcp_compute_network.py
+    - cloud/google/gcp_compute_network_endpoint_group.py
+    - cloud/google/gcp_compute_network_endpoint_group_info.py
     - cloud/google/gcp_compute_network_info.py
+    - cloud/google/gcp_compute_node_group.py
+    - cloud/google/gcp_compute_node_group_info.py
+    - cloud/google/gcp_compute_node_template.py
+    - cloud/google/gcp_compute_node_template_info.py
+    - cloud/google/gcp_compute_region_backend_service.py
+    - cloud/google/gcp_compute_region_backend_service_info.py
     - cloud/google/gcp_compute_region_disk.py
     - cloud/google/gcp_compute_region_disk_info.py
     - cloud/google/gcp_compute_route.py
@@ -1514,6 +1526,7 @@ community:
     - cloud/vmware/vmware_guest_move.py
     - cloud/vmware/vmware_guest_network.py
     - cloud/vmware/vmware_guest_powerstate.py
+    - cloud/vmware/vmware_guest_register_operation.py
     - cloud/vmware/vmware_guest_screenshot.py
     - cloud/vmware/vmware_guest_sendkey.py
     - cloud/vmware/vmware_guest_snapshot.py
@@ -2035,6 +2048,8 @@ community:
     - network/aos/_aos_login.py
     - network/aos/_aos_rack_type.py
     - network/aos/_aos_template.py
+    - network/apconos/__init__.py
+    - network/apconos/apconos_command.py
     - network/aruba/__init__.py
     - network/aruba/aruba_command.py
     - network/aruba/aruba_config.py
@@ -4422,6 +4437,8 @@ community:
     - network/aireos/aireos.py
     - network/aos/__init__.py
     - network/aos/aos.py
+    - network/apconos/__init__.py
+    - network/apconos/apconos.py
     - network/aruba/__init__.py
     - network/aruba/aruba.py
     - network/asa/__init__.py

@@ -356,6 +356,7 @@ glob:
     - keyring.py
     - laps_password.py
     - lastpass.py
+    - lmdb_kv.py
     - manifold.py
     - mongodb.py
     - nios.py
