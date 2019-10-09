@@ -54,7 +54,9 @@ jobs:
                   ansible-test sanity --requirements --python "${{ matrix.python-version }}" -vvv || :
               )
           done
-    - name: Run unit tests against all migrated collections, one by one
+    - name: >-
+        [NON-FAILING]
+        Run unit tests against all migrated collections, one by one
       run: |
           # pip install solidfire-sdk-python
           # pip uninstall --yes enum34
@@ -66,12 +68,12 @@ jobs:
                   pwd
                   [[ ! -d "tests/unit" ]] && echo This collection does not have unit tests. Skipping... && continue
                   ansible-test --help
-                  echo Injecting unit test requirements into "'${coll_dir}/tests/unit/requirements.txt'"...
+                  # echo Injecting unit test requirements into "'${coll_dir}/tests/unit/requirements.txt'"...
                   # cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" tests/unit/requirements.txt
                   # HACK:
                   # f5 deps unconditionally depend on enum34 which
                   # breaks on Pythons that have enum module in stdlib
-                  grep -vE ^solidfire-sdk- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
-                  ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
+                  # grep -vE ^solidfire-sdk- "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/units/requirements.txt" | tee tests/unit/requirements.txt
+                  ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv || :
               )
           done
