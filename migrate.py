@@ -1524,7 +1524,7 @@ def main():
 
     global manual_check
     print('======= Could not rewrite the following, please check manually =======\n')
-    print(yaml.dump(manual_check))
+    print(yaml.dump(dict(manual_check)))
 
 if __name__ == "__main__":
     main()
