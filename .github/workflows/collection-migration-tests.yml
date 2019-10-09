@@ -48,9 +48,6 @@ jobs:
                   cd "${coll_dir}"
                   pwd
                   ansible-test --help
-                  echo Injecting sanity test requirements into "'${coll_dir}/tests/sanity/requirements.txt'"...
-                  mkdir -pv tests/sanity/
-                  cp -v "${GITHUB_WORKSPACE}/.cache/releases/devel.git/test/sanity/requirements.txt" tests/sanity/requirements.txt
                   ansible-test sanity --requirements --python "${{ matrix.python-version }}" -vvv || :
               )
           done

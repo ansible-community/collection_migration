@@ -604,19 +604,18 @@ def inject_requirements_into_unit_tests(checkout_path, collection_dir):
     logger.info('Unit tests deps injected into collection')
 
 
-def inject_requirements_into_integration_tests(checkout_path, collection_dir):
-    """Inject integration tests Python dependencies into collection."""
-    coll_integration_tests_dir = os.path.join(
-        collection_dir, 'tests', 'integration',
+def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
+    """Inject sanity tests Python dependencies into collection."""
+    coll_sanity_tests_dir = os.path.join(
+        collection_dir, 'tests', 'sanity',
     )
-    original_integration_tests_req_file = os.path.join(
-        checkout_path, 'test', 'integration', 'requirements.txt',
+    original_sanity_tests_req_file = os.path.join(
+        checkout_path, 'test', 'sanity', 'requirements.txt',
     )
 
-    if os.path.exists(original_integration_tests_req_file):
-        os.makedirs(coll_integration_tests_dir, exist_ok=True)
-        shutil.copy( original_integration_tests_req_file, coll_integration_tests_dir)
-        logger.info('Integration tests deps injected into collection')
+    os.makedirs(coll_sanity_tests_dir, exist_ok=True)
+    shutil.copy(original_sanity_tests_req_file, coll_sanity_tests_dir)
+    logger.info('Sanity tests deps injected into collection')
 
 
 def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
@@ -937,6 +936,7 @@ def assemble_collections(spec, args, target_github_org):
             inject_ignore_into_sanity_tests(
                 checkout_path, collection_dir, migrated_to_collection,
             )
+            inject_requirements_into_sanity_tests(checkout_path, collection_dir)
 
             # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
             try:
@@ -949,8 +949,6 @@ def assemble_collections(spec, args, target_github_org):
                 dep = '%s.%s' % (dep_ns, dep_coll)
                 # FIXME hardcoded version
                 galaxy_metadata['dependencies'][dep] = '>=1.0'
-
-            inject_requirements_into_integration_tests(checkout_path, collection_dir)
 
             integration_test_dirs = []
             integration_tests_deps = set()
