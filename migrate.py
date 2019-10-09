@@ -577,6 +577,25 @@ def inject_init_into_tree(target_dir):
         write_text_into_file(initpath, '')
 
 
+def inject_gitignore_into_collection(collection_dir):
+    """Insert a ``.gitignore`` file into the collection dir.
+
+    The ``.gitignore`` resource file has been generated
+    using the following command:
+
+      curl -sL https://www.gitignore.io/api/git%2Clinux%2Cpydev%2Cpython%2Cwindows%2Cpycharm%2Ball%2Cjupyternotebook%2Cvim%2Cwebstorm%2Cemacs%2Cdotenv > resources/.gitignore.tmpl
+    """
+    gitignore_resource_path = os.path.join(
+        os.path.dirname(__file__),
+        'resources',
+        '.gitignore.tmpl',
+    )
+    shutil.copy(
+        gitignore_resource_path,
+        os.path.join(collection_dir, '.gitignore'),
+    )
+
+
 def inject_gitignore_into_tests(collection_dir):
     """Generate a ``.gitignore`` file for the collection tests dir."""
     os.makedirs(os.path.join(collection_dir, 'tests'), exist_ok=True)
@@ -973,6 +992,8 @@ def assemble_collections(spec, args, target_github_org):
 
             integration_test_dirs = []
             integration_tests_deps = set()
+
+            inject_gitignore_into_collection(collection_dir)
 
             # write collection metadata
             write_yaml_into_file_as_is(
