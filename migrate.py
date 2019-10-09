@@ -523,6 +523,29 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
     return deps
 
 
+def rewrite_py(src, dest, collection, spec, namespace, args):
+    mod_src_text, mod_fst = read_module_txt_n_fst(src)
+
+    import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
+
+    try:
+        docs_deps = rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
+    except LookupError as err:
+        docs_deps = []
+        logger.info('%s in %s', err, src)
+
+    rewrite_class_property(mod_fst, collection, namespace, dest)
+
+    plugin_data_new = mod_fst.dumps()
+
+    if mod_src_text != plugin_data_new:
+        logger.info('rewriting plugin references in %s' % dest)
+
+    write_text_into_file(dest, plugin_data_new)
+
+    return (import_deps, docs_deps)
+
+
 def read_module_txt_n_fst(path):
     """Parse module source code in form of Full Syntax Tree."""
     mod_src_text = read_text_from_file(path)
@@ -892,22 +915,9 @@ def assemble_collections(spec, args, target_github_org):
 
                     logger.info('Processing %s -> %s' % (src, dest))
 
-                    mod_src_text, mod_fst = read_module_txt_n_fst(src)
-
-                    import_deps += rewrite_imports(mod_fst, collection, spec, namespace, args)
-                    try:
-                        docs_deps += rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
-                    except LookupError as err:
-                        logger.info('%s in %s', err, src)
-
-                    rewrite_class_property(mod_fst, collection, namespace, dest)
-
-                    plugin_data_new = mod_fst.dumps()
-
-                    if mod_src_text != plugin_data_new:
-                        logger.info('rewriting plugin references in %s' % dest)
-
-                    write_text_into_file(dest, plugin_data_new)
+                    deps = rewrite_py(src, dest, collection, spec, namespace, args)
+                    import_deps += deps[0]
+                    docs_deps += deps[1]
 
                     integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
                     # process unit tests
@@ -1121,24 +1131,13 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 dummy, ext = os.path.splitext(filename)
 
                 if ext in ('.py',):
-                    # FIXME duplicate code from the 'main' function
-                    mod_src_text, mod_fst = read_module_txt_n_fst(full_path)
+                    import_deps, docs_deps = rewrite_py(full_path, dest, collection, spec, namespace, args)
 
-                    import_dependencies = rewrite_imports(mod_fst, collection, spec, namespace, args)
-                    try:
-                        docs_dependencies = rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
-                    except LookupError as err:
-                        docs_dependencies = []
-                        logger.info('%s in %s', err, full_path)
-                    plugin_data_new = mod_fst.dumps()
-
-                    for dep_ns, dep_coll in docs_dependencies + import_dependencies:
+                    for dep_ns, dep_coll in import_deps + docs_deps:
                         integration_tests_add_to_deps((namespace, collection), (dep_ns, dep_coll))
-
-                    write_text_into_file(dest, plugin_data_new)
                 elif ext in ('.ps1',):
                     # FIXME
-                    pass
+                    shutil.copy2(full_path, dest)
                 elif ext in ('.yml', '.yaml'):
                     rewrite_yaml(full_path, dest, namespace, collection, spec, args)
                 elif ext in ('.sh',):
