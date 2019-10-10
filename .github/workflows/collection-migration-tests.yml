@@ -8,7 +8,7 @@ on:
 
 jobs:
   test_migration:
-    name: install prereqs
+    name: Smoke-test migration
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
