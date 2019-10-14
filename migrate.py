@@ -249,74 +249,74 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
         ('units', ): unit_tests_path,
     }
 
+    patches = (
+        mod_fst('string',
+                lambda x:
+                    'ansible.modules' in x.dumps() or
+                    'ansible.module_utils' in x.dumps() or
+                    'ansible.plugins' in x.dumps() or
+                    'units' in x.dumps()
+        )
+    )
+
     deps = []
-    for patch in mod_fst('decorator', lambda x: x.dumps().startswith('@patch(')) + mod_fst('assignment', lambda x: 'patch(' in x.dumps())+ mod_fst('with', lambda x: 'patch(' in x.dumps()):
-        try:
-            value = patch.call.value
-        except AttributeError:
-            continue
+    for el in patches:
+        val = el.to_python().split('.')
 
-        for el in value:
-            try:
-                val = el.value.to_python().split('.')
-            except IndentationError as e:
-                logger.error(e)
-                add_manual_check(patch.dumps(), str(e), filename)
-                continue
-            except (AttributeError, TypeError, ValueError) as e:
-                # might be something else, like 'side_effect=...'
+        for old, new in import_map.items():
+            token_length = len(old)
+            if tuple(val[:token_length]) != old:
                 continue
 
-            for old, new in import_map.items():
-                token_length = len(old)
-                if tuple(val[:token_length]) != old:
-                    continue
+            if val[0] == 'units':
+                val[:token_length] = new
+                el.value = "'%s'" % '.'.join(val)
+                continue
+            if val[1] in ('modules', 'module_utils'):
+                plugin_type = val[1]
 
-                if val[1] in ('modules', 'module_utils'):
-                    plugin_type = val[1]
-
-                    # patch('ansible.modules.storage.netapp.na_ontap_nvme.NetAppONTAPNVMe.create_nvme')
-                    # look for module name
-                    for i in (len(val), -1, -2):
-                        plugin_name = '/'.join(val[2:i])
-                        try:
-                            found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
-                            break
-                        except LookupError:
-                            continue
-                    else:
-                        continue
-                elif val[1] == 'plugins':
-                    # patch('ansible.plugins.lookup.manifold.open_url')
-                    plugin_type = val[2]
-                    plugin_name = val[3]
-
+                # 'ansible.modules.storage.netapp.na_ontap_nvme.NetAppONTAPNVMe.create_nvme'
+                # look for module name
+                for i in (len(val), -1, -2):
+                    plugin_name = '/'.join(val[2:i])
                     try:
                         found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
+                        break
                     except LookupError:
                         continue
                 else:
                     continue
+            elif val[1] == 'plugins':
+                # 'ansible.plugins.lookup.manifold.open_url'
+                plugin_type = val[2]
+                plugin_name = val[3]
 
-                if found_coll in COLLECTION_SKIP_REWRITE:
+                try:
+                    found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
+                except LookupError:
                     continue
+            else:
+                continue
 
-                if args.fail_on_core_rewrite:
-                    raise RuntimeError('Rewriting to %s' % '.'.join(val))
+            if found_coll in COLLECTION_SKIP_REWRITE:
+                continue
 
-                val[:token_length] = new
+            if args.fail_on_core_rewrite:
+                raise RuntimeError('Rewriting to %s' % '.'.join(val))
 
-                if plugin_type == 'modules' and not args.preserve_module_subdirs:
-                    plugin_subdirs_len = len(plugin_name.split('/')[:-1])
-                    new_len = len(new)
-                    del val[new_len:new_len+plugin_subdirs_len]
+            val[:token_length] = new
 
-                if (found_ns, found_coll) != (namespace, collection):
-                    val[1] = found_ns
-                    val[2] = found_coll
-                    deps.append((found_ns, found_coll))
+            if plugin_type == 'modules' and not args.preserve_module_subdirs:
+                plugin_subdirs_len = len(plugin_name.split('/')[:-1])
+                new_len = len(new)
+                del val[new_len:new_len+plugin_subdirs_len]
 
-                el.value = "'%s'" % '.'.join(val)
+            if (found_ns, found_coll) != (namespace, collection):
+                val[1] = found_ns
+                val[2] = found_coll
+                deps.append((found_ns, found_coll))
+
+            el.value = "'%s'" % '.'.join(val)
 
     return deps
 
