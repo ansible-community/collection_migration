@@ -793,7 +793,6 @@ def assemble_collections(spec, args, target_github_org):
     releases_dir = os.path.join(args.vardir, 'releases')
     checkout_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
     collections_base_dir = os.path.join(args.vardir, 'collections')
-    meta_dir = os.path.join(args.vardir, 'meta')
     integration_test_dirs = []
 
     # expand globs so we deal with specific paths
@@ -1369,7 +1368,7 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest):
             integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
         except LookupError:
             if '{{' in el[key]:
-                add_manual_check((key, el[key], dest))
+                add_manual_check(key, el[key], dest)
 
 
 def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
