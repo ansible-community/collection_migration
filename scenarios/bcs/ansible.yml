@@ -1072,26 +1072,30 @@ unix:
     shell:
     - csh.py
     - fish.py
-vmware:
+vmware_soap:
     connection:
     - vmware_tools.py
     doc_fragments:
     - vmware.py
+    inventory:
+    - vmware_vm_inventory.py
+    modules:
+    - cloud/vmware/*
+    module_utils:
+    - vmware.py
+vmware_rest:
+    doc_fragments:
     - vmware_rest_client.py
     - VmwareRestModule.py
     - VmwareRestModule_filters.py
     - VmwareRestModule_full.py
     - VmwareRestModule_state.py
-    inventory:
-    - vmware_vm_inventory.py
-    modules:
-    - cloud/vmware/*
-    - cloud/vmware_httpapi/*
     module_utils:
-    - vmware.py
     - vmware_rest_client.py
     - vmware_spbm.py
     - vmware_httpapi/*
+    modules:
+    - cloud/vmware_httpapi/*
     httpapi:
     - vmware.py
 vultr:
