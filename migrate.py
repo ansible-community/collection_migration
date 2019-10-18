@@ -1182,17 +1182,52 @@ def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name
     if plugin_type != 'modules':
         return []
 
-    files = glob.glob(os.path.join(checkout_dir, 'test/integration/targets', os.path.basename(os.path.splitext(plugin_name)[0])))
-    for fname in files:
+    files = [
+        (file_, True) for file_ in glob.glob(os.path.join(checkout_dir, 'test/integration/targets', os.path.basename(os.path.splitext(plugin_name)[0])))
+    ]
+    deps = []
+    for fname, dummy_to_remove in files:
         logger.debug('Found integration tests for %s %s in %s' % (plugin_type, plugin_name, fname))
+        deps.extend(process_needs_target(checkout_dir, fname))
 
-    return files
+    return files + deps
+
+
+def process_needs_target(checkout_dir, fname):
+    deps = []
+    dep_file = os.path.join(fname, 'meta', 'main.yml')
+    if os.path.exists(dep_file):
+        content = read_yaml_file(dep_file)
+        if content:
+            meta_deps = content.get('dependencies', {}) or {}
+            for dep in meta_deps:
+                if isinstance(dep, dict):
+                    dep = dep.get('role')
+                dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
+                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                deps.append((dep_fname, False))
+                deps.extend(process_needs_target(checkout_dir, dep_fname))
+
+    aliases_file = os.path.join(fname, 'aliases')
+    if os.path.exists(aliases_file):
+        content = read_text_from_file(aliases_file)
+        for alias in content.split('\n'):
+            if not alias.startswith('needs/target/'):
+                continue
+            dep = alias.split('/')[-1]
+            dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
+            if os.path.exists(dep_fname):
+                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                deps.append((dep_fname, False))
+                deps.extend(process_needs_target(checkout_dir, dep_fname))
+
+    return deps
 
 
 def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args):
     # FIXME module_defaults groups
 
-    for test_dir in test_dirs:
+    for test_dir, to_remove in test_dirs:
         for dirpath, dirnames, filenames in os.walk(test_dir):
             for filename in filenames:
                 full_path = os.path.join(dirpath, filename)
@@ -1224,7 +1259,8 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 else:
                     shutil.copy2(full_path, dest)
 
-                remove(full_path)
+                if to_remove:
+                    remove(full_path)
 
 
 def rewrite_sh(full_path, dest, namespace, collection, spec, args):
