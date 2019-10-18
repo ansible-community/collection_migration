@@ -696,12 +696,58 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
     # Find all test modules with the same ending as the current plugin
     plugin_dir, plugin_mod = os.path.split(plugin)
-    matching_test_modules = glob.glob(os.path.join(type_base_subdir, plugin_dir, f'*{plugin_mod}'))
+    matching_test_modules = set(glob.glob(os.path.join(
+        type_base_subdir,
+        plugin_dir,
+        f'*{plugin_mod}',
+    )))
     # Path(matching_test_modules[0]).relative_to(Path(checkout_path))
     # os.path.relpath(matching_test_modules[0], checkout_path)
     if not matching_test_modules:
         logger.info('No tests matching %s/%s found', plugin_type, plugin)
         return copy_map
+
+    def find_up_the_tree(target_path):
+        """Find conftest.py in the parent test dirs."""
+        needle_filename = 'conftest.py'
+        tests_root = os.path.join(checkout_path, unit_tests_relative_root)
+
+        relative_target_path = os.path.relpath(target_path, tests_root)
+        if relative_target_path.startswith('..'):
+            raise ValueError(
+                f'`{target_path}` is not a part of `{tests_root}`',
+            )
+
+        logger.info(
+            'Locating parent %s '
+            'for %s...',
+            needle_filename,
+            target_path,
+        )
+        while relative_target_path:
+            relative_target_path, _ = os.path.split(relative_target_path)
+
+            target_file = os.path.join(
+                tests_root,
+                relative_target_path,
+                needle_filename,
+            )
+            if not os.path.isfile(target_file):
+                continue
+
+            logger.info(
+                'Located %s...',
+                target_file
+            )
+            yield target_file
+
+    # Augment constest.py's from
+    # parent dirs:
+    matching_test_modules.update(
+        p
+        for m in matching_test_modules.copy()
+        for p in find_up_the_tree(m)
+    )
 
     def traverse_dir(path, relative_to):
         rel_path = os.path.join(relative_to, path)
