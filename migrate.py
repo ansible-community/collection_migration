@@ -1514,7 +1514,7 @@ def _rewrite_yaml_filter(value, namespace, collection, spec, args):
                 if fm is None:
                     continue
                 filters = fm().filters().keys()
-                for found_filter in (match[5] for match in FILTER_RE.findall(value)):
+                for found_filter in set(match[5] for match in FILTER_RE.findall(value)):
                     if found_filter not in filters:
                         continue
                     new_plugin_name = get_plugin_fqcn(ns, coll, found_filter)
@@ -1537,7 +1537,7 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args):
                 if tm is None:
                     continue
                 tests = tm().tests().keys()
-                for found_test in (match[5] for match in TEST_RE.findall(value)):
+                for found_test in set(match[5] for match in TEST_RE.findall(value)):
                     if found_test not in tests:
                         continue
                     new_plugin_name = get_plugin_fqcn(ns, coll, found_test)
