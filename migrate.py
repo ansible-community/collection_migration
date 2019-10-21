@@ -1540,7 +1540,7 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args):
                 for found_test in (match[5] for match in TEST_RE.findall(value)):
                     if found_test not in tests:
                         continue
-                    new_plugin_name = get_plugin_fqcn(ns, coll, found_filter)
+                    new_plugin_name = get_plugin_fqcn(ns, coll, found_test)
                     if args.fail_on_core_rewrite:
                         raise RuntimeError('Rewriting to %s' % new_plugin_name)
                     value = value.replace(found_test, new_plugin_name)
