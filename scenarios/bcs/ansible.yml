@@ -1083,7 +1083,7 @@ vmware_soap:
     - cloud/vmware/*
     module_utils:
     - vmware.py
-     vmware_spbm.py
+    - vmware_spbm.py
 vmware_rest:
     doc_fragments:
     - vmware_rest_client.py

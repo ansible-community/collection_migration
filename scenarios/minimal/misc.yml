@@ -20,7 +20,6 @@ glob:
     - edgeos_config.py
     - enos.py
     - eos.py
-    - exos_config.py
     - exos_lldp_global.py
     - fail.py
     - fetch.py
