@@ -321,21 +321,20 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
     return deps
 
 
-def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
-    try:
-        doc_val = (
-            mod_fst.
-            find_all('assignment').
-            find('name', value='DOCUMENTATION').
-            parent.
-            value
-        )
-    except AttributeError:
-        raise LookupError('No DOCUMENTATION found')
+def rewrite_version_added(docs):
+    docs.pop('version_added', None)
 
-    docs_parsed = yaml.safe_load(doc_val.to_python().strip('\n'))
+    if not isinstance(docs['options'], dict):
+        # lib/ansible/plugins/doc_fragments/emc.py:
+        # options': ['See respective platform section for more details'],
+        return
 
-    fragments = docs_parsed.get('extends_documentation_fragment', [])
+    for option in docs['options']:
+        docs['options'][option].pop('version_added', None)
+
+
+def rewrite_docs_fragments(docs, collection, spec, namespace, args):
+    fragments = docs.get('extends_documentation_fragment', [])
     if not fragments:
         return []
 
@@ -371,7 +370,27 @@ def rewrite_doc_fragments(mod_fst, collection, spec, namespace, args):
         if (namespace, collection) != (fragment_namespace, fragment_collection):
             deps.append((fragment_namespace, fragment_collection))
 
-    docs_parsed['extends_documentation_fragment'] = new_fragments
+    docs['extends_documentation_fragment'] = new_fragments
+
+    return deps
+
+
+def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
+    try:
+        doc_val = (
+            mod_fst.
+            find_all('assignment').
+            find('name', value='DOCUMENTATION').
+            parent.
+            value
+        )
+    except AttributeError:
+        raise LookupError('No DOCUMENTATION found')
+
+    docs_parsed = yaml.safe_load(doc_val.to_python().strip('\n'))
+
+    deps = rewrite_docs_fragments(docs_parsed, collection, spec, namespace, args)
+    rewrite_version_added(docs_parsed)
 
     doc_str_tmpl = RAW_STR_TMPL if doc_val.type == 'raw_string' else STR_TMPL
     # `doc_val` holds a baron representation of the string node
@@ -540,7 +559,7 @@ def rewrite_py(src, dest, collection, spec, namespace, args):
     import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
 
     try:
-        docs_deps = rewrite_doc_fragments(mod_fst, collection, spec, namespace, args)
+        docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
     except LookupError as err:
         docs_deps = []
         logger.info('%s in %s', err, src)
@@ -1001,7 +1020,6 @@ def assemble_collections(spec, args, target_github_org):
                         plugin_type, plugin, spec,
                     )
                     migrated_to_collection.update(unit_tests_migrated_to_collection)
-                    # TODO: sanity tests?
 
             inject_init_into_tree(
                 os.path.join(collection_dir, 'tests', 'unit'),
