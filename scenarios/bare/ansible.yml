@@ -24,7 +24,7 @@ community:
     - edgeos_config.py
     - enos.py
     - eos.py
-    - exos_lldp_global.py
+    - exos.py
     - fail.py
     - fetch.py
     - fortios_config.py
@@ -69,14 +69,14 @@ community:
     - set_fact.py
     - set_stats.py
     - shell.py
-    - slxos_config.py
+    - slxos.py
     - sros.py
     - synchronize.py
     - telnet.py
     - template.py
     - unarchive.py
     - uri.py
-    - voss_config.py
+    - voss.py
     - vyos.py
     - wait_for_connection.py
     - win_copy.py

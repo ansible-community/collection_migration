@@ -20,7 +20,7 @@ glob:
     - edgeos_config.py
     - enos.py
     - eos.py
-    - exos_lldp_global.py
+    - exos.py
     - fail.py
     - fetch.py
     - fortios_config.py
@@ -53,12 +53,12 @@ glob:
     - nxos_file_copy.py
     - onyx_config.py
     - patch.py
-    - slxos_config.py
+    - slxos.py
     - sros.py
     - synchronize.py
     - telnet.py
     - unarchive.py
-    - voss_config.py
+    - voss.py
     - vyos.py
     - wait_for_connection.py
     - win_copy.py
