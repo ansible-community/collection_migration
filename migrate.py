@@ -760,9 +760,9 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
             )
             yield target_file
 
-    # Augment constest.py's from
+    # Discover constest.py's from
     # parent dirs:
-    matching_test_modules.update(
+    conftest_modules = set(
         p
         for m in matching_test_modules.copy()
         for p in find_up_the_tree(m)
@@ -811,25 +811,49 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
     for src_f, dst_f in compat_mock_helpers:
         copy_map[src_f] = dst_f
 
-    # Add test modules along with related artifacts
-    for td, tm in (os.path.split(p) for p in matching_test_modules):
-        relative_td = os.path.relpath(td, checkout_path)
-        copy_map_relative_td_to = os.path.join(
-            collection_unit_tests_relative_root,
-            plugin_type, plugin_dir,
-        )
-        copy_map[os.path.join(relative_td, tm)] = os.path.join(copy_map_relative_td_to, tm)
-        # Add subdirs that may contain related test artifacts/fixtures
-        # Also add important modules like conftest or __init__
-        for path in os.listdir(td):
-            is_dir = os.path.isdir(os.path.join(td, path))
-            if not is_dir and path.startswith('test_'):
+    def discover_file_migrations(paths, *, find_related=False):
+        """Generate the migration map for given paths.
+
+        Optionally, traverse siblings.
+        """
+        for td, tm in map(os.path.split, paths):
+            relative_td = os.path.relpath(td, checkout_path)
+            copy_map_relative_td_to = os.path.join(
+                collection_unit_tests_relative_root,
+                plugin_type, plugin_dir,
+            )
+            yield (
+                os.path.join(relative_td, tm),
+                os.path.join(copy_map_relative_td_to, tm),
+            )
+
+            if not find_related:
                 continue
-            for src_f in traverse_dir(
+
+            # Add subdirs that may contain related test artifacts/fixtures
+            # Also add important modules like conftest or __init__
+            related_test_fixtures = itertools.chain.from_iterable(
+                traverse_dir(
                     os.path.join(relative_td, path),
                     checkout_path,
-            ):
-                copy_map[src_f] = replace_path_prefix(src_f)
+                )
+                for path in os.listdir(td)
+                if os.path.isdir(os.path.join(td, path))
+                or not path.startswith('test_')
+            )
+
+            yield from (
+                (
+                    test_artifact_path,
+                    replace_path_prefix(test_artifact_path),
+                )
+                for test_artifact_path in related_test_fixtures
+            )
+
+    copy_map.update(itertools.chain(
+        discover_file_migrations(conftest_modules),
+        discover_file_migrations(matching_test_modules, find_related=True),
+    ))
 
     # Actually copy tests
     for src_f, dest_f in copy_map.items():
@@ -838,6 +862,7 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
 
         src = os.path.join(checkout_path, src_f)
+        logger.info('Copying %s -> %s', src, dest)
         shutil.copy(src, dest)
 
         if src == '.cache/releases/devel.git/test/units/modules/utils.py':
