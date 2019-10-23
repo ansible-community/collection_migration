@@ -972,6 +972,7 @@ unix:
     action:
     - assemble.py
     - synchronize.py
+    - unarchive.py
     become:
     - doas.py
     - ksu.py

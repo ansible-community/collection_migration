@@ -3385,6 +3385,7 @@ unix:
     - assemble.py
     - patch.py
     - synchronize.py
+    - unarchive.py
     become:
     - doas.py
     connection:
