@@ -484,7 +484,11 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
             continue
         elif imp_src[1].value == 'module_utils':
             plugin_type = 'module_utils'
-            plugin_name = '/'.join(t.value for t in imp_src[token_length:])
+            try:
+                plugin_name = '/'.join([t.value for t in imp_src[token_length:]] + [imp.targets[0].value])
+            except AttributeError:
+                plugin_name = '/'.join(t.value for t in imp_src[token_length:])
+
             if not plugin_name:
                 # 'from ansible.module_utils import distro'
                 plugin_name = imp.targets[0].value
