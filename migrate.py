@@ -54,6 +54,7 @@ COLLECTION_SKIP_REWRITE = ('_core',)
 RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
 
+BAD_EXT = frozenset({'.pyo', '.pyc'})
 
 os.makedirs(VARDIR, exist_ok=True)
 logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.WARNING)
@@ -857,6 +858,9 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
     # Actually copy tests
     for src_f, dest_f in copy_map.items():
+        if os.path.splitext(src_f)[1] in BAD_EXT:
+            continue
+
         dest = os.path.join(collection_dir, dest_f)
         # Ensure target dir exists
         os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -956,6 +960,10 @@ def assemble_collections(spec, args, target_github_org):
 
                 # process each plugin
                 for plugin in spec[namespace][collection][plugin_type]:
+
+                    if os.path.splitext(plugin)[1] in BAD_EXT:
+                        raise Exception("We should not be migrating compiled files: %s" % plugin)
+
                     plugin_sig = '%s/%s' % (plugin_type, plugin)
                     if plugin_sig in seen:
                         raise ValueError(
@@ -1285,7 +1293,9 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
 
                 dummy, ext = os.path.splitext(filename)
 
-                if ext in ('.py',):
+                if ext in BAD_EXT:
+                    continue
+                elif ext in ('.py',):
                     import_deps, docs_deps = rewrite_py(full_path, dest, collection, spec, namespace, args)
 
                     for dep_ns, dep_coll in import_deps + docs_deps:
