@@ -609,8 +609,7 @@ misc:
     - cloud/ovh/ovh_ip_failover.py
     - cloud/ovh/ovh_ip_loadbalancing_backend.py
     - cloud/ovirt/*
-    - cloud/packet/packet_device.py
-    - cloud/packet/packet_sshkey.py
+    - cloud/packet/*
     - cloud/profitbricks/*
     - cloud/pubnub/pubnub_blocks.py
     - cloud/rackspace/*

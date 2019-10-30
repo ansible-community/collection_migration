@@ -426,9 +426,7 @@ glob:
     - cloud/hcloud/*
     - cloud/heroku/__init__.py
     - cloud/heroku/heroku_collaborator.py
-    - cloud/huawei/__init__.py
-    - cloud/huawei/hwc_network_vpc.py
-    - cloud/huawei/hwc_smn_topic.py
+    - cloud/huawei/*
     - cloud/kubevirt/__init__.py
     - cloud/kubevirt/kubevirt_cdi_upload.py
     - cloud/kubevirt/kubevirt_preset.py
@@ -463,9 +461,7 @@ glob:
     - cloud/oracle/*
     - cloud/ovh/*
     - cloud/ovirt/*
-    - cloud/packet/__init__.py
-    - cloud/packet/packet_device.py
-    - cloud/packet/packet_sshkey.py
+    - cloud/packet/*
     - cloud/podman/__init__.py
     - cloud/podman/podman_image.py
     - cloud/podman/podman_image_info.py

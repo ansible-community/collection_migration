@@ -673,6 +673,7 @@ community:
     - cloud/amazon/iam_mfa_device_info.py
     - cloud/amazon/iam_password_policy.py
     - cloud/amazon/iam_policy.py
+    - cloud/amazon/iam_policy_info.py
     - cloud/amazon/iam_role.py
     - cloud/amazon/iam_role_info.py
     - cloud/amazon/iam_saml_federation.py
@@ -1151,6 +1152,10 @@ community:
     - cloud/google/gcp_redis_instance_info.py
     - cloud/google/gcp_resourcemanager_project.py
     - cloud/google/gcp_resourcemanager_project_info.py
+    - cloud/google/gcp_runtimeconfig_config.py
+    - cloud/google/gcp_runtimeconfig_config_info.py
+    - cloud/google/gcp_runtimeconfig_variable.py
+    - cloud/google/gcp_runtimeconfig_variable_info.py
     - cloud/google/gcp_sourcerepo_repository.py
     - cloud/google/gcp_sourcerepo_repository_info.py
     - cloud/google/gcp_spanner_database.py
@@ -1192,8 +1197,18 @@ community:
     - cloud/heroku/__init__.py
     - cloud/heroku/heroku_collaborator.py
     - cloud/huawei/__init__.py
+    - cloud/huawei/hwc_ecs_instance.py
+    - cloud/huawei/hwc_evs_disk.py
     - cloud/huawei/hwc_network_vpc.py
     - cloud/huawei/hwc_smn_topic.py
+    - cloud/huawei/hwc_vpc_eip.py
+    - cloud/huawei/hwc_vpc_peering_connect.py
+    - cloud/huawei/hwc_vpc_port.py
+    - cloud/huawei/hwc_vpc_private_ip.py
+    - cloud/huawei/hwc_vpc_route.py
+    - cloud/huawei/hwc_vpc_security_group.py
+    - cloud/huawei/hwc_vpc_security_group_rule.py
+    - cloud/huawei/hwc_vpc_subnet.py
     - cloud/kubevirt/__init__.py
     - cloud/kubevirt/kubevirt_cdi_upload.py
     - cloud/kubevirt/kubevirt_preset.py
@@ -1363,8 +1378,10 @@ community:
     - cloud/ovirt/ovirt_vmpool.py
     - cloud/ovirt/ovirt_vmpool_info.py
     - cloud/ovirt/ovirt_vnic_profile.py
+    - cloud/ovirt/ovirt_vnic_profile_info.py
     - cloud/packet/__init__.py
     - cloud/packet/packet_device.py
+    - cloud/packet/packet_project.py
     - cloud/packet/packet_sshkey.py
     - cloud/podman/__init__.py
     - cloud/podman/podman_image.py
@@ -2024,6 +2041,8 @@ community:
     - network/aci/mso_schema_template_bd_subnet.py
     - network/aci/mso_schema_template_contract_filter.py
     - network/aci/mso_schema_template_deploy.py
+    - network/aci/mso_schema_template_external_epg_contract.py
+    - network/aci/mso_schema_template_external_epg_subnet.py
     - network/aci/mso_schema_template_externalepg.py
     - network/aci/mso_schema_template_filter_entry.py
     - network/aci/mso_schema_template_l3out.py
@@ -2263,7 +2282,10 @@ community:
     - network/cloudengine/ce_interface.py
     - network/cloudengine/ce_interface_ospf.py
     - network/cloudengine/ce_ip_interface.py
+    - network/cloudengine/ce_lacp.py
     - network/cloudengine/ce_link_status.py
+    - network/cloudengine/ce_lldp.py
+    - network/cloudengine/ce_lldp_interface.py
     - network/cloudengine/ce_mlag_config.py
     - network/cloudengine/ce_mlag_interface.py
     - network/cloudengine/ce_mtu.py
@@ -2287,6 +2309,7 @@ community:
     - network/cloudengine/ce_snmp_user.py
     - network/cloudengine/ce_startup.py
     - network/cloudengine/ce_static_route.py
+    - network/cloudengine/ce_static_route_bfd.py
     - network/cloudengine/ce_stp.py
     - network/cloudengine/ce_switchport.py
     - network/cloudengine/ce_vlan.py
@@ -2394,7 +2417,10 @@ community:
     - network/exos/exos_command.py
     - network/exos/exos_config.py
     - network/exos/exos_facts.py
+    - network/exos/exos_l2_interfaces.py
     - network/exos/exos_lldp_global.py
+    - network/exos/exos_lldp_interfaces.py
+    - network/exos/exos_vlans.py
     - network/f5/__init__.py
     - network/f5/_bigip_asm_policy.py
     - network/f5/_bigip_facts.py
@@ -4560,18 +4586,36 @@ community:
     - network/exos/argspec/__init__.py
     - network/exos/argspec/facts/__init__.py
     - network/exos/argspec/facts/facts.py
+    - network/exos/argspec/l2_interfaces/__init__.py
+    - network/exos/argspec/l2_interfaces/l2_interfaces.py
     - network/exos/argspec/lldp_global/__init__.py
     - network/exos/argspec/lldp_global/lldp_global.py
+    - network/exos/argspec/lldp_interfaces/__init__.py
+    - network/exos/argspec/lldp_interfaces/lldp_interfaces.py
+    - network/exos/argspec/vlans/__init__.py
+    - network/exos/argspec/vlans/vlans.py
     - network/exos/config/__init__.py
+    - network/exos/config/l2_interfaces/__init__.py
+    - network/exos/config/l2_interfaces/l2_interfaces.py
     - network/exos/config/lldp_global/__init__.py
     - network/exos/config/lldp_global/lldp_global.py
+    - network/exos/config/lldp_interfaces/__init__.py
+    - network/exos/config/lldp_interfaces/lldp_interfaces.py
+    - network/exos/config/vlans/__init__.py
+    - network/exos/config/vlans/vlans.py
     - network/exos/exos.py
     - network/exos/facts/__init__.py
     - network/exos/facts/facts.py
+    - network/exos/facts/l2_interfaces/__init__.py
+    - network/exos/facts/l2_interfaces/l2_interfaces.py
     - network/exos/facts/legacy/__init__.py
     - network/exos/facts/legacy/base.py
     - network/exos/facts/lldp_global/__init__.py
     - network/exos/facts/lldp_global/lldp_global.py
+    - network/exos/facts/lldp_interfaces/__init__.py
+    - network/exos/facts/lldp_interfaces/lldp_interfaces.py
+    - network/exos/facts/vlans/__init__.py
+    - network/exos/facts/vlans/vlans.py
     - network/exos/utils/__init__.py
     - network/exos/utils/utils.py
     - network/f5/__init__.py
