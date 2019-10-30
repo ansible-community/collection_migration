@@ -1652,6 +1652,9 @@ def main():
     spec = {}
 
     for spec_file in os.listdir(args.spec_dir):
+        if not spec_file.endswith('.yml'):
+            logger.debug('skipping %s as it is not a yaml file' % spec_file)
+            continue
         try:
             spec[os.path.splitext(os.path.basename(spec_file))[0]] = load_spec_file(os.path.join(args.spec_dir, spec_file))
         except Exception as e:

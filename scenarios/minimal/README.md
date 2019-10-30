@@ -1,0 +1,1 @@
+Opinionated 'minimal' usable ansible version, keeps certain things in core that are either required for any ansible cli to execute or allow minimal configuration of the system to then enable installing collections and/or other content.
