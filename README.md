@@ -76,3 +76,16 @@ as a means to let collections know dependencies but not actually
 migrate, also the special `_core` collection is used to indicate
 plugins that would stay in core and not require rewrites for those
 referencing them.
+
+
+Known issues
+------------
+
+* If the scenario doesn't contain an explicit enumeration of artifacts
+  related to the given resource, it may result in an incomplete
+  migration.
+  One example of such case it including an action plugin and omitting
+  the module with the same name, or any other related files. This may
+  result in various sanity and/or other tests failures.
+  E.g. `action plugin has no matching module to provide documentation`
+  (`action-plugin-docs`).
