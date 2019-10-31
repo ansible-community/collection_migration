@@ -4,8 +4,6 @@ glob:
     - aruba.py
     - asa.py
     - assemble.py
-    - assert.py
-    - async_status.py
     - aws_s3.py
     - bigip.py
     - bigiq.py
@@ -21,10 +19,7 @@ glob:
     - enos.py
     - eos.py
     - exos.py
-    - fail.py
-    - fetch.py
     - fortios_config.py
-    - include_vars.py
     - ios.py
     - iosxr.py
     - ironware.py
@@ -52,7 +47,6 @@ glob:
     - nxos.py
     - nxos_file_copy.py
     - onyx_config.py
-    - patch.py
     - slxos.py
     - sros.py
     - synchronize.py
@@ -60,7 +54,6 @@ glob:
     - unarchive.py
     - voss.py
     - vyos.py
-    - wait_for_connection.py
     - win_copy.py
     - win_reboot.py
     - win_template.py
@@ -640,7 +633,6 @@ glob:
     - files/read_csv.py
     - files/synchronize.py
     - files/tempfile.py
-    - files/template.py
     - files/unarchive.py
     - files/xattr.py
     - files/xml.py
@@ -1002,7 +994,10 @@ glob:
     - network/cloudengine/ce_interface.py
     - network/cloudengine/ce_interface_ospf.py
     - network/cloudengine/ce_ip_interface.py
+    - network/cloudengine/ce_lacp.py
     - network/cloudengine/ce_link_status.py
+    - network/cloudengine/ce_lldp.py
+    - network/cloudengine/ce_lldp_interface.py
     - network/cloudengine/ce_mlag_config.py
     - network/cloudengine/ce_mlag_interface.py
     - network/cloudengine/ce_mtu.py
@@ -1026,6 +1021,7 @@ glob:
     - network/cloudengine/ce_snmp_user.py
     - network/cloudengine/ce_startup.py
     - network/cloudengine/ce_static_route.py
+    - network/cloudengine/ce_static_route_bfd.py
     - network/cloudengine/ce_stp.py
     - network/cloudengine/ce_switchport.py
     - network/cloudengine/ce_vlan.py
@@ -1133,7 +1129,10 @@ glob:
     - network/exos/exos_command.py
     - network/exos/exos_config.py
     - network/exos/exos_facts.py
+    - network/exos/exos_l2_interfaces.py
     - network/exos/exos_lldp_global.py
+    - network/exos/exos_lldp_interfaces.py
+    - network/exos/exos_vlans.py
     - network/f5/*
     - network/files/__init__.py
     - network/files/net_get.py
@@ -2409,6 +2408,7 @@ glob:
     - system/gconftool2.py
     - system/facter.py
     - system/filesystem.py
+    - system/firewalld.py
     - system/interfaces_file.py
     - system/java_cert.py
     - system/java_keystore.py

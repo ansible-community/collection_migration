@@ -1,12 +1,18 @@
 _core:
     action:
+    - assert.py
+    - async_status.py
     - copy.py
     - debug.py
     - command.py
+    - fail.py
+    - fetch.py
     - gather_facts.py
     - group_by.py
+    - include_vars.py
     - normal.py
     - package.py
+    - patch.py
     - pause.py
     - raw.py
     - shell.py
@@ -15,6 +21,7 @@ _core:
     - template.py
     - uri.py
     - yum.py
+    - wait_for_connection.py
     become:
     - su.py
     - sudo.py
@@ -129,6 +136,7 @@ _core:
     - files/patch.py
     - files/replace.py
     - files/stat.py
+    - files/template.py
     - inventory/add_host.py
     - inventory/group_by.py
     - net_tools/basics/get_url.py
