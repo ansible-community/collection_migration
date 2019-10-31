@@ -412,7 +412,7 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     # DOCUMENTATION = '''some string value'''
     # ```
     doc_val.value = doc_str_tmpl.format(
-        str_val=yaml.dump(docs_parsed),
+        str_val=yaml.dump(docs_parsed, allow_unicode=True, default_flow_style=False, sort_keys=False),
     )
 
     return deps
