@@ -78,8 +78,8 @@ plugins that would stay in core and not require rewrites for those
 referencing them.
 
 
-Known issues
-------------
+Things to be aware of
+---------------------
 
 * If the scenario doesn't contain an explicit enumeration of artifacts
   related to the given resource, it may result in an incomplete
