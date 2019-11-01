@@ -517,7 +517,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
         try:
             plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
         except LookupError as e:
-            if plugin_type != 'modules':
+            if plugin_type not in ('modules', 'module_utils'):
                 # plugin not in spec, assuming it stays in core and skipping
                 continue
 
