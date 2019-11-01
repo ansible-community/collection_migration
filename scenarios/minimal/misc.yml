@@ -260,7 +260,6 @@ glob:
     - shell_windows.py
     - skydive.py
     - sros.py
-    - template_common.py
     - tower.py
     - ucs.py
     - url_windows.py
@@ -2935,15 +2934,21 @@ glob:
     - network/exos/argspec/lldp_global/__init__.py
     - network/exos/argspec/lldp_global/lldp_global.py
     - network/exos/config/__init__.py
+    - network/exos/config/l2_interfaces/l2_interfaces.py
     - network/exos/config/lldp_global/__init__.py
     - network/exos/config/lldp_global/lldp_global.py
+    - network/exos/config/lldp_interfaces/lldp_interfaces.py
+    - network/exos/config/vlans/vlans.py
     - network/exos/exos.py
     - network/exos/facts/__init__.py
     - network/exos/facts/facts.py
     - network/exos/facts/legacy/__init__.py
     - network/exos/facts/legacy/base.py
+    - network/exos/facts/l2_interfaces/l2_interfaces.py
     - network/exos/facts/lldp_global/__init__.py
     - network/exos/facts/lldp_global/lldp_global.py
+    - network/exos/facts/lldp_interfaces/lldp_interfaces.py
+    - network/exos/facts/vlans/vlans.py
     - network/exos/utils/__init__.py
     - network/exos/utils/utils.py
     - network/f5/__init__.py
