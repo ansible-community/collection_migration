@@ -78,19 +78,15 @@ def add_manual_check(key, value, filename):
     manual_check[filename].append((key, value))
 
 
-def checkout_repo(vardir=VARDIR, refresh=False):
-    releases_dir = os.path.join(vardir, 'releases')
-    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
-
-    if refresh and os.path.exists(devel_path):
-        subprocess.check_call(('git', 'checkout', DEVEL_BRANCH), cwd=devel_path)
-        subprocess.check_call(('git', 'pull', '--rebase'), cwd=devel_path)
-
-    if not os.path.exists(releases_dir):
-        os.makedirs(releases_dir)
-
-    if not os.path.exists(devel_path):
-        subprocess.check_call(('git', 'clone', DEVEL_URL, f'{DEVEL_BRANCH}.git'), cwd=releases_dir)
+def checkout_repo(git_url, checkout_path, *, refresh=False):
+    if not os.path.exists(checkout_path):
+        subprocess.check_call(('git', 'clone', git_url, checkout_path))
+    elif refresh:
+        subprocess.check_call(
+            ('git', 'checkout', DEVEL_BRANCH),
+            cwd=checkout_path,
+        )
+        subprocess.check_call(('git', 'pull', '--rebase'), cwd=checkout_path)
 
 
 # ===== FILE utils =====
@@ -102,16 +98,17 @@ def remove(path):
     REMOVE.add(path)
 
 
-def actually_remove(namespace, collection, vardir=VARDIR):
+def actually_remove(checkout_path, namespace, collection):
     global REMOVE
-    releases_dir = os.path.join(vardir, 'releases')
-    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
     for path in REMOVE:
-        actual_devel_path = os.path.relpath(path, devel_path)
-        subprocess.check_call(('git', 'rm', actual_devel_path), cwd=devel_path)
+        actual_devel_path = os.path.relpath(path, checkout_path)
+        subprocess.check_call(
+            ('git', 'rm', actual_devel_path),
+            cwd=checkout_path,
+        )
 
-    subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection)), cwd=devel_path)
+    subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection)), cwd=checkout_path)
 
 
 def read_yaml_file(path):
@@ -886,10 +883,8 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
 
 # ===== MAKE COLLECTIONS =====
-def assemble_collections(spec, args, target_github_org):
+def assemble_collections(checkout_path, spec, args, target_github_org):
     # NOTE releases_dir is already created by checkout_repo(), might want to move all that to something like ensure_dirs() ...
-    releases_dir = os.path.join(args.vardir, 'releases')
-    checkout_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
     collections_base_dir = os.path.join(args.vardir, 'collections')
     integration_test_dirs = []
 
@@ -1114,7 +1109,7 @@ def assemble_collections(spec, args, target_github_org):
             )
 
             if args.move_plugins:
-                actually_remove(namespace, collection)
+                actually_remove(checkout_path, namespace, collection)
 
             global REMOVE
             REMOVE = set()
@@ -1145,23 +1140,22 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
             git_repo_url[:5], git_repo_url[-5:],
         )
         subprocess.check_call(
-            ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
+            ('git', 'push', '--force-with-lease', git_repo_url, 'HEAD:master'),
             cwd=collection_dir,
         )
 
 
-def push_migrated_core(vardir):
-    releases_dir = os.path.join(vardir, 'releases')
+def push_migrated_core(releases_dir):
     devel_path = os.path.join(releases_dir, 'migrated_core.git')
 
-    if not os.path.exists(devel_path):
-        subprocess.check_call(('git', 'clone', MIGRATED_DEVEL_URL, 'migrated_core.git'), cwd=releases_dir)
-    else:
-        subprocess.check_call(('git', 'checkout', DEVEL_BRANCH), cwd=devel_path)
-        subprocess.check_call(('git', 'pull', '--rebase'), cwd=devel_path)
+    checkout_repo(MIGRATED_DEVEL_URL, devel_path, refresh=True)
 
-    # NOTE assumes the repo is not used and/or is locked while migration is running
-    subprocess.check_call(('git', 'push', '--force', 'origin', DEVEL_BRANCH), cwd=devel_path)
+    # NOTE: assumes the repo is not used and/or is locked
+    # while migration is running
+    subprocess.check_call(
+        ('git', 'push', '--force-with-lease', 'origin', DEVEL_BRANCH),
+        cwd=devel_path,
+    )
 
 
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
@@ -1675,10 +1669,13 @@ def main():
             # warn we skipped spec_file for reasons: e
             raise
 
-    checkout_repo(args.vardir, args.refresh)
+    releases_dir = os.path.join(args.vardir, 'releases')
+    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
+
+    checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
 
     # doeet
-    assemble_collections(spec, args, args.target_github_org)
+    assemble_collections(devel_path, spec, args, args.target_github_org)
 
     if args.publish_to_github:
         publish_to_github(
@@ -1689,7 +1686,7 @@ def main():
         )
 
     if args.push_migrated_core:
-        push_migrated_core(args.vardir)
+        push_migrated_core(releases_dir)
 
     global core
     print('======= Assumed stayed in core =======\n')
