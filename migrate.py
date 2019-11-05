@@ -101,6 +101,12 @@ def remove(path):
 def actually_remove(checkout_path, namespace, collection):
     global REMOVE
 
+    sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
+    new_sanity_ignore = defaultdict(list)
+    for ignore in sanity_ignore:
+        values = ignore.split(' ', 1)
+        new_sanity_ignore[values[0]].append(values[1])
+
     for path in REMOVE:
         actual_devel_path = os.path.relpath(path, checkout_path)
         if actual_devel_path.startswith('lib/ansible/modules') and actual_devel_path.endswith('__init__.py'):
@@ -111,6 +117,16 @@ def actually_remove(checkout_path, namespace, collection):
             ('git', 'rm', actual_devel_path),
             cwd=checkout_path,
         )
+        new_sanity_ignore.pop(actual_devel_path, None)
+
+    res = ''
+    for filename, values in new_sanity_ignore.items():
+        for value in values:
+            # value contains '\n' which is preserved from the original file
+            res += '%s %s' % (filename, value)
+
+    write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
+    subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
 
     subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection)), cwd=checkout_path)
 
@@ -138,6 +154,11 @@ def write_ansible_yaml_into_file_as_is(path, data):
 def read_text_from_file(path):
     with open(path, 'r') as f:
         return f.read()
+
+
+def read_lines_from_file(path):
+    with open(path, 'r') as f:
+        return f.readlines()
 
 
 def write_text_into_file(path, text):
