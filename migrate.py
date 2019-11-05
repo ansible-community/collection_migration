@@ -1178,8 +1178,7 @@ def push_migrated_core(releases_dir):
 
     checkout_repo(MIGRATED_DEVEL_URL, devel_path, refresh=True)
 
-    # NOTE: assumes the repo is not used and/or is locked
-    # while migration is running
+    # NOTE: assumes the repo is not used and/or is locked while migration is running
     subprocess.check_call(
         ('git', 'push', '--force-with-lease', 'origin', DEVEL_BRANCH),
         cwd=devel_path,
