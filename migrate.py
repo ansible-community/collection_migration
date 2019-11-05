@@ -1170,7 +1170,6 @@ def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collec
     migrated_to = '.'.join((namespace, collection))
     botmeta_rel_path = '.github/BOTMETA.yml'
     botmeta_checkout_path = os.path.join(checkout_dir, botmeta_rel_path)
-    close_related_issues = False
 
     botmeta = read_yaml_file(botmeta_checkout_path)
 
@@ -1198,7 +1197,6 @@ def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collec
                 'maintainers': migrated_secion,
             }
 
-        migrated_secion['close'] = close_related_issues
         migrated_secion['migrated_to'] = migrated_to
 
     write_yaml_into_file_as_is(botmeta_checkout_path, botmeta)
