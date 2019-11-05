@@ -3,6 +3,7 @@
 import asyncio
 from dataclasses import dataclass
 import contextlib
+import os
 import pathlib
 from typing import Union
 
@@ -21,13 +22,23 @@ class GitHubOrgClient:
     github_app_private_key_path: Union[pathlib.Path, str]
     github_org_name: str
 
+    def _read_app_id(self):
+        if self.github_app_id is None:
+            return int(os.environ['GITHUB_APP_IDENTIFIER'])
+        return self.github_app_id
+
+    def _read_private_key(self):
+        if self.github_app_private_key_path is None:
+            return os.environ['GITHUB_PRIVATE_KEY']
+        return pathlib.Path(
+            self.github_app_private_key_path,
+        ).expanduser().resolve().read_text()
+
     def _get_github_app(self):
         """Initialize a GitHub App instance with creds."""
         github_app_config = GitHubAppIntegrationConfig(
-            app_id=self.github_app_id,
-            private_key=pathlib.Path(
-                self.github_app_private_key_path
-            ).expanduser().resolve().read_text(),
+            app_id=self._read_app_id(),
+            private_key=self._read_private_key(),
 
             app_name='Ansible Collection Migrator',
             app_version='1.0',

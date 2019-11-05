@@ -37,8 +37,32 @@ jobs:
       run: |
         git config --global user.email "ansible_migration@example.com"
         git config --global user.name "Poor B"
-    - name: 'Run migration scenario ${{ matrix.migration-scenario }}'
-      run: 'python -m migrate -m -s "scenarios/${{ matrix.migration-scenario }}"'
+    - name: >-
+        Run migration scenario ${{ matrix.migration-scenario }}
+        and auto-publish the migrated repos to GitHub repos
+      if: >-
+        github.event_name != 'pull_request'
+        && github.repository == 'ansible/collection_migration'
+      env:
+        GITHUB_APP_IDENTIFIER: 41435
+        GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
+      run: >-
+        python -m
+        migrate
+        -m
+        -s "scenarios/${{ matrix.migration-scenario }}"
+        -P
+        --target-github-org ansible-collection-migration
+    - name: >-
+        Run migration scenario ${{ matrix.migration-scenario }}
+      if: >-
+        github.event_name == 'pull_request'
+        || github.repository != 'ansible/collection_migration'
+      run: >-
+        python -m
+        migrate
+        -m
+        -s "scenarios/${{ matrix.migration-scenario }}"
     - name: >-
         List the migrated collections
       run: |

@@ -1620,7 +1620,7 @@ def main():
         action='store',
         type=int,
         dest='github_app_id',
-        default=41435,
+        default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,
         help='Use this GitHub App ID for GH auth',
     )
     parser.add_argument(
@@ -1628,15 +1628,17 @@ def main():
         action='store',
         type=str,
         dest='github_app_key_path',
-        default='~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
-        help='Use this PEM key file for GH auth',
+        default=None if 'GITHUB_PRIVATE_KEY' in os.environ
+        else '~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
+        help='Use this PEM key file for GH auth. '
+        'Altertanively, put its contents into `GITHUB_PRIVATE_KEY` env var.',
     )
     parser.add_argument(
         '--target-github-org',
         action='store',
         type=str,
         dest='target_github_org',
-        default='ansible-collections',
+        default='ansible-collection-migration',
         help='Push migrated collections to this GH org',
     )
     parser.add_argument(
