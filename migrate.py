@@ -103,6 +103,10 @@ def actually_remove(checkout_path, namespace, collection):
 
     for path in REMOVE:
         actual_devel_path = os.path.relpath(path, checkout_path)
+        if actual_devel_path.startswith('lib/ansible/modules') and actual_devel_path.endswith('__init__.py'):
+            if os.listdir(os.path.dirname(path)) != ['__init__.py']:
+                continue
+
         subprocess.check_call(
             ('git', 'rm', actual_devel_path),
             cwd=checkout_path,
