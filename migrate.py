@@ -1235,7 +1235,8 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
         )
         logger.info(
             'The migrated collection has been successfully published to '
-            '`https://github.com/%s.git`...',
+            '`https://github.com/%s/%s.git`...',
+            gh_org,
             repo_name,
         )
 
