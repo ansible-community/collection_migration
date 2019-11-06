@@ -253,7 +253,7 @@ amazon:
     - aws/*
     modules:
     - cloud/amazon/*
-    lookups:
+    lookup:
     - aws_account_attribute.py
     - aws_secret.py
     - aws_service_ip_ranges.py
@@ -467,7 +467,7 @@ kubernetes:
     - k8s.py
     - kubevirt.py
     - openshift.py
-    lookups:
+    lookup:
     - _openshift.py
     - k8s.py
     module_utils:
@@ -956,7 +956,7 @@ skydive:
     - network/skydive/*
     module_utils:
     - network/skydive/*
-    lookups:
+    lookup:
     - skydive.py
 tower:
     doc_fragments:

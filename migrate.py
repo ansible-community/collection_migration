@@ -45,7 +45,7 @@ MIGRATED_DEVEL_URL = 'git@github.com:ansible/migratedcore.git'
 
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 COLLECTION_NAMESPACE = 'test_migrate_ns'
-PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'lookups': 'lib/ansible/plugins/lookup'}
+PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils'}
 
 
 COLLECTION_SKIP_REWRITE = ('_core',)
@@ -55,6 +55,29 @@ RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
 
 BAD_EXT = frozenset({'.pyo', '.pyc'})
+
+VALID_PLUGIN_TYPES = frozenset({
+    'action',
+    'become',
+    'cache',
+    'callback',
+    'cliconf',
+    'connection',
+    'doc_fragments',
+    'filter',
+    'httpapi',
+    'inventory',
+    'lookup',
+    'module_utils',
+    'modules',
+    'netconf',
+    'shell',
+    'strategy',
+    'terminal',
+    'test',
+    'vars',
+})
+
 
 os.makedirs(VARDIR, exist_ok=True)
 logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.WARNING)
@@ -185,6 +208,8 @@ def resolve_spec(spec, checkoutdir):
     for ns in spec.keys():
         for coll in spec[ns].keys():
             for ptype in spec[ns][coll].keys():
+                if ptype not in VALID_PLUGIN_TYPES:
+                    raise Exception('Invalid plugin type: %s, expected one of %s' % (ptype, VALID_PLUGIN_TYPES))
                 plugin_base = os.path.join(checkoutdir, PLUGIN_EXCEPTION_PATHS.get(ptype, os.path.join('lib', 'ansible', 'plugins', ptype)))
                 replace_base = '%s/' % plugin_base
                 for entry in spec[ns][coll][ptype]:

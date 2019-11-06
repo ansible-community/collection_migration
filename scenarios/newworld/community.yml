@@ -667,7 +667,7 @@ skydive:
     - network/skydive/skydive_node.py
     module_utils:
     - network/skydive/api.py
-    lookups:
+    lookup:
     - skydive.py
 sros:
     doc_fragments:
@@ -1003,7 +1003,7 @@ amazon:
     - cloud/amazon/sqs_queue.py
     - cloud/amazon/sts_assume_role.py
     - cloud/amazon/sts_session_token.py
-    lookups:
+    lookup:
     - aws_account_attribute.py
     - aws_secret.py
     - aws_service_ip_ranges.py
