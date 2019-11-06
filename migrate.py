@@ -20,6 +20,7 @@ from collections import defaultdict
 from collections.abc import Mapping
 from importlib import import_module
 from string import Template
+from typing import Dict, Set
 
 from ansible.parsing.yaml.dumper import AnsibleDumper
 from ansible.parsing.yaml.loader import AnsibleLoader
@@ -43,6 +44,7 @@ DEVEL_BRANCH = 'devel'
 MIGRATED_DEVEL_URL = 'git@github.com:ansible/migratedcore.git'
 
 
+ALL_THE_FILES = set()
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils'}
@@ -101,7 +103,12 @@ def add_manual_check(key, value, filename):
     manual_check[filename].append((key, value))
 
 
-def checkout_repo(git_url, checkout_path, *, refresh=False):
+def checkout_repo(
+        git_url: str, checkout_path: str,
+        *,
+        refresh: bool = False,
+) -> Set[str]:
+    """Fetch and optionally refresh the repo."""
     if not os.path.exists(checkout_path):
         subprocess.check_call(('git', 'clone', git_url, checkout_path))
     elif refresh:
@@ -110,6 +117,15 @@ def checkout_repo(git_url, checkout_path, *, refresh=False):
             cwd=checkout_path,
         )
         subprocess.check_call(('git', 'pull', '--rebase'), cwd=checkout_path)
+
+    return set(
+        os.path.join(checkout_path, f)
+        for f in subprocess.check_output(
+            ('git', 'ls-tree', '--full-tree', '-r', '--name-only', 'HEAD'),
+            text=True, cwd=checkout_path,
+        ).split('\n')
+        if f.strip()
+    )
 
 
 # ===== FILE utils =====
@@ -946,7 +962,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
         shutil.rmtree(collections_base_dir)
 
     # make initial YAML transformation to minimize the diff
-    mark_moved_resources(checkout_path, 'N/A', 'init', set())
+    mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
     seen = {}
     for namespace in spec.keys():
@@ -1210,8 +1226,28 @@ def push_migrated_core(releases_dir):
     )
 
 
+def assert_migrating_git_tracked_resources(
+        migrated_to_collection: Dict[str, str],
+):
+    """Make sure that non-tracked files aren't scheduled for migration."""
+    logger.info(
+        'Verifying that only legitimate files are being migrated...',
+    )
+    for migrated_resource in migrated_to_collection:
+        exists_in_src = migrated_resource in ALL_THE_FILES
+        if not exists_in_src:
+            err_msg = (
+                f'{migrated_resource} does not '
+                'exist in the source'
+            )
+            logger.error(err_msg)
+            raise RuntimeError(err_msg)
+
+
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
     """Mark migrated paths in botmeta."""
+    assert_migrating_git_tracked_resources(migrated_to_collection)
+
     migrated_to = '.'.join((namespace, collection))
     botmeta_rel_path = '.github/BOTMETA.yml'
     botmeta_checkout_path = os.path.join(checkout_dir, botmeta_rel_path)
@@ -1724,7 +1760,8 @@ def main():
     releases_dir = os.path.join(args.vardir, 'releases')
     devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
+    global ALL_THE_FILES
+    ALL_THE_FILES = checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
 
     # doeet
     assemble_collections(devel_path, spec, args, args.target_github_org)
