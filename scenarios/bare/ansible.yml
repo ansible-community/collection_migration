@@ -1844,8 +1844,8 @@ community:
     - monitoring/airbrake_deployment.py
     - monitoring/bigpanda.py
     - monitoring/circonus_annotation.py
-    - monitoring/datadog_event.py
-    - monitoring/datadog_monitor.py
+    - monitoring/datadog/datadog_event.py
+    - monitoring/datadog/datadog_monitor.py
     - monitoring/grafana_dashboard.py
     - monitoring/grafana_datasource.py
     - monitoring/grafana_plugin.py
@@ -1864,11 +1864,11 @@ community:
     - monitoring/pagerduty_alert.py
     - monitoring/pingdom.py
     - monitoring/rollbar_deployment.py
-    - monitoring/sensu_check.py
-    - monitoring/sensu_client.py
-    - monitoring/sensu_handler.py
-    - monitoring/sensu_silence.py
-    - monitoring/sensu_subscription.py
+    - monitoring/sensu/sensu_check.py
+    - monitoring/sensu/sensu_client.py
+    - monitoring/sensu/sensu_handler.py
+    - monitoring/sensu/sensu_silence.py
+    - monitoring/sensu/sensu_subscription.py
     - monitoring/spectrum_device.py
     - monitoring/stackdriver.py
     - monitoring/statusio_maintenance.py
@@ -3676,7 +3676,7 @@ community:
     - remote_management/ucs/ucs_wwn_pool.py
     - remote_management/wakeonlan.py
     - source_control/__init__.py
-    - source_control/_github_hooks.py
+    - source_control/github/_github_hooks.py
     - source_control/bitbucket/__init__.py
     - source_control/bitbucket/bitbucket_access_key.py
     - source_control/bitbucket/bitbucket_pipeline_key_pair.py
@@ -3685,19 +3685,19 @@ community:
     - source_control/bzr.py
     - source_control/git.py
     - source_control/git_config.py
-    - source_control/github_deploy_key.py
-    - source_control/github_issue.py
-    - source_control/github_key.py
-    - source_control/github_release.py
-    - source_control/github_webhook.py
-    - source_control/github_webhook_info.py
-    - source_control/gitlab_deploy_key.py
-    - source_control/gitlab_group.py
-    - source_control/gitlab_hook.py
-    - source_control/gitlab_project.py
-    - source_control/gitlab_project_variable.py
-    - source_control/gitlab_runner.py
-    - source_control/gitlab_user.py
+    - source_control/github/github_deploy_key.py
+    - source_control/github/github_issue.py
+    - source_control/github/github_key.py
+    - source_control/github/github_release.py
+    - source_control/github/github_webhook.py
+    - source_control/github/github_webhook_info.py
+    - source_control/gitlab/gitlab_deploy_key.py
+    - source_control/gitlab/gitlab_group.py
+    - source_control/gitlab/gitlab_hook.py
+    - source_control/gitlab/gitlab_project.py
+    - source_control/gitlab/gitlab_project_variable.py
+    - source_control/gitlab/gitlab_runner.py
+    - source_control/gitlab/gitlab_user.py
     - source_control/hg.py
     - source_control/subversion.py
     - storage/__init__.py
