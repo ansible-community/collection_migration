@@ -1208,9 +1208,35 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
             'Using %s...%s Git URL for push',
             git_repo_url[:5], git_repo_url[-5:],
         )
+        logger.info(
+            'Rebasing the migrated collection on top of the Git remote',
+        )
+        # Putting our newly generated stuff on top of what's on remote:
+        # Ref: https://demisx.github.io/git/rebase/2015/07/02/git-rebase-keep-my-branch-changes.html
+        subprocess.check_call(
+            (
+                'git', 'pull',
+                '--rebase',
+                '--strategy', 'recursive',
+                # Refs:
+                # * https://stackoverflow.com/a/3443225/595220
+                # * https://dev.to/willamesoares/git-ours-or-theirs-part1-agh
+                # * https://dev.to/willamesoares/git-ours-or-theirs-part-2-d0o
+                '--strategy-option', 'theirs',
+                git_repo_url,
+                'master'
+            ),
+            cwd=collection_dir,
+        )
+        logger.info('Pushing the migrated collection to the Git remote')
         subprocess.check_call(
             ('git', 'push', '--force-with-lease', git_repo_url, 'HEAD:master'),
             cwd=collection_dir,
+        )
+        logger.info(
+            'The migrated collection has been successfully published to '
+            '`https://github.com/%s.git`...',
+            repo_name,
         )
 
 
