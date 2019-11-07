@@ -1012,6 +1012,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             }
 
             for plugin_type in spec[namespace][collection].keys():
+                plugins = spec[namespace][collection][plugin_type]
+                if not plugins:
+                    logger.error('Empty plugin_type: %s in spec for %s.%s' % (plugin_type, namespace, collection))
+                    continue
 
                 # get right plugin path
                 if plugin_type not in PLUGIN_EXCEPTION_PATHS:
@@ -1028,7 +1032,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         f.write('')
 
                 # process each plugin
-                for plugin in spec[namespace][collection][plugin_type]:
+                for plugin in plugins:
                     if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
                         logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)" % (plugin, plugin_type, namespace, collection))
                         continue
