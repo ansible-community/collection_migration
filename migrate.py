@@ -80,9 +80,10 @@ VALID_PLUGIN_TYPES = frozenset({
     'vars',
 })
 
+LOGFILE = os.path.join(VARDIR, 'errors.log')
 
 os.makedirs(VARDIR, exist_ok=True)
-logzero.logfile(os.path.join(VARDIR, 'errors.log'), loglevel=logging.WARNING)
+logzero.logfile(LOGFILE, loglevel=logging.WARNING)
 
 
 core = {}
@@ -1814,6 +1815,8 @@ def main():
     global manual_check
     print('======= Could not rewrite the following, please check manually =======\n')
     print(yaml.dump(dict(manual_check)))
+
+    print('See %s for any warnings/errors that were logged during migration.' % LOGFILE)
 
 if __name__ == "__main__":
     main()
