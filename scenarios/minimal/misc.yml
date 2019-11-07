@@ -2720,7 +2720,6 @@ glob:
     - acme.py
     - alicloud_ecs.py
     - ansible_tower.py
-    - network/apconos/apconos.py
     - aws/__init__.py
     - aws/acm.py
     - aws/batch.py
@@ -2807,7 +2806,7 @@ glob:
     - network/aireos/aireos.py
     - network/aos/__init__.py
     - network/aos/aos.py
-    - network/apconos/utils/*
+    - network/apconos/apconos.py
     - network/aruba/__init__.py
     - network/aruba/aruba.py
     - network/asa/__init__.py
