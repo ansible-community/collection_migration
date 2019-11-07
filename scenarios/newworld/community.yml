@@ -2076,10 +2076,7 @@ misc:
     - cloud/xenserver/xenserver_guest.py
     - cloud/xenserver/xenserver_guest_info.py
     - cloud/xenserver/xenserver_guest_powerstate.py
-    - clustering/consul.py
-    - clustering/consul_acl.py
-    - clustering/consul_kv.py
-    - clustering/consul_session.py
+    - clustering/consul/*.py
     - clustering/etcd3.py
     - clustering/k8s/_k8s_facts.py
     - clustering/k8s/_k8s_raw.py

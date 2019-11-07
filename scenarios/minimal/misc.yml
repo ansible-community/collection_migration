@@ -537,10 +537,7 @@ glob:
     - cloud/webfaction/webfaction_site.py
     - cloud/xenserver/*
     - clustering/__init__.py
-    - clustering/consul.py
-    - clustering/consul_acl.py
-    - clustering/consul_kv.py
-    - clustering/consul_session.py
+    - clustering/consul/*.py
     - clustering/etcd3.py
     - clustering/k8s/*
     - clustering/openshift/*
@@ -2725,6 +2722,7 @@ glob:
     - ansible_tower.py
     - network/apconos/apconos.py
     - aws/__init__.py
+    - aws/acm.py
     - aws/batch.py
     - aws/cloudfront_facts.py
     - aws/core.py
@@ -3232,6 +3230,8 @@ glob:
     - network/nxos/argspec/bfd_interfaces/bfd_interfaces.py
     - network/nxos/argspec/facts/__init__.py
     - network/nxos/argspec/facts/facts.py
+    - network/nxos/argspec/hsrp_interfaces/__init__.py
+    - network/nxos/argspec/hsrp_interfaces/hsrp_interfaces.py
     - network/nxos/argspec/interfaces/__init__.py
     - network/nxos/argspec/interfaces/interfaces.py
     - network/nxos/argspec/l2_interfaces/__init__.py
@@ -3256,6 +3256,10 @@ glob:
     - network/nxos/config/__init__.py
     - network/nxos/config/bfd_interfaces/__init__.py
     - network/nxos/config/bfd_interfaces/bfd_interfaces.py
+    - network/nxos/config/hsrp_interfaces/__init__.py
+    - network/nxos/config/hsrp_interfaces/hsrp_interfaces.py
+    - network/nxos/facts/hsrp_interfaces/__init__.py
+    - network/nxos/facts/hsrp_interfaces/hsrp_interfaces.py
     - network/nxos/config/interfaces/__init__.py
     - network/nxos/config/interfaces/interfaces.py
     - network/nxos/config/l2_interfaces/__init__.py

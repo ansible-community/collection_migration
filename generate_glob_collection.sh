@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # script takes 2 positional parameters:
-# $1 = (required) ansible repo to search for files
-# $2 = (optional) name of collection to use in output
+# first: (required) ansible repo to search for files
+# second: (optional) name of collection to use in output
 
 set -eu
 set -o pipefail
