@@ -756,6 +756,9 @@ amazon:
     - aws/urls.py
     - aws/waf.py
     - aws/waiters.py
+    inventory:
+    - aws_ec2.py
+    - aws_rds.py
     modules:
     - cloud/amazon/_aws_acm_facts.py
     - cloud/amazon/_aws_az_facts.py
@@ -1012,6 +1015,8 @@ azure:
     doc_fragments:
     - azure.py
     - azure_tags.py
+    inventory:
+    - azure_rm.py
     modules:
     - cloud/azure/_azure.py
     - cloud/azure/_azure_rm_managed_disk.py
@@ -1182,6 +1187,8 @@ azure:
 google:
     doc_fragments:
     - gcp.py
+    inventory:
+    - gcp_compute.py
     modules:
     - cloud/google/_gcdns_record.py
     - cloud/google/_gcdns_zone.py
@@ -1335,6 +1342,8 @@ vmware:
     doc_fragments:
     - vmware.py
     - vmware_rest_client.py
+    inventory:
+    - vmware_vm_inventory.py
     modules:
     - cloud/vmware/_vsphere_guest.py
     - cloud/vmware/vca_fw.py
@@ -1604,6 +1613,9 @@ misc:
     - vexata.py
     - xenserver.py
     - zabbix.py
+    inventory:
+    - foreman.py
+    - linode.py
     callback:
     - actionable.py
     - aws_resource_actions.py
