@@ -356,8 +356,13 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
                     continue
             elif val[1] == 'plugins':
                 # 'ansible.plugins.lookup.manifold.open_url'
-                plugin_type = val[2]
-                plugin_name = val[3]
+                try:
+                    plugin_type = val[2]
+                    plugin_name = val[3]
+                except IndexError:
+                    # Not enough information to search for the plugin, safe to assume it's not for the rewrite
+                    # e.g. 'ansible.plugins.inventory'
+                    continue
 
                 try:
                     found_ns, found_coll = get_plugin_collection(plugin_name, plugin_type, spec)
