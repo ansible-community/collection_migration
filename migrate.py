@@ -893,18 +893,26 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
         Optionally, traverse siblings.
         """
+        nonlocal unit_tests_relative_root
+
         for td, tm in map(os.path.split, paths):
             relative_td = os.path.relpath(td, checkout_path)
-            copy_map_relative_td_to = os.path.join(
-                collection_unit_tests_relative_root,
-                plugin_type, plugin_dir,
-            )
+            test_artifact_path = os.path.join(relative_td, tm)
             yield (
-                os.path.join(relative_td, tm),
-                os.path.join(copy_map_relative_td_to, tm),
+                test_artifact_path,
+                replace_path_prefix(test_artifact_path),
             )
 
             if not find_related:
+                continue
+
+            module_type = os.path.relpath(
+                relative_td,
+                unit_tests_relative_root,
+            )
+
+            if module_type in {'module_utils'}:
+                """Top-level dir of the module_utils unit tests."""
                 continue
 
             # Add subdirs that may contain related test artifacts/fixtures
