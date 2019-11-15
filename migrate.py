@@ -1135,6 +1135,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     import_deps += deps[0]
                     docs_deps += deps[1]
 
+                    if args.skip_tests:
+                        continue
+
                     integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
                     # process unit tests
                     unit_tests_migrated_to_collection = copy_unit_tests(
@@ -1143,40 +1146,30 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     )
                     migrated_to_collection.update(unit_tests_migrated_to_collection)
 
-            inject_init_into_tree(
-                os.path.join(collection_dir, 'tests', 'unit'),
-            )
+            if not args.skip_tests:
+                inject_init_into_tree(
+                    os.path.join(collection_dir, 'tests', 'unit'),
+                )
 
-            for file_path in itertools.chain.from_iterable(
-                    (os.path.join(dp, f) for f in fn if f.endswith('.py'))
-                    for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
-            ):
-                _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
-                unit_deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-                unit_deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, file_path)
-                write_text_into_file(file_path, unit_test_module_fst.dumps())
+                unit_deps += rewrite_unit_tests(collection_dir, collection, spec, namespace, args)
 
-            inject_gitignore_into_tests(collection_dir)
+                inject_gitignore_into_tests(collection_dir)
 
-            inject_ignore_into_sanity_tests(
-                checkout_path, collection_dir, migrated_to_collection,
-            )
-            inject_requirements_into_sanity_tests(checkout_path, collection_dir)
+                inject_ignore_into_sanity_tests(
+                    checkout_path, collection_dir, migrated_to_collection,
+                )
+                inject_requirements_into_sanity_tests(checkout_path, collection_dir)
 
-            # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
-            try:
-                rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args)
-            except yaml.composer.ComposerError as e:
-                logger.error(e)
+                # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
+                try:
+                    rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args)
+                except yaml.composer.ComposerError as e:
+                    logger.error(e)
 
-            global integration_tests_deps
-            for dep_ns, dep_coll in integration_tests_deps.union(import_deps + docs_deps + unit_deps):
-                dep = '%s.%s' % (dep_ns, dep_coll)
-                # FIXME hardcoded version
-                galaxy_metadata['dependencies'][dep] = '>=1.0'
-
-            integration_test_dirs = []
-            integration_tests_deps = set()
+                global integration_tests_deps
+                add_deps_to_metadata(integration_tests_deps.union(import_deps + docs_deps + unit_deps), galaxy_metadata)
+                integration_test_dirs = []
+                integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
 
@@ -1203,6 +1196,30 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             global REMOVE
             REMOVE = set()
+
+
+def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
+    """Rewrite imports and apply patches to unit tests."""
+    deps = []
+
+    for file_path in itertools.chain.from_iterable(
+            (os.path.join(dp, f) for f in fn if f.endswith('.py'))
+            for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
+    ):
+        _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
+        deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
+        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, file_path)
+        write_text_into_file(file_path, unit_test_module_fst.dumps())
+
+    return deps
+
+
+def add_deps_to_metadata(deps, galaxy_metadata):
+    """Augment galaxy metadata with the dependencies."""
+    for dep_ns, dep_coll in deps:
+        dep = '%s.%s' % (dep_ns, dep_coll)
+        # FIXME hardcoded version
+        galaxy_metadata['dependencies'][dep] = '>=1.0'
 
 
 def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app_key_path):
@@ -1789,6 +1806,9 @@ def main():
                         help='Push migrated core to the Git repo')
     parser.add_argument('-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
             help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running migration against the list of files kept in core: spec must contain the "_core" collection.')
+
+    parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False,
+                        help='Skip tests and rewrite the runtime code only.')
 
     args = parser.parse_args()
 
