@@ -1144,6 +1144,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
 
 def galaxy_metadata_init(collection, namespace, target_github_org):
+    """Return the initial Galaxy collection metadata object."""
     return {
         'namespace': namespace,
         'name': collection,
@@ -1163,6 +1164,7 @@ def galaxy_metadata_init(collection, namespace, target_github_org):
 
 
 def process_symlink(plugin_type, plugins, dest, src):
+    """Recreate plugin module symlinks."""
     real_src = os.readlink(src)
 
     # remove destination if it already exists
@@ -1171,23 +1173,24 @@ def process_symlink(plugin_type, plugins, dest, src):
         logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
         os.remove(dest)
 
-    if real_src.startswith('../'):
-        target = real_src[3:]
-        found = any(p.endswith(target) for p in plugins)
-
-        if found:
-            if plugin_type == 'module_utils':
-                target = real_src
-            else:
-                target = os.path.basename(real_src)
-            ret = os.getcwd()
-            os.chdir(os.path.dirname(dest))
-            os.symlink(os.path.basename(target), os.path.basename(dest))
-            os.chdir(ret)
-        else:
-            raise Exception('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
-    else:
+    if not real_src.startswith('../'):
         shutil.copyfile(src, dest, follow_symlinks=False)
+        return
+
+    target = real_src[3:]
+    found = any(p.endswith(target) for p in plugins)
+
+    if not found:
+        raise LookupError('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
+
+    if plugin_type == 'module_utils':
+        target = real_src
+    else:
+        target = os.path.basename(real_src)
+    ret = os.getcwd()
+    os.chdir(os.path.dirname(dest))
+    os.symlink(os.path.basename(target), os.path.basename(dest))
+    os.chdir(ret)
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
