@@ -967,9 +967,7 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
 # ===== MAKE COLLECTIONS =====
 def assemble_collections(checkout_path, spec, args, target_github_org):
-    # NOTE releases_dir is already created by checkout_repo(), might want to move all that to something like ensure_dirs() ...
     collections_base_dir = os.path.join(args.vardir, 'collections')
-    integration_test_dirs = []
 
     # expand globs so we deal with specific paths
     resolve_spec(spec, checkout_path)
@@ -981,12 +979,14 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
     # make initial YAML transformation to minimize the diff
     mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
+    integration_test_dirs = []
     seen = {}
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
             import_deps = []
             docs_deps = []
             unit_deps = []
+            migrated_to_collection = {}
 
             if args.fail_on_core_rewrite:
                 if collection != '_core':
@@ -995,8 +995,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 if collection.startswith('_'):
                     # these are info only collections
                     continue
-
-            migrated_to_collection = {}
 
             collection_dir = os.path.join(collections_base_dir, 'ansible_collections', namespace, collection)
 
@@ -1007,23 +1005,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 os.makedirs(collection_dir)
 
             # create the data for galaxy.yml
-            galaxy_metadata = {
-                'namespace': namespace,
-                'name': collection,
-                'version': '1.0.0',  # TODO: add to spec, args?
-                'readme': None,
-                'authors': None,
-                'description': None,
-                'license': None,
-                'license_file': None,
-                'tags': None,
-                'dependencies': {},
-                'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
-                'documentation': None,
-                'homepage': None,
-                'issues': None
-            }
+            galaxy_metadata = galaxy_metadata_init(collection, namespace, target_github_org)
 
+            # process each plugin type
             for plugin_type in spec[namespace][collection].keys():
                 plugins = spec[namespace][collection][plugin_type]
                 if not plugins:
@@ -1090,39 +1074,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         raise Exception('Spec specifies "%s" but file "%s" is not found in checkout' % (plugin, src))
 
                     if os.path.islink(src):
-                        real_src = os.readlink(src)
-
-                        # remove destination if it already exists
-                        if os.path.exists(dest):
-                            # NOTE: not atomic but should not matter in our script
-                            logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
-                            os.remove(dest)
-
-                        if real_src.startswith('../'):
-                            target = real_src[3:]
-                            found = False
-                            for k in spec[namespace][collection][plugin_type]:
-                                if k.endswith(target):
-                                    found = True
-                                    break
-
-                            if found:
-                                if plugin_type == 'module_utils':
-                                    target = real_src
-                                else:
-                                    target = os.path.basename(real_src)
-                                ret = os.getcwd()
-                                os.chdir(os.path.dirname(dest))
-                                os.symlink(os.path.basename(target), os.path.basename(dest))
-                                os.chdir(ret)
-                            else:
-                                raise Exception('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
-                        else:
-                            shutil.copyfile(src, dest, follow_symlinks=False)
-
-                        # dont rewrite symlinks, original file should already be handled
+                        process_symlink(namespace, collection, plugin_type, dest, src, spec)
+                        # don't rewrite symlinks, original file should already be handled
                         continue
-
                     elif not src.endswith('.py'):
                         # its not all python files, copy and go to next
                         # TODO: handle powershell import rewrites
@@ -1196,6 +1150,57 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             global REMOVE
             REMOVE = set()
+
+
+def galaxy_metadata_init(collection, namespace, target_github_org):
+    return {
+        'namespace': namespace,
+        'name': collection,
+        'version': '1.0.0',  # TODO: add to spec, args?
+        'readme': None,
+        'authors': None,
+        'description': None,
+        'license': None,
+        'license_file': None,
+        'tags': None,
+        'dependencies': {},
+        'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
+        'documentation': None,
+        'homepage': None,
+        'issues': None
+    }
+
+
+def process_symlink(namespace, collection, plugin_type, dest, src, spec):
+    real_src = os.readlink(src)
+
+    # remove destination if it already exists
+    if os.path.exists(dest):
+        # NOTE: not atomic but should not matter in our script
+        logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
+        os.remove(dest)
+
+    if real_src.startswith('../'):
+        target = real_src[3:]
+        found = False
+        for k in spec[namespace][collection][plugin_type]:
+            if k.endswith(target):
+                found = True
+                break
+
+        if found:
+            if plugin_type == 'module_utils':
+                target = real_src
+            else:
+                target = os.path.basename(real_src)
+            ret = os.getcwd()
+            os.chdir(os.path.dirname(dest))
+            os.symlink(os.path.basename(target), os.path.basename(dest))
+            os.chdir(ret)
+        else:
+            raise Exception('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
+    else:
+        shutil.copyfile(src, dest, follow_symlinks=False)
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
