@@ -1008,8 +1008,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             galaxy_metadata = galaxy_metadata_init(collection, namespace, target_github_org)
 
             # process each plugin type
-            for plugin_type in spec[namespace][collection].keys():
-                plugins = spec[namespace][collection][plugin_type]
+            for plugin_type, plugins in spec[namespace][collection].items():
                 if not plugins:
                     logger.error('Empty plugin_type: %s in spec for %s.%s' % (plugin_type, namespace, collection))
                     continue
