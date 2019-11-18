@@ -317,12 +317,15 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
         ('units', ): unit_tests_path,
     }
 
-    patches = (mod_fst('string',
-                       lambda x:
-                       'ansible.modules' in x.dumps() or
-                       'ansible.module_utils' in x.dumps() or
-                       'ansible.plugins' in x.dumps() or
-                       'units' in x.dumps()))
+    patches = (
+        mod_fst('string',
+                lambda x:
+                    'ansible.modules' in x.dumps() or
+                    'ansible.module_utils' in x.dumps() or
+                    'ansible.plugins' in x.dumps() or
+                    'units' in x.dumps()
+        )
+    )
 
     deps = []
     for el in patches:
