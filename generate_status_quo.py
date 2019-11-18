@@ -159,6 +159,9 @@ class StatusQuo:
         bn = os.path.basename(filename)
         bn = bn.replace('.py', '').replace('.ini', '')
 
+        # workaround for everything depending on aws
+        if bn == 'core' and 'aws' not in filename:
+            return 'utilities.misc'
 
         # does the filepath contain a topic?
         paths = filename.replace(self.checkout_dir + '/', '')
@@ -374,6 +377,8 @@ class StatusQuo:
             ptype = x[0]
             if not '.' in topic:
                 topic = topic + '.misc'
+            if topic not in self.collections:
+                self.collections[topic] = {}
             if ptype not in self.collections[topic]:
                 self.collections[topic][ptype] = []
 
