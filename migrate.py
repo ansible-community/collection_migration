@@ -305,7 +305,7 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
             add_manual_check(property_name, val.value, filename)
 
 
-def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filename):
+def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
@@ -317,15 +317,12 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
         ('units', ): unit_tests_path,
     }
 
-    patches = (
-        mod_fst('string',
-                lambda x:
-                    'ansible.modules' in x.dumps() or
-                    'ansible.module_utils' in x.dumps() or
-                    'ansible.plugins' in x.dumps() or
-                    'units' in x.dumps()
-        )
-    )
+    patches = (mod_fst('string',
+                       lambda x:
+                       'ansible.modules' in x.dumps() or
+                       'ansible.module_utils' in x.dumps() or
+                       'ansible.plugins' in x.dumps() or
+                       'units' in x.dumps()))
 
     deps = []
     for el in patches:
@@ -340,7 +337,7 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
                 val[:token_length] = new
                 el.value = "'%s'" % '.'.join(val)
                 continue
-            if val[1] in ('modules', 'module_utils'):
+            elif val[1] in ('modules', 'module_utils'):
                 plugin_type = val[1]
 
                 # 'ansible.modules.storage.netapp.na_ontap_nvme.NetAppONTAPNVMe.create_nvme'
@@ -591,7 +588,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
         try:
             plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
-        except LookupError as e:
+        except LookupError:
             if plugin_type not in ('modules', 'module_utils'):
                 # plugin not in spec, assuming it stays in core and skipping
                 continue
@@ -767,7 +764,7 @@ def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
     logger.info('Sanity tests deps injected into collection')
 
 
-def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
+def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
     """Find all unit tests and related artifacts for the given plugin.
 
     Return the copy map.
@@ -1091,7 +1088,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     # process unit tests
                     unit_tests_migrated_to_collection = copy_unit_tests(
                         checkout_path, collection_dir,
-                        plugin_type, plugin, spec,
+                        plugin_type, plugin,
                     )
                     migrated_to_collection.update(unit_tests_migrated_to_collection)
 
@@ -1203,7 +1200,7 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
     ):
         _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
         deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, file_path)
+        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
         write_text_into_file(file_path, unit_test_module_fst.dumps())
 
     return deps
@@ -1800,8 +1797,8 @@ def main():
     parser.add_argument('-M', '--push-migrated-core', action='store_true', dest='push_migrated_core', default=False,
                         help='Push migrated core to the Git repo')
     parser.add_argument('-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
-            help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running migration against the list of files kept in core: spec must contain the "_core" collection.')
-
+                        help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running'
+                             ' migration against the list of files kept in core: spec must contain the "_core" collection.')
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False,
                         help='Skip tests and rewrite the runtime code only.')
 
