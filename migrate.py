@@ -1069,7 +1069,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         raise Exception('Spec specifies "%s" but file "%s" is not found in checkout' % (plugin, src))
 
                     if os.path.islink(src):
-                        process_symlink(namespace, collection, plugin_type, dest, src, spec)
+                        process_symlink(plugin_type, plugins, dest, src)
                         # don't rewrite symlinks, original file should already be handled
                         continue
                     elif not src.endswith('.py'):
@@ -1165,7 +1165,7 @@ def galaxy_metadata_init(collection, namespace, target_github_org):
     }
 
 
-def process_symlink(namespace, collection, plugin_type, dest, src, spec):
+def process_symlink(plugin_type, plugins, dest, src):
     real_src = os.readlink(src)
 
     # remove destination if it already exists
@@ -1176,11 +1176,7 @@ def process_symlink(namespace, collection, plugin_type, dest, src, spec):
 
     if real_src.startswith('../'):
         target = real_src[3:]
-        found = False
-        for k in spec[namespace][collection][plugin_type]:
-            if k.endswith(target):
-                found = True
-                break
+        found = any(p.endswith(target) for p in plugins)
 
         if found:
             if plugin_type == 'module_utils':
