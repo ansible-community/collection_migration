@@ -1369,7 +1369,7 @@ def integration_tests_add_to_deps(collection, dep_collection):
 
     global integration_tests_deps
     integration_tests_deps.add(dep_collection)
-    logger.debug("Adding %s.%s as a dep for %s.%s" % (dep_collection[0], dep_collection[1], collection[0], collection[1]))
+    logger.debug("Adding %s.%s as a dep for %s.%s", dep_collection[0], dep_collection[1], collection[0], collection[1])
 
 
 def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name):
@@ -1382,7 +1382,7 @@ def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name
     ]
     deps = []
     for fname, dummy_to_remove in files:
-        logger.debug('Found integration tests for %s %s in %s' % (plugin_type, plugin_name, fname))
+        logger.debug('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
         deps.extend(process_needs_target(checkout_dir, fname))
 
     return files + deps
@@ -1399,7 +1399,7 @@ def process_needs_target(checkout_dir, fname):
                 if isinstance(dep, dict):
                     dep = dep.get('role')
                 dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
-                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1412,7 +1412,7 @@ def process_needs_target(checkout_dir, fname):
             dep = alias.split('/')[-1]
             dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
             if os.path.exists(dep_fname):
-                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1551,7 +1551,7 @@ def rewrite_yaml(src, dest, namespace, collection, spec, args):
         _rewrite_yaml(contents, namespace, collection, spec, args, dest)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
-        logger.error('Skipping bad YAML in %s: %s' % (src, str(e)))
+        logger.error('Skipping bad YAML in %s: %s', src, str(e))
 
 
 def _rewrite_yaml(contents, namespace, collection, spec, args, dest):
@@ -1812,7 +1812,7 @@ def main():
 
     for spec_file in os.listdir(args.spec_dir):
         if not spec_file.endswith('.yml'):
-            logger.debug('skipping %s as it is not a yaml file' % spec_file)
+            logger.debug('skipping %s as it is not a yaml file', spec_file)
             continue
         try:
             spec[os.path.splitext(os.path.basename(spec_file))[0]] = load_spec_file(os.path.join(args.spec_dir, spec_file))
