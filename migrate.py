@@ -979,13 +979,13 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
     # make initial YAML transformation to minimize the diff
     mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
-    integration_test_dirs = []
     seen = {}
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
             import_deps = []
             docs_deps = []
             unit_deps = []
+            integration_test_dirs = []
             migrated_to_collection = {}
 
             if args.fail_on_core_rewrite:
@@ -1122,7 +1122,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 global integration_tests_deps
                 add_deps_to_metadata(integration_tests_deps.union(import_deps + docs_deps + unit_deps), galaxy_metadata)
-                integration_test_dirs = []
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
