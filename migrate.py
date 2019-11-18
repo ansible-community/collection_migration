@@ -1005,7 +1005,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 os.makedirs(collection_dir)
 
             # create the data for galaxy.yml
-            galaxy_metadata = galaxy_metadata_init(collection, namespace, target_github_org)
+            galaxy_metadata = init_galaxy_metadata(collection, namespace, target_github_org)
 
             # process each plugin type
             for plugin_type, plugins in spec[namespace][collection].items():
@@ -1146,8 +1146,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             REMOVE = set()
 
 
-def galaxy_metadata_init(collection, namespace, target_github_org):
+def init_galaxy_metadata(collection, namespace, target_github_org):
     """Return the initial Galaxy collection metadata object."""
+
     return {
         'namespace': namespace,
         'name': collection,
@@ -1168,6 +1169,7 @@ def galaxy_metadata_init(collection, namespace, target_github_org):
 
 def process_symlink(plugin_type, plugins, dest, src):
     """Recreate plugin module symlinks."""
+
     real_src = os.readlink(src)
 
     # remove destination if it already exists
