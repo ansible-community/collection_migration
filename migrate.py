@@ -1013,19 +1013,15 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     logger.error('Empty plugin_type: %s in spec for %s.%s' % (plugin_type, namespace, collection))
                     continue
 
-                # get right plugin path
-                if plugin_type not in PLUGIN_EXCEPTION_PATHS:
-                    src_plugin_base = os.path.join('lib', 'ansible', 'plugins', plugin_type)
-                else:
-                    src_plugin_base = PLUGIN_EXCEPTION_PATHS[plugin_type]
+                # get src plugin path
+                src_plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
 
                 # ensure destinations exist
                 relative_dest_plugin_base = os.path.join('plugins', plugin_type)
                 dest_plugin_base = os.path.join(collection_dir, relative_dest_plugin_base)
                 if not os.path.exists(dest_plugin_base):
                     os.makedirs(dest_plugin_base)
-                    with open(os.path.join(dest_plugin_base, '__init__.py'), 'w') as f:
-                        f.write('')
+                    write_text_into_file(os.path.join(dest_plugin_base, '__init__.py'), '')
 
                 # process each plugin
                 for plugin in plugins:
@@ -1052,7 +1048,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     remove(src)
 
                     if plugin_type in ('modules',) and '/' in plugin:
-                        init_py_path = os.path.join(checkout_path, src_plugin_base, os.path.dirname(plugin), '__init__.py')
+                        init_py_path = os.path.join(os.path.dirname(src), '__init__.py')
                         if os.path.exists(init_py_path):
                             remove(init_py_path)
 
