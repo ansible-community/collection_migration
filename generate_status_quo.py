@@ -163,6 +163,10 @@ class StatusQuo:
         if bn == 'core' and 'aws' not in filename:
             return 'utilities.misc'
 
+        # workaround for mu/database.py ending up in aerospike
+        if bn == 'database':
+            return 'database.misc'
+
         # does the filepath contain a topic?
         paths = filename.replace(self.checkout_dir + '/', '')
         paths = paths.replace('lib/ansible/', '')
