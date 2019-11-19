@@ -285,6 +285,13 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
         'InventoryModule': 'NAME',
     }
 
+    if not (
+            'plugins/become' in filename or
+            'plugins/callback' in filename or
+            'plugins/connection' in filename or
+            'plugins/inventory' in filename):
+        return
+
     for class_name, property_name in rewrite_map.items():
         try:
             val = (
