@@ -676,9 +676,9 @@ glob:
     - monitoring/circonus_annotation.py
     - monitoring/datadog/datadog_event.py
     - monitoring/datadog/datadog_monitor.py
-    - monitoring/grafana_dashboard.py
-    - monitoring/grafana_datasource.py
-    - monitoring/grafana_plugin.py
+    - monitoring/grafana/grafana_dashboard.py
+    - monitoring/grafana/grafana_datasource.py
+    - monitoring/grafana/grafana_plugin.py
     - monitoring/honeybadger_deployment.py
     - monitoring/icinga2_feature.py
     - monitoring/icinga2_host.py
@@ -720,7 +720,7 @@ glob:
     - net_tools/ipify_facts.py
     - net_tools/ipinfoio_facts.py
     - net_tools/ldap/__init__.py
-    - net_tools/ldap/ldap_attr.py
+    - net_tools/ldap/ldap_attrs.py
     - net_tools/ldap/ldap_entry.py
     - net_tools/ldap/ldap_passwd.py
     - net_tools/lldp.py
