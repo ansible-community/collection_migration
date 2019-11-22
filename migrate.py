@@ -285,11 +285,14 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
         'InventoryModule': 'NAME',
     }
 
-    if not (
-            'plugins/become' in filename or
-            'plugins/callback' in filename or
-            'plugins/connection' in filename or
-            'plugins/inventory' in filename):
+    ignored_plugins = {
+        'become',
+        'callback',
+        'connection',
+        'inventory',
+    }
+
+    if all(f'plugins/{p}' not in filename for p in ignored_plugins):
         return
 
     for class_name, property_name in rewrite_map.items():
