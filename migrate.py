@@ -1158,6 +1158,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
 def init_galaxy_metadata(collection, namespace, target_github_org):
     """Return the initial Galaxy collection metadata object."""
+    github_repo_slug = f'{target_github_org}/{namespace}.{collection}'
+    github_repo_http_url = f'https://github.com/{github_repo_slug}'
+    github_repo_ssh_url = f'git@github.com:{github_repo_slug}.git'
     return {
         'namespace': namespace,
         'name': collection,
@@ -1169,10 +1172,13 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
         'license_file': None,
         'tags': None,
         'dependencies': {},
-        'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
-        'documentation': None,
-        'homepage': None,
-        'issues': None
+        'repository': github_repo_ssh_url,
+        'documentation': f'{github_repo_http_url}/tree/master/docs',
+        'homepage': github_repo_http_url,
+        'issues': (
+            f'{github_repo_http_url}/issues'
+            '?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc'
+        ),
     }
 
 
