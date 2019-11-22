@@ -206,6 +206,17 @@ def write_text_into_file(path, text):
         return f.write(text)
 
 
+@contextlib.contextmanager
+def working_directory(target_dir):
+    """Temporary change dir to the target and change back on exit."""
+    current_working_dir = os.getcwd()
+    os.chdir(target_dir)
+    try:
+        yield os.getcwd()
+    finally:
+        os.chdir(current_working_dir)
+
+
 # ===== SPEC utils =====
 def load_spec_file(spec_file):
 
@@ -1206,10 +1217,9 @@ def process_symlink(plugin_type, plugins, dest, src):
         target = real_src
     else:
         target = os.path.basename(real_src)
-    ret = os.getcwd()
-    os.chdir(os.path.dirname(dest))
-    os.symlink(os.path.basename(target), os.path.basename(dest))
-    os.chdir(ret)
+
+    with working_directory(os.path.dirname(dest)):
+        os.symlink(os.path.basename(target), os.path.basename(dest))
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
