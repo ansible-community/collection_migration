@@ -1148,7 +1148,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
 def init_galaxy_metadata(collection, namespace, target_github_org):
     """Return the initial Galaxy collection metadata object."""
-
     return {
         'namespace': namespace,
         'name': collection,
@@ -1169,7 +1168,6 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
 
 def process_symlink(plugin_type, plugins, dest, src):
     """Recreate plugin module symlinks."""
-
     real_src = os.readlink(src)
 
     # remove destination if it already exists
