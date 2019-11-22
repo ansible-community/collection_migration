@@ -285,6 +285,16 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
         'InventoryModule': 'NAME',
     }
 
+    ignored_plugins = {
+        'become',
+        'callback',
+        'connection',
+        'inventory',
+    }
+
+    if all(f'plugins/{p}' not in filename for p in ignored_plugins):
+        return
+
     for class_name, property_name in rewrite_map.items():
         try:
             val = (
@@ -305,7 +315,7 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
             add_manual_check(property_name, val.value, filename)
 
 
-def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filename):
+def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
@@ -340,7 +350,7 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, filenam
                 val[:token_length] = new
                 el.value = "'%s'" % '.'.join(val)
                 continue
-            if val[1] in ('modules', 'module_utils'):
+            elif val[1] in ('modules', 'module_utils'):
                 plugin_type = val[1]
 
                 # 'ansible.modules.storage.netapp.na_ontap_nvme.NetAppONTAPNVMe.create_nvme'
@@ -591,7 +601,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
         try:
             plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
-        except LookupError as e:
+        except LookupError:
             if plugin_type not in ('modules', 'module_utils'):
                 # plugin not in spec, assuming it stays in core and skipping
                 continue
@@ -767,7 +777,7 @@ def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
     logger.info('Sanity tests deps injected into collection')
 
 
-def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
+def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
     """Find all unit tests and related artifacts for the given plugin.
 
     Return the copy map.
@@ -967,9 +977,7 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin, spec):
 
 # ===== MAKE COLLECTIONS =====
 def assemble_collections(checkout_path, spec, args, target_github_org):
-    # NOTE releases_dir is already created by checkout_repo(), might want to move all that to something like ensure_dirs() ...
     collections_base_dir = os.path.join(args.vardir, 'collections')
-    integration_test_dirs = []
 
     # expand globs so we deal with specific paths
     resolve_spec(spec, checkout_path)
@@ -987,6 +995,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             import_deps = []
             docs_deps = []
             unit_deps = []
+            integration_test_dirs = []
+            migrated_to_collection = {}
 
             if args.fail_on_core_rewrite:
                 if collection != '_core':
@@ -995,8 +1005,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 if collection.startswith('_'):
                     # these are info only collections
                     continue
-
-            migrated_to_collection = {}
 
             collection_dir = os.path.join(collections_base_dir, 'ansible_collections', namespace, collection)
 
@@ -1007,42 +1015,23 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 os.makedirs(collection_dir)
 
             # create the data for galaxy.yml
-            galaxy_metadata = {
-                'namespace': namespace,
-                'name': collection,
-                'version': '1.0.0',  # TODO: add to spec, args?
-                'readme': None,
-                'authors': None,
-                'description': None,
-                'license': None,
-                'license_file': None,
-                'tags': None,
-                'dependencies': {},
-                'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
-                'documentation': None,
-                'homepage': None,
-                'issues': None
-            }
+            galaxy_metadata = init_galaxy_metadata(collection, namespace, target_github_org)
 
-            for plugin_type in spec[namespace][collection].keys():
-                plugins = spec[namespace][collection][plugin_type]
+            # process each plugin type
+            for plugin_type, plugins in spec[namespace][collection].items():
                 if not plugins:
                     logger.error('Empty plugin_type: %s in spec for %s.%s' % (plugin_type, namespace, collection))
                     continue
 
-                # get right plugin path
-                if plugin_type not in PLUGIN_EXCEPTION_PATHS:
-                    src_plugin_base = os.path.join('lib', 'ansible', 'plugins', plugin_type)
-                else:
-                    src_plugin_base = PLUGIN_EXCEPTION_PATHS[plugin_type]
+                # get src plugin path
+                src_plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
 
                 # ensure destinations exist
                 relative_dest_plugin_base = os.path.join('plugins', plugin_type)
                 dest_plugin_base = os.path.join(collection_dir, relative_dest_plugin_base)
                 if not os.path.exists(dest_plugin_base):
                     os.makedirs(dest_plugin_base)
-                    with open(os.path.join(dest_plugin_base, '__init__.py'), 'w') as f:
-                        f.write('')
+                    write_text_into_file(os.path.join(dest_plugin_base, '__init__.py'), '')
 
                 # process each plugin
                 for plugin in plugins:
@@ -1069,7 +1058,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     remove(src)
 
                     if plugin_type in ('modules',) and '/' in plugin:
-                        init_py_path = os.path.join(checkout_path, src_plugin_base, os.path.dirname(plugin), '__init__.py')
+                        init_py_path = os.path.join(os.path.dirname(src), '__init__.py')
                         if os.path.exists(init_py_path):
                             remove(init_py_path)
 
@@ -1090,39 +1079,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         raise Exception('Spec specifies "%s" but file "%s" is not found in checkout' % (plugin, src))
 
                     if os.path.islink(src):
-                        real_src = os.readlink(src)
-
-                        # remove destination if it already exists
-                        if os.path.exists(dest):
-                            # NOTE: not atomic but should not matter in our script
-                            logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
-                            os.remove(dest)
-
-                        if real_src.startswith('../'):
-                            target = real_src[3:]
-                            found = False
-                            for k in spec[namespace][collection][plugin_type]:
-                                if k.endswith(target):
-                                    found = True
-                                    break
-
-                            if found:
-                                if plugin_type == 'module_utils':
-                                    target = real_src
-                                else:
-                                    target = os.path.basename(real_src)
-                                ret = os.getcwd()
-                                os.chdir(os.path.dirname(dest))
-                                os.symlink(os.path.basename(target), os.path.basename(dest))
-                                os.chdir(ret)
-                            else:
-                                raise Exception('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
-                        else:
-                            shutil.copyfile(src, dest, follow_symlinks=False)
-
-                        # dont rewrite symlinks, original file should already be handled
+                        process_symlink(plugin_type, plugins, dest, src)
+                        # don't rewrite symlinks, original file should already be handled
                         continue
-
                     elif not src.endswith('.py'):
                         # its not all python files, copy and go to next
                         # TODO: handle powershell import rewrites
@@ -1142,7 +1101,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     # process unit tests
                     unit_tests_migrated_to_collection = copy_unit_tests(
                         checkout_path, collection_dir,
-                        plugin_type, plugin, spec,
+                        plugin_type, plugin,
                     )
                     migrated_to_collection.update(unit_tests_migrated_to_collection)
 
@@ -1168,7 +1127,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 global integration_tests_deps
                 add_deps_to_metadata(integration_tests_deps.union(import_deps + docs_deps + unit_deps), galaxy_metadata)
-                integration_test_dirs = []
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
@@ -1198,6 +1156,56 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             REMOVE = set()
 
 
+def init_galaxy_metadata(collection, namespace, target_github_org):
+    """Return the initial Galaxy collection metadata object."""
+    return {
+        'namespace': namespace,
+        'name': collection,
+        'version': '1.0.0',  # TODO: add to spec, args?
+        'readme': None,
+        'authors': None,
+        'description': None,
+        'license': None,
+        'license_file': None,
+        'tags': None,
+        'dependencies': {},
+        'repository': f'git@github.com:{target_github_org}/{namespace}.{collection}.git',
+        'documentation': None,
+        'homepage': None,
+        'issues': None
+    }
+
+
+def process_symlink(plugin_type, plugins, dest, src):
+    """Recreate plugin module symlinks."""
+    real_src = os.readlink(src)
+
+    # remove destination if it already exists
+    if os.path.exists(dest):
+        # NOTE: not atomic but should not matter in our script
+        logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
+        os.remove(dest)
+
+    if not real_src.startswith('../'):
+        shutil.copyfile(src, dest, follow_symlinks=False)
+        return
+
+    target = real_src[3:]
+    found = any(p.endswith(target) for p in plugins)
+
+    if not found:
+        raise LookupError('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
+
+    if plugin_type == 'module_utils':
+        target = real_src
+    else:
+        target = os.path.basename(real_src)
+    ret = os.getcwd()
+    os.chdir(os.path.dirname(dest))
+    os.symlink(os.path.basename(target), os.path.basename(dest))
+    os.chdir(ret)
+
+
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
     """Rewrite imports and apply patches to unit tests."""
     deps = []
@@ -1208,7 +1216,7 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
     ):
         _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
         deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, file_path)
+        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
         write_text_into_file(file_path, unit_test_module_fst.dumps())
 
     return deps
@@ -1374,7 +1382,7 @@ def integration_tests_add_to_deps(collection, dep_collection):
 
     global integration_tests_deps
     integration_tests_deps.add(dep_collection)
-    logger.debug("Adding %s.%s as a dep for %s.%s" % (dep_collection[0], dep_collection[1], collection[0], collection[1]))
+    logger.debug("Adding %s.%s as a dep for %s.%s", dep_collection[0], dep_collection[1], collection[0], collection[1])
 
 
 def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name):
@@ -1387,7 +1395,7 @@ def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name
     ]
     deps = []
     for fname, dummy_to_remove in files:
-        logger.debug('Found integration tests for %s %s in %s' % (plugin_type, plugin_name, fname))
+        logger.debug('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
         deps.extend(process_needs_target(checkout_dir, fname))
 
     return files + deps
@@ -1404,7 +1412,7 @@ def process_needs_target(checkout_dir, fname):
                 if isinstance(dep, dict):
                     dep = dep.get('role')
                 dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
-                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1417,7 +1425,7 @@ def process_needs_target(checkout_dir, fname):
             dep = alias.split('/')[-1]
             dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
             if os.path.exists(dep_fname):
-                logger.debug('Adding integration tests dependency target %s for %s' % (dep_fname, fname))
+                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1556,7 +1564,7 @@ def rewrite_yaml(src, dest, namespace, collection, spec, args):
         _rewrite_yaml(contents, namespace, collection, spec, args, dest)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
-        logger.error('Skipping bad YAML in %s: %s' % (src, str(e)))
+        logger.error('Skipping bad YAML in %s: %s', src, str(e))
 
 
 def _rewrite_yaml(contents, namespace, collection, spec, args, dest):
@@ -1805,8 +1813,8 @@ def main():
     parser.add_argument('-M', '--push-migrated-core', action='store_true', dest='push_migrated_core', default=False,
                         help='Push migrated core to the Git repo')
     parser.add_argument('-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
-            help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running migration against the list of files kept in core: spec must contain the "_core" collection.')
-
+                        help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running'
+                             ' migration against the list of files kept in core: spec must contain the "_core" collection.')
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False,
                         help='Skip tests and rewrite the runtime code only.')
 
@@ -1817,7 +1825,7 @@ def main():
 
     for spec_file in os.listdir(args.spec_dir):
         if not spec_file.endswith('.yml'):
-            logger.debug('skipping %s as it is not a yaml file' % spec_file)
+            logger.debug('skipping %s as it is not a yaml file', spec_file)
             continue
         try:
             spec[os.path.splitext(os.path.basename(spec_file))[0]] = load_spec_file(os.path.join(args.spec_dir, spec_file))
