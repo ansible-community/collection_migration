@@ -33,6 +33,7 @@ from baron.parser import ParsingError
 import redbaron
 
 from gh import GitHubOrgClient
+from template_utils import render_template_into
 
 
 # https://github.com/ansible/ansible/blob/100fe52860f45238ee8ca9e3019d1129ad043c68/hacking/fix_test_syntax.py#L62
@@ -683,6 +684,20 @@ def inject_init_into_tree(target_dir):
         write_text_into_file(initpath, '')
 
 
+def inject_readme_into_collection(collection_dir, *, ctx):
+    """Insert a ``README.md`` file into the collection dir.
+
+    The ``README.md.tmpl`` resource template file contains a title
+    and a GitHub Actions Workflow badge.
+    """
+    target_file = 'README.md'
+    render_template_into(
+        f'{target_file}.tmpl',
+        ctx,
+        os.path.join(collection_dir, target_file),
+    )
+
+
 def inject_gitignore_into_collection(collection_dir):
     """Insert a ``.gitignore`` file into the collection dir.
 
@@ -1130,6 +1145,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
+            inject_readme_into_collection(
+                collection_dir,
+                ctx={'coll_ns': namespace, 'coll_name': collection},
+            )
 
             # write collection metadata
             write_yaml_into_file_as_is(
@@ -1162,7 +1181,7 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
         'namespace': namespace,
         'name': collection,
         'version': '1.0.0',  # TODO: add to spec, args?
-        'readme': None,
+        'readme': 'README.md',
         'authors': None,
         'description': None,
         'license': None,
