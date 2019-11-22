@@ -42,7 +42,7 @@ jobs:
         and auto-publish the migrated repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
-        && github.repository == 'ansible/collection_migration'
+        && github.repository == 'ansible-community/collection_migration'
       env:
         GITHUB_APP_IDENTIFIER: 41435
         GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
@@ -57,7 +57,7 @@ jobs:
         Run migration scenario ${{ matrix.migration-scenario }}
       if: >-
         github.event_name == 'pull_request'
-        || github.repository != 'ansible/collection_migration'
+        || github.repository != 'ansible-community/collection_migration'
       run: >-
         python -m
         migrate
