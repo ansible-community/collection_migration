@@ -698,6 +698,20 @@ def inject_readme_into_collection(collection_dir, *, ctx):
     )
 
 
+def inject_github_actions_workflow_into_collection(collection_dir, *, ctx):
+    """Insert GitHub Actions Workflow config into collection repo."""
+    target_file = 'collection-continuous-integration.yml'
+
+    workflows_dir = os.path.join(collection_dir, '.github', 'workflows')
+    os.makedirs(workflows_dir, exist_ok=True)
+
+    render_template_into(
+        f'{target_file}.tmpl',
+        ctx,
+        os.path.join(workflows_dir, target_file),
+    )
+
+
 def inject_gitignore_into_collection(collection_dir):
     """Insert a ``.gitignore`` file into the collection dir.
 
@@ -1146,6 +1160,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             inject_gitignore_into_collection(collection_dir)
             inject_readme_into_collection(
+                collection_dir,
+                ctx={'coll_ns': namespace, 'coll_name': collection},
+            )
+            inject_github_actions_workflow_into_collection(
                 collection_dir,
                 ctx={'coll_ns': namespace, 'coll_name': collection},
             )
