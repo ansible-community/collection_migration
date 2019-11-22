@@ -1,5 +1,6 @@
 ansible
 gidgethub  # dependency of octomachinery but imported too
+Jinja2
 logzero
 octomachinery
 redbaron

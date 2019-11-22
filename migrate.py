@@ -33,6 +33,7 @@ from baron.parser import ParsingError
 import redbaron
 
 from gh import GitHubOrgClient
+from template_utils import render_template_into
 
 
 # https://github.com/ansible/ansible/blob/100fe52860f45238ee8ca9e3019d1129ad043c68/hacking/fix_test_syntax.py#L62
@@ -204,6 +205,17 @@ def read_lines_from_file(path):
 def write_text_into_file(path, text):
     with open(path, 'w') as f:
         return f.write(text)
+
+
+@contextlib.contextmanager
+def working_directory(target_dir):
+    """Temporary change dir to the target and change back on exit."""
+    current_working_dir = os.getcwd()
+    os.chdir(target_dir)
+    try:
+        yield os.getcwd()
+    finally:
+        os.chdir(current_working_dir)
 
 
 # ===== SPEC utils =====
@@ -683,6 +695,34 @@ def inject_init_into_tree(target_dir):
         write_text_into_file(initpath, '')
 
 
+def inject_readme_into_collection(collection_dir, *, ctx):
+    """Insert a ``README.md`` file into the collection dir.
+
+    The ``README.md.tmpl`` resource template file contains a title
+    and a GitHub Actions Workflow badge.
+    """
+    target_file = 'README.md'
+    render_template_into(
+        f'{target_file}.tmpl',
+        ctx,
+        os.path.join(collection_dir, target_file),
+    )
+
+
+def inject_github_actions_workflow_into_collection(collection_dir, *, ctx):
+    """Insert GitHub Actions Workflow config into collection repo."""
+    target_file = 'collection-continuous-integration.yml'
+
+    workflows_dir = os.path.join(collection_dir, '.github', 'workflows')
+    os.makedirs(workflows_dir, exist_ok=True)
+
+    render_template_into(
+        f'{target_file}.tmpl',
+        ctx,
+        os.path.join(workflows_dir, target_file),
+    )
+
+
 def inject_gitignore_into_collection(collection_dir):
     """Insert a ``.gitignore`` file into the collection dir.
 
@@ -1130,6 +1170,14 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
+            inject_readme_into_collection(
+                collection_dir,
+                ctx={'coll_ns': namespace, 'coll_name': collection},
+            )
+            inject_github_actions_workflow_into_collection(
+                collection_dir,
+                ctx={'coll_ns': namespace, 'coll_name': collection},
+            )
 
             # write collection metadata
             write_yaml_into_file_as_is(
@@ -1165,7 +1213,7 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
         'namespace': namespace,
         'name': collection,
         'version': '1.0.0',  # TODO: add to spec, args?
-        'readme': None,
+        'readme': 'README.md',
         'authors': None,
         'description': None,
         'license': None,
@@ -1206,10 +1254,9 @@ def process_symlink(plugin_type, plugins, dest, src):
         target = real_src
     else:
         target = os.path.basename(real_src)
-    ret = os.getcwd()
-    os.chdir(os.path.dirname(dest))
-    os.symlink(os.path.basename(target), os.path.basename(dest))
-    os.chdir(ret)
+
+    with working_directory(os.path.dirname(dest)):
+        os.symlink(os.path.basename(target), os.path.basename(dest))
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
