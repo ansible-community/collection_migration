@@ -1675,6 +1675,10 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
 
         for ns in spec.keys():
             for coll in get_rewritable_collections(ns, spec):
+                if collection == coll:
+                    # https://github.com/ansible-community/collection_migration/issues/156
+                    continue
+
                 try:
                     modules_in_collection = get_plugins_from_collection(ns, coll, 'modules', spec)
                 except LookupError:
