@@ -661,14 +661,14 @@ def rewrite_py(src, dest, collection, spec, namespace, args):
         docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
     except LookupError as err:
         docs_deps = []
-        logger.info('%s in %s', err, src)
+        logger.debug('%s in %s', err, src)
 
     rewrite_class_property(mod_fst, collection, namespace, dest)
 
     plugin_data_new = mod_fst.dumps()
 
     if mod_src_text != plugin_data_new:
-        logger.info('rewriting plugin references in %s' % dest)
+        logger.info('Rewriting plugin references in %s' % dest)
 
     write_text_into_file(dest, plugin_data_new)
 
@@ -1434,8 +1434,11 @@ def integration_tests_add_to_deps(collection, dep_collection):
         return
 
     global integration_tests_deps
+
+    if dep_collection not in integration_tests_deps:
+        logger.info("Adding %s.%s as a dep for %s.%s", dep_collection[0], dep_collection[1], collection[0], collection[1])
+
     integration_tests_deps.add(dep_collection)
-    logger.debug("Adding %s.%s as a dep for %s.%s", dep_collection[0], dep_collection[1], collection[0], collection[1])
 
 
 def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name):
@@ -1448,7 +1451,7 @@ def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name
     ]
     deps = []
     for fname, dummy_to_remove in files:
-        logger.debug('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
+        logger.info('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
         deps.extend(process_needs_target(checkout_dir, fname))
 
     return files + deps
@@ -1465,7 +1468,7 @@ def process_needs_target(checkout_dir, fname):
                 if isinstance(dep, dict):
                     dep = dep.get('role')
                 dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
-                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
+                logger.info('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1478,7 +1481,7 @@ def process_needs_target(checkout_dir, fname):
             dep = alias.split('/')[-1]
             dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
             if os.path.exists(dep_fname):
-                logger.debug('Adding integration tests dependency target %s for %s', dep_fname, fname)
+                logger.info('Adding integration tests dependency target %s for %s', dep_fname, fname)
                 deps.append((dep_fname, False))
                 deps.extend(process_needs_target(checkout_dir, dep_fname))
 
@@ -1488,11 +1491,12 @@ def process_needs_target(checkout_dir, fname):
 def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args):
     # FIXME module_defaults groups
 
+    logger.info('Processing integration tests for %s.%s', namespace, collection)
+
     for test_dir, to_remove in test_dirs:
         for dirpath, dirnames, filenames in os.walk(test_dir):
             for filename in filenames:
                 full_path = os.path.join(dirpath, filename)
-                logger.debug(full_path)
 
                 dest_dir = os.path.join(collection_dir,
                                         'tests',
@@ -1502,6 +1506,8 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 dest = os.path.join(dest_dir, filename)
 
                 dummy, ext = os.path.splitext(filename)
+
+                logger.info('Processing %s -> %s', full_path, dest)
 
                 if ext in BAD_EXT:
                     continue
@@ -1550,9 +1556,11 @@ def rewrite_sh(full_path, dest, namespace, collection, spec, args):
                         continue
                     # FIXME list
                     new_plugin_name = get_plugin_fqcn(ns, coll, plugin_name)
-
+                    msg = 'Rewriting to %s' % new_plugin_name
                     if args.fail_on_core_rewrite:
-                        raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                        raise RuntimeError(msg)
+
+                    logger.debug(msg)
                     contents = contents.replace(key + '=' + plugin_name, key + '=' + new_plugin_name)
                     contents = contents.replace(key + ' ' + plugin_name, key + ' ' + new_plugin_name)
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
@@ -1601,8 +1609,12 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
                 plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
                 if plugin_collection in COLLECTION_SKIP_REWRITE:
                     raise LookupError
+
+                msg = 'Rewriting to %s.%s.%s' % (plugin_namespace, plugin_collection, plugin_name)
                 if args.fail_on_core_rewrite:
-                    raise RuntimeError('Rewriting to %s.%s.%s' % (plugin_namespace, plugin_collection, plugin_name))
+                    raise RuntimeError(msg)
+
+                logger.debug(msg)
                 new_plugin_names.append(get_plugin_fqcn(namespace, plugin_collection, plugin_name))
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
@@ -1666,8 +1678,11 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
                 if plugin_collection in COLLECTION_SKIP_REWRITE:
                     raise LookupError
 
+                msg = 'Rewriting to %s.%s.%s' % (plugin_namespace, plugin_collection, plugin_name)
                 if args.fail_on_core_rewrite:
-                    raise RuntimeError('Rewriting to %s.%s.%s' % (plugin_namespace, plugin_collection, plugin_name))
+                    raise RuntimeError(msg)
+
+                logger.debug(msg)
                 translate.append((prefix + get_plugin_fqcn(namespace, plugin_collection, plugin_name), key))
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
@@ -1688,8 +1703,11 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
                     if key != module:
                         continue
                     new_module_name = get_plugin_fqcn(ns, coll, key)
+                    msg = 'Rewriting to %s' % new_module_name
                     if args.fail_on_core_rewrite:
-                        raise RuntimeError('Rewriting to %s' % new_module_name)
+                        raise RuntimeError(msg)
+
+                    logger.debug(msg)
                     translate.append((new_module_name, key))
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
@@ -1711,8 +1729,12 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest):
             if plugin_collection in COLLECTION_SKIP_REWRITE:
                 continue
             new_plugin_name = get_plugin_fqcn(namespace, plugin_collection, el[key])
+
+            msg = 'Rewriting to %s' % new_plugin_name
             if args.fail_on_core_rewrite:
-                raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                raise RuntimeError(msg)
+
+            logger.debug(msg)
             el[key] = new_plugin_name
             integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
         except LookupError:
@@ -1737,8 +1759,10 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
                             for coll in get_rewritable_collections(ns, spec):
                                 if item in get_plugins_from_collection(ns, coll, 'modules', spec):
                                     new_plugin_name = get_plugin_fqcn(ns, coll, el[key][idx])
+                                    msg = 'Rewriting to %s' % new_plugin_name
                                     if args.fail_on_core_rewrite:
-                                        raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                                        raise RuntimeError(msg)
+                                    logger.debug(msg)
                                     el[key][idx] = new_plugin_name
                                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
                     if isinstance(el[key][idx], str):
@@ -1762,8 +1786,11 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec, args):
                 if plugin_name not in value:
                     continue
                 new_plugin_name = get_plugin_fqcn(ns, coll, plugin_name)
+                msg = 'Rewriting to %s' % new_plugin_name
                 if args.fail_on_core_rewrite:
-                    raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                    raise RuntimeError(msg)
+
+                logger.debug(msg)
                 value = value.replace(plugin_name, new_plugin_name)
                 integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
@@ -1785,8 +1812,11 @@ def _rewrite_yaml_filter(value, namespace, collection, spec, args):
                     if found_filter not in filters:
                         continue
                     new_plugin_name = get_plugin_fqcn(ns, coll, found_filter)
+                    msg = 'Rewriting to %s' % new_plugin_name
                     if args.fail_on_core_rewrite:
-                        raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                        raise RuntimeError(msg)
+
+                    logger.debug(msg)
                     value = value.replace(found_filter, new_plugin_name)
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
@@ -1808,8 +1838,11 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args):
                     if found_test not in tests:
                         continue
                     new_plugin_name = get_plugin_fqcn(ns, coll, found_test)
+                    msg = 'Rewriting to %s' % new_plugin_name
                     if args.fail_on_core_rewrite:
-                        raise RuntimeError('Rewriting to %s' % new_plugin_name)
+                        raise RuntimeError(msg)
+
+                    logger.debug(msg)
                     value = value.replace(found_test, new_plugin_name)
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
