@@ -1546,13 +1546,13 @@ def rewrite_sh(full_path, dest, namespace, collection, spec, args):
 
     contents = read_text_from_file(full_path)
     for key, plugin_type in sh_key_map.items():
-        if not contents.find(key):
+        if contents.find(key) == -1:
             continue
         for ns in spec.keys():
             for coll in get_rewritable_collections(ns, spec):
                 plugins = get_plugins_from_collection(ns, coll, plugin_type, spec)
                 for plugin_name in plugins:
-                    if not contents.find(plugin_name):
+                    if contents.find(plugin_name) == -1:
                         continue
                     # FIXME list
                     new_plugin_name = get_plugin_fqcn(ns, coll, plugin_name)
