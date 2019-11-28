@@ -1315,6 +1315,7 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
         subprocess.check_call(
             (
                 'git', 'pull',
+                '--allow-unrelated-histories',
                 '--rebase',
                 '--strategy', 'recursive',
                 # Refs:
