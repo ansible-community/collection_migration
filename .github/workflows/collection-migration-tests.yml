@@ -30,7 +30,7 @@ jobs:
     - name: Uninstall previously installed Ansible via Pip
       run: python -m pip uninstall ansible
     - name: Install migration script deps
-      run: python -m pip install -r requirements.txt
+      run: python -m pip install -r requirements.in -c requirements.txt
     - name: Install Ansible==devel
       run: python -m pip install git+https://github.com/ansible/ansible.git@devel
     - name: Configure user settings in Git
