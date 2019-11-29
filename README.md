@@ -14,8 +14,12 @@ the dependency packages:
 ```console
 $ python3.7 -m venv .venv
 $ . .venv/bin/activate
-(.venv) $ python3.7 -m pip install -r requirements.txt
+(.venv) $ python3.7 -m pip install -r requirements.in
 ```
+
+*Pro tip:* If you wish to install exactly the same dep versions
+as the CI uses, make sure to add `-c requirements.txt`
+in the end of that last command.
 
 
 Migration scenario
