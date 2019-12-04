@@ -1714,7 +1714,7 @@ glob:
     - network/junos/junos_ping.py
     - network/junos/junos_rpc.py
     - network/junos/junos_scp.py
-    - network/junos/junos_static_route.py
+    - network/junos/junos_static_routes.py
     - network/junos/junos_system.py
     - network/junos/junos_user.py
     - network/junos/junos_vlans.py
@@ -3169,6 +3169,8 @@ glob:
     - network/junos/argspec/lldp_global/lldp_global.py
     - network/junos/argspec/lldp_interfaces/__init__.py
     - network/junos/argspec/lldp_interfaces/lldp_interfaces.py
+    - network/junos/argspec/static_routes/__init__.py
+    - network/junos/argspec/static_routes/static_routes.py
     - network/junos/argspec/vlans/__init__.py
     - network/junos/argspec/vlans/vlans.py
     - network/junos/config/__init__.py
@@ -3188,6 +3190,8 @@ glob:
     - network/junos/config/lldp_global/lldp_global.py
     - network/junos/config/lldp_interfaces/__init__.py
     - network/junos/config/lldp_interfaces/lldp_interfaces.py
+    - network/junos/config/static_routes/__init__.py
+    - network/junos/config/static_routes/static_routes.py
     - network/junos/config/vlans/__init__.py
     - network/junos/config/vlans/vlans.py
     - network/junos/facts/__init__.py
@@ -3210,6 +3214,8 @@ glob:
     - network/junos/facts/lldp_global/lldp_global.py
     - network/junos/facts/lldp_interfaces/__init__.py
     - network/junos/facts/lldp_interfaces/lldp_interfaces.py
+    - network/junos/facts/static_routes/__init__.py
+    - network/junos/facts/static_routes/static_routes.py
     - network/junos/facts/vlans/__init__.py
     - network/junos/facts/vlans/vlans.py
     - network/junos/junos.py
