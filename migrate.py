@@ -817,7 +817,7 @@ def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
     logger.info('Sanity tests deps injected into collection')
 
 
-def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
+def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugin):
     """Find all unit tests and related artifacts for the given plugin.
 
     Return the copy map.
@@ -850,7 +850,7 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
     # Path(matching_test_modules[0]).relative_to(Path(checkout_path))
     # os.path.relpath(matching_test_modules[0], checkout_path)
     if not matching_test_modules:
-        logger.info('No tests matching %s/%s found', plugin_type, plugin)
+        logger.info('No unit tests matching %s/%s found', plugin_type, plugin)
         return copy_map
 
     def find_up_the_tree(target_path):
@@ -990,7 +990,11 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
         discover_file_migrations(matching_test_modules, find_related=True),
     ))
 
-    # Actually copy tests
+    return copy_map
+
+
+def copy_unit_tests(copy_map, collection_dir, checkout_path):
+    """Copy unit tests into a collection using a copy map."""
     for src_f, dest_f in copy_map.items():
         if os.path.splitext(src_f)[1] in BAD_EXT:
             continue
@@ -1010,9 +1014,6 @@ def copy_unit_tests(checkout_path, collection_dir, plugin_type, plugin):
         remove(src)
 
     inject_requirements_into_unit_tests(checkout_path, collection_dir)
-
-    logger.info('Unit tests copied for %s/%s', plugin_type, plugin)
-    return copy_map
 
 
 # ===== MAKE COLLECTIONS =====
@@ -1037,6 +1038,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             unit_deps = []
             integration_test_dirs = []
             migrated_to_collection = {}
+            unit_tests_copy_map = {}
 
             if args.fail_on_core_rewrite:
                 if collection != '_core':
@@ -1139,13 +1141,15 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
                     # process unit tests
-                    unit_tests_migrated_to_collection = copy_unit_tests(
-                        checkout_path, collection_dir,
-                        plugin_type, plugin,
+                    plugin_unit_tests_copy_map = create_unit_tests_copy_map(
+                        checkout_path, collection_dir, plugin_type, plugin,
                     )
-                    migrated_to_collection.update(unit_tests_migrated_to_collection)
+                    unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
             if not args.skip_tests:
+                copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path)
+                migrated_to_collection.update(unit_tests_copy_map)
+
                 inject_init_into_tree(
                     os.path.join(collection_dir, 'tests', 'unit'),
                 )
