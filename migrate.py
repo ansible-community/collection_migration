@@ -1355,7 +1355,7 @@ def push_migrated_core(releases_dir):
 
     # NOTE: assumes the repo is not used and/or is locked while migration is running
     subprocess.check_call(
-        ('git', 'push', '--force-with-lease', 'migrated_core', DEVEL_BRANCH),
+        ('git', 'push', '--force', 'migrated_core', DEVEL_BRANCH),
         cwd=devel_path,
     )
 
