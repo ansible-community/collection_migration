@@ -1178,10 +1178,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 collection_dir,
                 ctx={'coll_ns': namespace, 'coll_name': collection},
             )
-            inject_github_actions_workflow_into_collection(
-                collection_dir,
-                ctx={'coll_ns': namespace, 'coll_name': collection},
-            )
+            #inject_github_actions_workflow_into_collection(
+            #    collection_dir,
+            #    ctx={'coll_ns': namespace, 'coll_name': collection},
+            #)
 
             # write collection metadata
             write_yaml_into_file_as_is(
