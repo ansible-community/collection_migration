@@ -42,7 +42,7 @@ TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
-MIGRATED_DEVEL_URL = 'git@github.com:ansible/migratedcore.git'
+MIGRATED_DEVEL_REMOTE = 'git@github.com:ansible-collection-migration/ansible-minimal.git'
 
 
 ALL_THE_FILES = set()
@@ -1346,13 +1346,16 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
 
 
 def push_migrated_core(releases_dir):
-    devel_path = os.path.join(releases_dir, 'migrated_core.git')
+    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    checkout_repo(MIGRATED_DEVEL_URL, devel_path, refresh=True)
+    subprocess.check_call(
+        ('git', 'remote', 'add', 'migrated_core', MIGRATED_DEVEL_REMOTE),
+        cwd=devel_path,
+    )
 
     # NOTE: assumes the repo is not used and/or is locked while migration is running
     subprocess.check_call(
-        ('git', 'push', '--force-with-lease', 'origin', DEVEL_BRANCH),
+        ('git', 'push', '--force-with-lease', 'migrated_core', DEVEL_BRANCH),
         cwd=devel_path,
     )
 
