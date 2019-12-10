@@ -39,6 +39,9 @@ jobs:
         git config --global user.name "Poor B"
     # https://www.webfactory.de/blog/use-ssh-key-for-private-repositories-in-github-actions
     - name: Setup SSH Keys and known_hosts
+      if: >-
+        github.event_name != 'pull_request'
+        && github.repository == 'ansible-community/collection_migration'
       env:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
