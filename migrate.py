@@ -1077,10 +1077,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 # process each plugin
                 for plugin in plugins:
-                    if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
-                        logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)" % (plugin, plugin_type, namespace, collection))
-                        continue
-
                     if os.path.splitext(plugin)[1] in BAD_EXT:
                         raise Exception("We should not be migrating compiled files: %s" % plugin)
 
@@ -1096,6 +1092,16 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     # TODO: currently requires 'full name of file', but should work w/o extension?
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
                     src = os.path.join(checkout_path, relative_src_plugin_path)
+
+                    if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
+                        if os.path.islink(src):
+                            logger.info("Removing plugin alias from checkout and skipping: %s (%s in %s.%s)",
+                                         plugin, plugin_type, namespace, collection)
+                            remove(src)
+                        else:
+                            logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)",
+                                         plugin, plugin_type, namespace, collection)
+                        continue
 
                     remove(src)
 
