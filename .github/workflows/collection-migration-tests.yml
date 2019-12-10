@@ -64,6 +64,8 @@ jobs:
         migrate
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
+        -P
+        --target-github-org ansible-collection-migration
         -M
     - name: >-
         Run migration scenario ${{ matrix.migration-scenario }}

@@ -1184,10 +1184,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 collection_dir,
                 ctx={'coll_ns': namespace, 'coll_name': collection},
             )
-            #inject_github_actions_workflow_into_collection(
-            #    collection_dir,
-            #    ctx={'coll_ns': namespace, 'coll_name': collection},
-            #)
+            inject_github_actions_workflow_into_collection(
+                collection_dir,
+                ctx={'coll_ns': namespace, 'coll_name': collection},
+            )
 
             # write collection metadata
             write_yaml_into_file_as_is(
@@ -1340,7 +1340,7 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
         )
         logger.info('Pushing the migrated collection to the Git remote')
         subprocess.check_call(
-            ('git', 'push', '--force-with-lease', git_repo_url, 'HEAD:master'),
+            ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
             cwd=collection_dir,
         )
         logger.info(
