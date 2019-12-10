@@ -2041,6 +2041,7 @@ glob:
     - network/vyos/vyos_user.py
     - network/vyos/vyos_vlan.py
     - notification/__init__.py
+    - notification/_osx_say.py
     - notification/bearychat.py
     - notification/campfire.py
     - notification/catapult.py
@@ -2392,6 +2393,7 @@ glob:
     - storage/zfs/zfs_facts.py
     - storage/zfs/zpool_facts.py
     - system/__init__.py
+    - system/_python_requirements_facts.py
     - system/aix_devices.py
     - system/aix_filesystem.py
     - system/aix_inittab.py
