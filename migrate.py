@@ -123,7 +123,7 @@ def checkout_repo(
     return set(
         f.strip()
         for f in subprocess.check_output(
-            ('git', 'ls-tree', '--full-tree', '-r', '--name-only', 'HEAD'),
+            ('git', '-c', 'core.quotepath=false', 'ls-tree', '--full-tree', '-r', '--name-only', 'HEAD'),
             text=True, cwd=checkout_path,
         ).split('\n')
         if f.strip()
