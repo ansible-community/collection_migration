@@ -1171,7 +1171,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
                 try:
-                    rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args)
+                    migrated_integration_test_files = rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args)
+                    migrated_to_collection.update(migrated_integration_test_files)
                 except yaml.composer.ComposerError as e:
                     logger.error(e)
 
@@ -1507,10 +1508,11 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
 
     logger.info('Processing integration tests for %s.%s', namespace, collection)
 
+    migrated = {}
     for test_dir, to_remove in test_dirs:
         for dirpath, dirnames, filenames in os.walk(test_dir):
             for filename in filenames:
-                full_path = os.path.join(dirpath, filename)
+                src = os.path.join(dirpath, filename)
 
                 dest_dir = os.path.join(collection_dir,
                                         'tests',
@@ -1521,32 +1523,38 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
 
                 dummy, ext = os.path.splitext(filename)
 
-                logger.info('Processing %s -> %s', full_path, dest)
+                logger.info('Processing %s -> %s', src, dest)
 
                 if ext in BAD_EXT:
                     continue
                 elif ext in ('.py',):
-                    import_deps, docs_deps = rewrite_py(full_path, dest, collection, spec, namespace, args)
+                    import_deps, docs_deps = rewrite_py(src, dest, collection, spec, namespace, args)
 
                     for dep_ns, dep_coll in import_deps + docs_deps:
                         integration_tests_add_to_deps((namespace, collection), (dep_ns, dep_coll))
                 elif ext in ('.ps1',):
                     # FIXME
-                    shutil.copy2(full_path, dest)
+                    shutil.copy2(src, dest)
                 elif ext in ('.yml', '.yaml'):
-                    rewrite_yaml(full_path, dest, namespace, collection, spec, args)
+                    rewrite_yaml(src, dest, namespace, collection, spec, args)
                 elif ext in ('.sh',):
-                    rewrite_sh(full_path, dest, namespace, collection, spec, args)
+                    rewrite_sh(src, dest, namespace, collection, spec, args)
                 elif filename == 'ansible.cfg':
-                    rewrite_ini(full_path, dest, namespace, collection, spec, args)
+                    rewrite_ini(src, dest, namespace, collection, spec, args)
                 else:
-                    shutil.copy2(full_path, dest)
+                    shutil.copy2(src, dest)
 
                 if to_remove:
-                    remove(full_path)
+                    remove(src)
+
+                relative_src_path = os.path.relpath(src, checkout_dir)
+                relative_dest_path = os.path.relpath(dest, collection_dir)
+                migrated[relative_src_path] = relative_dest_path
+
+    return migrated
 
 
-def rewrite_sh(full_path, dest, namespace, collection, spec, args):
+def rewrite_sh(src, dest, namespace, collection, spec, args):
     sh_key_map = {
         'ANSIBLE_CACHE_PLUGIN': 'cache',
         'ANSIBLE_CALLBACK_WHITELIST': 'callback',
@@ -1558,7 +1566,7 @@ def rewrite_sh(full_path, dest, namespace, collection, spec, args):
         '--connection': 'connection',
     }
 
-    contents = read_text_from_file(full_path)
+    contents = read_text_from_file(src)
     for key, plugin_type in sh_key_map.items():
         if contents.find(key) == -1:
             continue
@@ -1580,7 +1588,7 @@ def rewrite_sh(full_path, dest, namespace, collection, spec, args):
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     write_text_into_file(dest, contents)
-    shutil.copystat(full_path, dest)
+    shutil.copystat(src, dest)
 
 
 def rewrite_ini(src, dest, namespace, collection, spec, args):
