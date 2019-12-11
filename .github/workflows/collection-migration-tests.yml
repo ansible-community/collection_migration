@@ -69,12 +69,12 @@ jobs:
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'
-      run:
+      run: |
         python -m venv /tmp/ansible-minimal-venv
         source /tmp/ansible-minimal-venv/bin/activate
         pip install git+https://github.com/ansible-collection-migration/ansible-minimal
         ansible --help
-        ansible --verion
+        ansible --version
         deactivate
         rm -rf /tmp/ansible-minimal-venv
     - name: >-
