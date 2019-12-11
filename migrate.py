@@ -268,7 +268,7 @@ def get_plugin_collection(plugin_name, plugin_type, spec):
 
     # keep info
     plugin_name = plugin_name.replace('/', '.')
-    logger.debug('Assuming "%s.%s " stays in core' % (plugin_type, plugin_name))
+    logger.debug('Assuming "%s.%s " stays in core', plugin_type, plugin_name)
     add_core(plugin_type, plugin_name.replace('/', '.'))
 
     raise LookupError('Could not find "%s" named "%s" in any collection in the spec' % (plugin_type, plugin_name))
@@ -668,7 +668,7 @@ def rewrite_py(src, dest, collection, spec, namespace, args):
     plugin_data_new = mod_fst.dumps()
 
     if mod_src_text != plugin_data_new:
-        logger.info('Rewriting plugin references in %s' % dest)
+        logger.info('Rewriting plugin references in %s', dest)
 
     write_text_into_file(dest, plugin_data_new)
 
@@ -1062,7 +1062,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             # process each plugin type
             for plugin_type, plugins in spec[namespace][collection].items():
                 if not plugins:
-                    logger.error('Empty plugin_type: %s in spec for %s.%s' % (plugin_type, namespace, collection))
+                    logger.error('Empty plugin_type: %s in spec for %s.%s', plugin_type, namespace, collection)
                     continue
 
                 # get src plugin path
@@ -1136,7 +1136,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         shutil.copyfile(src, dest)
                         continue
 
-                    logger.info('Processing %s -> %s' % (src, dest))
+                    logger.info('Processing %s -> %s', src, dest)
 
                     deps = rewrite_py(src, dest, collection, spec, namespace, args)
                     import_deps += deps[0]
@@ -1247,7 +1247,7 @@ def process_symlink(plugin_type, plugins, dest, src):
     # remove destination if it already exists
     if os.path.exists(dest):
         # NOTE: not atomic but should not matter in our script
-        logger.warning('Removed "%s" as it is target for symlink of "%s"' % (dest, src))
+        logger.warning('Removed "%s" as it is target for symlink of "%s"', dest, src)
         os.remove(dest)
 
     if not real_src.startswith('../'):
