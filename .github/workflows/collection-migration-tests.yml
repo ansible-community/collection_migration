@@ -65,6 +65,18 @@ jobs:
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
         -M
+    - name: Smoke test ansible-minimal
+      if: >-
+        github.event_name != 'pull_request'
+        && github.repository == 'ansible-community/collection_migration'
+      run:
+        python -m venv /tmp/ansible-minimal-venv
+        source /tmp/ansible-minimal-venv/bin/activate
+        pip install git+https://github.com/ansible-collection-migration/ansible-minimal
+        ansible --help
+        ansible --verion
+        deactivate
+        rm -rf /tmp/ansible-minimal-venv
     - name: >-
         Run migration scenario ${{ matrix.migration-scenario }}
       if: >-
