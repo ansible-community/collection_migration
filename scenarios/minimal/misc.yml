@@ -455,8 +455,10 @@ glob:
     - cloud/ovirt/*
     - cloud/packet/*
     - cloud/podman/__init__.py
+    - cloud/podman/podman_container_info.py
     - cloud/podman/podman_image.py
     - cloud/podman/podman_image_info.py
+    - cloud/podman/podman_volume_info.py
     - cloud/profitbricks/__init__.py
     - cloud/profitbricks/profitbricks.py
     - cloud/profitbricks/profitbricks_datacenter.py
@@ -608,6 +610,7 @@ glob:
     - database/postgresql/postgresql_sequence.py
     - database/postgresql/postgresql_set.py
     - database/postgresql/postgresql_slot.py
+    - database/postgresql/postgresql_subscription.py
     - database/postgresql/postgresql_table.py
     - database/postgresql/postgresql_tablespace.py
     - database/postgresql/postgresql_user.py
