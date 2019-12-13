@@ -717,6 +717,8 @@ glob:
     - net_tools/haproxy.py
     - net_tools/hetzner_failover_ip.py
     - net_tools/hetzner_failover_ip_info.py
+    - net_tools/hetzner_firewall_info.py
+    - net_tools/hetzner_firewall.py
     - net_tools/infinity/__init__.py
     - net_tools/infinity/infinity.py
     - net_tools/ip_netns.py
@@ -993,13 +995,19 @@ glob:
     - network/cloudengine/ce_interface.py
     - network/cloudengine/ce_interface_ospf.py
     - network/cloudengine/ce_ip_interface.py
+    - network/cloudengine/ce_is_is_instance.py
+    - network/cloudengine/ce_is_is_interface.py
+    - network/cloudengine/ce_is_is_view.py
     - network/cloudengine/ce_lacp.py
     - network/cloudengine/ce_link_status.py
     - network/cloudengine/ce_lldp.py
     - network/cloudengine/ce_lldp_interface.py
+    - network/cloudengine/ce_mdn_interface.py
     - network/cloudengine/ce_mlag_config.py
     - network/cloudengine/ce_mlag_interface.py
     - network/cloudengine/ce_mtu.py
+    - network/cloudengine/ce_multicast_global.py
+    - network/cloudengine/ce_multicast_igmp_enable.py
     - network/cloudengine/ce_netconf.py
     - network/cloudengine/ce_netstream_aging.py
     - network/cloudengine/ce_netstream_export.py
@@ -1863,6 +1871,7 @@ glob:
     - network/nxos/nxos_file_copy.py
     - network/nxos/nxos_gir.py
     - network/nxos/nxos_gir_profile_management.py
+    - network/nxos/nxos_hsrp_interfaces.py
     - network/nxos/nxos_hsrp.py
     - network/nxos/nxos_igmp.py
     - network/nxos/nxos_igmp_interface.py
@@ -2526,6 +2535,8 @@ glob:
     - windows/win_audit_policy_system.py
     - windows/win_audit_rule.ps1
     - windows/win_audit_rule.py
+    - windows/win_auto_logon.ps1
+    - windows/win_auto_logon.py
     - windows/win_certificate_store.ps1
     - windows/win_certificate_store.py
     - windows/win_chocolatey.ps1
@@ -2540,10 +2551,14 @@ glob:
     - windows/win_chocolatey_source.py
     - windows/win_command.ps1
     - windows/win_command.py
+    - windows/win_computer_description.ps1
+    - windows/win_computer_description.py
     - windows/win_copy.ps1
     - windows/win_copy.py
     - windows/win_credential.ps1
     - windows/win_credential.py
+    - windows/win_data_deduplication.ps1
+    - windows/win_data_deduplication.py
     - windows/win_defrag.ps1
     - windows/win_defrag.py
     - windows/win_disk_facts.ps1
@@ -2582,6 +2597,8 @@ glob:
     - windows/win_feature.py
     - windows/win_file.ps1
     - windows/win_file.py
+    - windows/win_file_compression.py
+    - windows/win_file_compression.ps1
     - windows/win_file_version.ps1
     - windows/win_file_version.py
     - windows/win_find.ps1
@@ -3437,3 +3454,4 @@ glob:
     - vmware_spbm.py
     - vultr.py
     - xenserver.py
+    
