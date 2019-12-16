@@ -2631,7 +2631,6 @@ glob:
     - network/nso/__init__.py
     - network/nso/nso.py
     - network/nxos/*
-    - network/nxos/*
     - network/nxos/*/*
     - network/nxos/*/*/*
     - network/onyx/__init__.py
