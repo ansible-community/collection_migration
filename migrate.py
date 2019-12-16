@@ -142,17 +142,20 @@ def remove(path):
 def actually_remove(checkout_path, namespace, collection):
     global REMOVE
 
+    # load sanity/ignore.txt, the files being removed below need to be removed from ignore.txt too
     sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
     new_sanity_ignore = defaultdict(list)
     for ignore in sanity_ignore:
         values = ignore.split(' ', 1)
         new_sanity_ignore[values[0]].append(values[1])
 
+    # actually remove files we marked for removal
+    init_files = set()
     for path in REMOVE:
         actual_devel_path = os.path.relpath(path, checkout_path)
         if actual_devel_path.startswith('lib/ansible/modules') and actual_devel_path.endswith('__init__.py'):
-            if os.listdir(os.path.dirname(path)) != ['__init__.py']:
-                continue
+            init_files.add(path)
+            continue
 
         subprocess.check_call(
             ('git', 'rm', actual_devel_path),
@@ -160,6 +163,21 @@ def actually_remove(checkout_path, namespace, collection):
         )
         new_sanity_ignore.pop(actual_devel_path, None)
 
+    # process the __init__.py files from module dirs now that all files are removed,
+    # that way we can check if there are no modules left in the dirs they are in
+    # so we can remove __init__.py as well
+    for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
+        if os.listdir(os.path.dirname(init)) != ['__init__.py']:
+            continue
+
+        actual_devel_path = os.path.relpath(init, checkout_path)
+        subprocess.check_call(
+            ('git', 'rm', actual_devel_path),
+            cwd=checkout_path,
+        )
+        new_sanity_ignore.pop(actual_devel_path, None)
+
+    # save modified sanity/ignore.txt
     res = ''
     for filename, values in new_sanity_ignore.items():
         for value in values:
@@ -169,6 +187,7 @@ def actually_remove(checkout_path, namespace, collection):
     write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
     subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
 
+    # commit the changes
     subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection)), cwd=checkout_path)
 
 
