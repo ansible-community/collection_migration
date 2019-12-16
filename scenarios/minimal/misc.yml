@@ -2614,7 +2614,6 @@ glob:
     - network/ironware/__init__.py
     - network/ironware/ironware.py
     - network/junos/*
-    - network/junos/*
     - network/junos/*/*
     - network/junos/*/*/*
     - network/meraki/__init__.py
