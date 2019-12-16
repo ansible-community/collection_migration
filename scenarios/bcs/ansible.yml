@@ -161,6 +161,7 @@ _core:
     - system/getent.py
     - system/group.py
     - system/hostname.py
+    - system/known_hosts.py
     - system/ping.py
     - system/reboot.py
     - system/service.py
@@ -657,7 +658,7 @@ misc:
     - monitoring/bigpanda.py
     - monitoring/circonus_annotation.py
     - monitoring/datadog_*
-    - monitoring/grafana_*
+    - monitoring/grafana/*
     - monitoring/honeybadger_deployment.py
     - monitoring/icinga2_*
     - monitoring/librato_annotation.py
@@ -1048,7 +1049,7 @@ unix:
     - system/firewalld.py
     - system/gconftool2.py
     - system/iptables.py
-    - system/known_hosts.py
+    - system/lbu.py
     - system/locale_gen.py
     - system/lvg.py
     - system/lvol.py

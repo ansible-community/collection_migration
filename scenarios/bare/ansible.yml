@@ -560,6 +560,7 @@ community:
     - cloud/amazon/aws_sgw_info.py
     - cloud/amazon/aws_ssm_parameter_store.py
     - cloud/amazon/aws_step_functions_state_machine.py
+    - cloud/amazon/aws_step_functions_state_machine_execution.py
     - cloud/amazon/aws_waf_condition.py
     - cloud/amazon/aws_waf_info.py
     - cloud/amazon/aws_waf_rule.py
@@ -1164,6 +1165,8 @@ community:
     - cloud/google/gcp_runtimeconfig_config_info.py
     - cloud/google/gcp_runtimeconfig_variable.py
     - cloud/google/gcp_runtimeconfig_variable_info.py
+    - cloud/google/gcp_serviceusage_service.py
+    - cloud/google/gcp_serviceusage_service_info.py
     - cloud/google/gcp_sourcerepo_repository.py
     - cloud/google/gcp_sourcerepo_repository_info.py
     - cloud/google/gcp_spanner_database.py
@@ -1395,6 +1398,7 @@ community:
     - cloud/packet/packet_volume.py
     - cloud/packet/packet_volume_attachment.py
     - cloud/podman/__init__.py
+    - cloud/podman/podman_container_info.py
     - cloud/podman/podman_image.py
     - cloud/podman/podman_image_info.py
     - cloud/podman/podman_volume_info.py
@@ -1475,6 +1479,7 @@ community:
     - cloud/vmware/_vcenter_extension_facts.py
     - cloud/vmware/_vmware_about_facts.py
     - cloud/vmware/_vmware_category_facts.py
+    - cloud/vmware/_vmware_dns_config.py
     - cloud/vmware/_vmware_drs_group_facts.py
     - cloud/vmware/_vmware_drs_rule_facts.py
     - cloud/vmware/_vmware_dvs_portgroup_facts.py
@@ -1524,7 +1529,6 @@ community:
     - cloud/vmware/vmware_datastore_info.py
     - cloud/vmware/vmware_datastore_maintenancemode.py
     - cloud/vmware/vmware_deploy_ovf.py
-    - cloud/vmware/vmware_dns_config.py
     - cloud/vmware/vmware_drs_group.py
     - cloud/vmware/vmware_drs_group_info.py
     - cloud/vmware/vmware_drs_rule_info.py
@@ -1543,6 +1547,7 @@ community:
     - cloud/vmware/vmware_guest.py
     - cloud/vmware/vmware_guest_boot_info.py
     - cloud/vmware/vmware_guest_boot_manager.py
+    - cloud/vmware/vmware_guest_controller.py
     - cloud/vmware/vmware_guest_custom_attribute_defs.py
     - cloud/vmware/vmware_guest_custom_attributes.py
     - cloud/vmware/vmware_guest_customization_info.py
@@ -1557,8 +1562,10 @@ community:
     - cloud/vmware/vmware_guest_register_operation.py
     - cloud/vmware/vmware_guest_screenshot.py
     - cloud/vmware/vmware_guest_sendkey.py
+    - cloud/vmware/vmware_guest_serial_port.py
     - cloud/vmware/vmware_guest_snapshot.py
     - cloud/vmware/vmware_guest_snapshot_info.py
+    - cloud/vmware/vmware_guest_tools_info.py
     - cloud/vmware/vmware_guest_tools_upgrade.py
     - cloud/vmware/vmware_guest_tools_wait.py
     - cloud/vmware/vmware_guest_video.py
@@ -1566,10 +1573,12 @@ community:
     - cloud/vmware/vmware_host.py
     - cloud/vmware/vmware_host_acceptance.py
     - cloud/vmware/vmware_host_active_directory.py
+    - cloud/vmware/vmware_host_auto_start.py
     - cloud/vmware/vmware_host_capability_info.py
     - cloud/vmware/vmware_host_config_info.py
     - cloud/vmware/vmware_host_config_manager.py
     - cloud/vmware/vmware_host_datastore.py
+    - cloud/vmware/vmware_host_dns.py
     - cloud/vmware/vmware_host_dns_info.py
     - cloud/vmware/vmware_host_facts.py
     - cloud/vmware/vmware_host_feature_info.py
@@ -1861,9 +1870,10 @@ community:
     - monitoring/datadog/__init__.py
     - monitoring/datadog/datadog_event.py
     - monitoring/datadog/datadog_monitor.py
-    - monitoring/grafana_dashboard.py
-    - monitoring/grafana_datasource.py
-    - monitoring/grafana_plugin.py
+    - monitoring/grafana/__init__.py
+    - monitoring/grafana/grafana_dashboard.py
+    - monitoring/grafana/grafana_datasource.py
+    - monitoring/grafana/grafana_plugin.py
     - monitoring/honeybadger_deployment.py
     - monitoring/icinga2_feature.py
     - monitoring/icinga2_host.py
@@ -1902,6 +1912,7 @@ community:
     - monitoring/zabbix/zabbix_proxy.py
     - monitoring/zabbix/zabbix_screen.py
     - monitoring/zabbix/zabbix_template.py
+    - monitoring/zabbix/zabbix_template_info.py
     - monitoring/zabbix/zabbix_user.py
     - monitoring/zabbix/zabbix_user_info.py
     - monitoring/zabbix/zabbix_valuemap.py
@@ -1919,13 +1930,16 @@ community:
     - net_tools/haproxy.py
     - net_tools/hetzner_failover_ip.py
     - net_tools/hetzner_failover_ip_info.py
+    - net_tools/hetzner_firewall.py
+    - net_tools/hetzner_firewall_info.py
     - net_tools/infinity/__init__.py
     - net_tools/infinity/infinity.py
     - net_tools/ip_netns.py
     - net_tools/ipify_facts.py
     - net_tools/ipinfoio_facts.py
     - net_tools/ldap/__init__.py
-    - net_tools/ldap/ldap_attr.py
+    - net_tools/ldap/_ldap_attr.py
+    - net_tools/ldap/ldap_attrs.py
     - net_tools/ldap/ldap_entry.py
     - net_tools/ldap/ldap_passwd.py
     - net_tools/lldp.py
@@ -2298,13 +2312,19 @@ community:
     - network/cloudengine/ce_interface.py
     - network/cloudengine/ce_interface_ospf.py
     - network/cloudengine/ce_ip_interface.py
+    - network/cloudengine/ce_is_is_instance.py
+    - network/cloudengine/ce_is_is_interface.py
+    - network/cloudengine/ce_is_is_view.py
     - network/cloudengine/ce_lacp.py
     - network/cloudengine/ce_link_status.py
     - network/cloudengine/ce_lldp.py
     - network/cloudengine/ce_lldp_interface.py
+    - network/cloudengine/ce_mdn_interface.py
     - network/cloudengine/ce_mlag_config.py
     - network/cloudengine/ce_mlag_interface.py
     - network/cloudengine/ce_mtu.py
+    - network/cloudengine/ce_multicast_global.py
+    - network/cloudengine/ce_multicast_igmp_enable.py
     - network/cloudengine/ce_netconf.py
     - network/cloudengine/ce_netstream_aging.py
     - network/cloudengine/ce_netstream_export.py
@@ -3167,6 +3187,7 @@ community:
     - network/junos/_junos_linkagg.py
     - network/junos/_junos_lldp.py
     - network/junos/_junos_lldp_interface.py
+    - network/junos/_junos_static_route.py
     - network/junos/_junos_vlan.py
     - network/junos/junos_banner.py
     - network/junos/junos_command.py
@@ -3186,7 +3207,7 @@ community:
     - network/junos/junos_ping.py
     - network/junos/junos_rpc.py
     - network/junos/junos_scp.py
-    - network/junos/junos_static_route.py
+    - network/junos/junos_static_routes.py
     - network/junos/junos_system.py
     - network/junos/junos_user.py
     - network/junos/junos_vlans.py
@@ -3388,6 +3409,10 @@ community:
     - network/nxos/nxos_vtp_version.py
     - network/nxos/nxos_vxlan_vtep.py
     - network/nxos/nxos_vxlan_vtep_vni.py
+    - network/nxos/storage/__init__.py
+    - network/nxos/storage/nxos_devicealias.py
+    - network/nxos/storage/nxos_vsan.py
+    - network/nxos/storage/nxos_zone_zoneset.py
     - network/onyx/__init__.py
     - network/onyx/onyx_bgp.py
     - network/onyx/onyx_buffer_pool.py
@@ -3959,6 +3984,7 @@ community:
     - system/java_keystore.py
     - system/kernel_blacklist.py
     - system/known_hosts.py
+    - system/lbu.py
     - system/listen_ports_facts.py
     - system/locale_gen.py
     - system/lvg.py
@@ -4095,6 +4121,8 @@ community:
     - windows/win_audit_policy_system.py
     - windows/win_audit_rule.ps1
     - windows/win_audit_rule.py
+    - windows/win_auto_logon.ps1
+    - windows/win_auto_logon.py
     - windows/win_certificate_store.ps1
     - windows/win_certificate_store.py
     - windows/win_chocolatey.ps1
@@ -4109,10 +4137,14 @@ community:
     - windows/win_chocolatey_source.py
     - windows/win_command.ps1
     - windows/win_command.py
+    - windows/win_computer_description.ps1
+    - windows/win_computer_description.py
     - windows/win_copy.ps1
     - windows/win_copy.py
     - windows/win_credential.ps1
     - windows/win_credential.py
+    - windows/win_data_deduplication.ps1
+    - windows/win_data_deduplication.py
     - windows/win_defrag.ps1
     - windows/win_defrag.py
     - windows/win_disk_facts.ps1
@@ -4151,6 +4183,8 @@ community:
     - windows/win_feature.py
     - windows/win_file.ps1
     - windows/win_file.py
+    - windows/win_file_compression.ps1
+    - windows/win_file_compression.py
     - windows/win_file_version.ps1
     - windows/win_file_version.py
     - windows/win_find.ps1
@@ -4187,6 +4221,8 @@ community:
     - windows/win_iis_website.py
     - windows/win_inet_proxy.ps1
     - windows/win_inet_proxy.py
+    - windows/win_initialize_disk.ps1
+    - windows/win_initialize_disk.py
     - windows/win_lineinfile.ps1
     - windows/win_lineinfile.py
     - windows/win_mapped_drive.ps1
@@ -4854,6 +4890,8 @@ community:
     - network/junos/argspec/lldp_global/lldp_global.py
     - network/junos/argspec/lldp_interfaces/__init__.py
     - network/junos/argspec/lldp_interfaces/lldp_interfaces.py
+    - network/junos/argspec/static_routes/__init__.py
+    - network/junos/argspec/static_routes/static_routes.py
     - network/junos/argspec/vlans/__init__.py
     - network/junos/argspec/vlans/vlans.py
     - network/junos/config/__init__.py
@@ -4873,6 +4911,8 @@ community:
     - network/junos/config/lldp_global/lldp_global.py
     - network/junos/config/lldp_interfaces/__init__.py
     - network/junos/config/lldp_interfaces/lldp_interfaces.py
+    - network/junos/config/static_routes/__init__.py
+    - network/junos/config/static_routes/static_routes.py
     - network/junos/config/vlans/__init__.py
     - network/junos/config/vlans/vlans.py
     - network/junos/facts/__init__.py
@@ -4895,6 +4935,8 @@ community:
     - network/junos/facts/lldp_global/lldp_global.py
     - network/junos/facts/lldp_interfaces/__init__.py
     - network/junos/facts/lldp_interfaces/lldp_interfaces.py
+    - network/junos/facts/static_routes/__init__.py
+    - network/junos/facts/static_routes/static_routes.py
     - network/junos/facts/vlans/__init__.py
     - network/junos/facts/vlans/vlans.py
     - network/junos/junos.py

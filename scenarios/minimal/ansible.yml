@@ -143,6 +143,9 @@ _core:
     - net_tools/basics/get_url.py
     - net_tools/basics/slurp.py
     - net_tools/basics/uri.py
+    - notification/irc.py
+    - notification/jabber.py
+    - notification/mail.py
     - packaging/language/pip.py
     - packaging/os/apt.py
     - packaging/os/apt_key.py
@@ -155,6 +158,8 @@ _core:
     - packaging/os/rpm_key.py
     - packaging/os/yum.py
     - packaging/os/yum_repository.py
+    - remote_management/ipmi/ipmi_boot.py
+    - remote_management/ipmi/ipmi_power.py
     - source_control/git.py
     - source_control/subversion.py
     - system/cron.py
