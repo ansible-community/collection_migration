@@ -5,6 +5,8 @@ _core:
     - command.py
     - gather_facts.py
     - group_by.py
+    - netconf.py
+    - netcommon.py
     - normal.py
     - package.py
     - patch.py
@@ -33,7 +35,9 @@ _core:
     - tree.py
     connection:
     - local.py
-    - paramiko_ssh.py
+    - httpapi.py
+    - netconf.py
+    - network_cli.py
     - ssh.py
     doc_fragments:
     - backup.py
@@ -886,17 +890,20 @@ misc:
     - vca.py
     - vexata.py
     - xenserver.py
-network:
+netcommon:
     action:
+    - cli_command.py
+    - cli_config.py
+    - net_put.py
+    - net_get.py
     - telnet.py
     become:
     - enable.py
     cliconf:
     - nxos.py
     connection:
-    - httpapi.py
     - paramiko_ssh.py
-    - network_cli.py
+    - napalm.py
     doc_fragments:
     - network_agnostic.py
     filter:
@@ -1109,21 +1116,6 @@ vultr:
     - vultr.py
     modules:
     - cloud/vultr/*
-vyos:
-    action:
-    - vyos.py
-    cliconf:
-    - vyos.py
-    doc_fragments:
-    - vyos.py
-    modules:
-    - network/vyos/*
-    module_utils:
-    - network/vyos/*
-    - network/vyos/*/*
-    - network/vyos/*/*/*
-    terminal:
-    - vyos.py
 windows:
     action:
     - win_*
