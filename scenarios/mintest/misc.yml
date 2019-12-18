@@ -1,4 +1,4 @@
-glob:
+not_a_real_collection:
   action:
     - aireos.py
     - aruba.py
