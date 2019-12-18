@@ -2,6 +2,8 @@
 
 bcoca's opinionated 'minimal' testable Ansible version, keeps certain things in Core that are either required for any Ansible cli to execute or allow minimal configuration of the system to then enable installing collections and/or other content.
 
+This is *NOT *for final/production use, just meant as a good test bed for manualy migrated collections and to narrow down what core subsystems require to function.
+
 ## Use Cases
 
 * `ansible[|-playbook|-galaxy|-pull|-doc]` --help
