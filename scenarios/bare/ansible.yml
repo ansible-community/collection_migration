@@ -3431,13 +3431,20 @@ community:
     - network/onyx/onyx_magp.py
     - network/onyx/onyx_mlag_ipl.py
     - network/onyx/onyx_mlag_vip.py
+    - network/onyx/onyx_ntp.py
+    - network/onyx/onyx_ntp_servers_peers.py
     - network/onyx/onyx_ospf.py
     - network/onyx/onyx_pfc_interface.py
     - network/onyx/onyx_protocol.py
     - network/onyx/onyx_ptp_global.py
     - network/onyx/onyx_ptp_interface.py
     - network/onyx/onyx_qos.py
+    - network/onyx/onyx_snmp.py
+    - network/onyx/onyx_snmp_users.py
+    - network/onyx/onyx_syslog_files.py
+    - network/onyx/onyx_syslog_remote.py
     - network/onyx/onyx_traffic_class.py
+    - network/onyx/onyx_username.py
     - network/onyx/onyx_vlan.py
     - network/onyx/onyx_vxlan.py
     - network/onyx/onyx_wjh.py
@@ -4123,6 +4130,8 @@ community:
     - windows/win_audit_rule.py
     - windows/win_auto_logon.ps1
     - windows/win_auto_logon.py
+    - windows/win_certificate_info.ps1
+    - windows/win_certificate_info.py
     - windows/win_certificate_store.ps1
     - windows/win_certificate_store.py
     - windows/win_chocolatey.ps1
