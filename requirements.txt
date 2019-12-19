@@ -18,8 +18,8 @@ aiohttp==3.6.2 \
     --hash=sha256:ae55bac364c405caa23a4f2d6cfecc6a0daada500274ffca4a9230e7129eac59 \
     --hash=sha256:b778ce0c909a2653741cb4b1ac7015b5c130ab9c897611df43ae6a58523cb965 \
     # via octomachinery
-ansible==2.9.1 \
-    --hash=sha256:d87cb25df02284d59226ff1d935d7075a175f31d0db83564c2f1ca28bbbd4cb4
+ansible==2.9.2 \
+    --hash=sha256:2f83f8ccc50640aa41a24f6e7757ac06b0ee6189fdcaacab68851771d3b42f3a
 appdirs==1.4.3 \
     --hash=sha256:9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92 \
     --hash=sha256:d8b24664561d0d34ddfaec54636d502d7cea6e29c3eaf68f3df6180863e2166e \
