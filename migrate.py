@@ -866,6 +866,15 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
         plugin_dir,
         f'*{plugin_mod}',
     )))
+    # plugin_mod might also be a directory, scan subdirs
+    plugin_mod = os.path.splitext(plugin_mod)[0]
+    matching_test_modules = matching_test_modules.union(set(glob.glob(os.path.join(
+        type_base_subdir,
+        plugin_dir,
+        f'*{plugin_mod}/**',
+    ), recursive=True)))
+    matching_test_modules = set(f for f in matching_test_modules if not os.path.isdir(f))
+
     # Path(matching_test_modules[0]).relative_to(Path(checkout_path))
     # os.path.relpath(matching_test_modules[0], checkout_path)
     if not matching_test_modules:
