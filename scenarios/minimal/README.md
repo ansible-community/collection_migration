@@ -8,4 +8,6 @@ This is *NOT *for final/production use.
 
 `ansible-minimal` is built, at least daily, to https://github.com/ansible-collection-migration/ansible-minimal and is installable by doing:
 
-`pip install git+https://github.com/ansible-collection-migration/ansible-minimal.git`
+```console
+pip install git+https://github.com/ansible-collection-migration/ansible-minimal.git
+```
