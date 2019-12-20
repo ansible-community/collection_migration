@@ -551,7 +551,6 @@ misc:
     - dense.py
     - foreman.py
     - full_skip.py
-    - grafana_annotations.py
     - hipchat.py
     - jabber.py
     - json.py
@@ -583,7 +582,6 @@ misc:
     - dict.py
     - etcd.py
     - filetree.py
-    - grafana_dashboard.py
     - hashi_vault.py
     - hiera.py
     - ini.py
@@ -662,7 +660,6 @@ misc:
     - monitoring/bigpanda.py
     - monitoring/circonus_annotation.py
     - monitoring/datadog_*
-    - monitoring/grafana/*
     - monitoring/honeybadger_deployment.py
     - monitoring/icinga2_*
     - monitoring/librato_annotation.py
