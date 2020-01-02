@@ -48,7 +48,8 @@ MIGRATED_DEVEL_REMOTE = 'git@github.com:ansible-collection-migration/ansible-min
 ALL_THE_FILES = set()
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 COLLECTION_NAMESPACE = 'test_migrate_ns'
-PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils'}
+PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory'}
+PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory'}
 
 
 COLLECTION_SKIP_REWRITE = ('_core',)
@@ -79,7 +80,10 @@ VALID_PLUGIN_TYPES = frozenset({
     'terminal',
     'test',
     'vars',
+    'inventory_scripts',
 })
+NOT_PLUGINS=frozenset(set(['inventory_scripts']))
+
 
 LOGFILE = os.path.join(VARDIR, 'errors.log')
 
@@ -1097,7 +1101,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 src_plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
 
                 # ensure destinations exist
-                relative_dest_plugin_base = os.path.join('plugins', plugin_type)
+                if plugin_type in PLUGIN_DEST_EXCEPTION_PATHS:
+                    relative_dest_plugin_base = PLUGIN_DEST_EXCEPTION_PATHS[plugin_type]
+                else:
+                    relative_dest_plugin_base = os.path.join('plugins', plugin_type)
                 dest_plugin_base = os.path.join(collection_dir, relative_dest_plugin_base)
                 if not os.path.exists(dest_plugin_base):
                     os.makedirs(dest_plugin_base)
@@ -1170,10 +1177,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     import_deps += deps[0]
                     docs_deps += deps[1]
 
-                    if args.skip_tests:
+                    if args.skip_tests or plugin_type in NOT_PLUGINS:
+                        # skip rest for 'not really plugins'
                         continue
 
                     integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
+
                     # process unit tests
                     plugin_unit_tests_copy_map = create_unit_tests_copy_map(
                         checkout_path, collection_dir, plugin_type, plugin,
@@ -2002,6 +2011,7 @@ def main():
     print(yaml.dump(dict(manual_check)))
 
     print('See %s for any warnings/errors that were logged during migration.' % LOGFILE)
+
 
 if __name__ == "__main__":
     main()
