@@ -1,3 +1,6 @@
+[![GitHub Actions CI/CD build status — Collection migration smoke test suite](https://github.com/ansible-community/collection_migration/workflows/Collection%20migration%20smoke%20test%20suite/badge.svg?branch=master)](https://github.com/ansible-community/collection_migration/actions?query=workflow%3A%22Collection%20migration%20smoke%20test%20suite%22)
+
+
 migrate.py
 ==========
 
