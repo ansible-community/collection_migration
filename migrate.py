@@ -439,22 +439,10 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     return deps
 
 
-def rewrite_version_added(docs):
-    docs.pop('version_added', None)
-
-    if not isinstance(docs['options'], dict):
-        # lib/ansible/plugins/doc_fragments/emc.py:
-        # options': ['See respective platform section for more details'],
-        return
-
-    for option in docs['options']:
-        docs['options'][option].pop('version_added', None)
-
-
 def rewrite_docs_fragments(docs, collection, spec, namespace, args):
     fragments = docs.get('extends_documentation_fragment', [])
     if not fragments:
-        return []
+        return [], []
 
     if not isinstance(fragments, list):
         fragments = [fragments]
@@ -488,9 +476,7 @@ def rewrite_docs_fragments(docs, collection, spec, namespace, args):
         if (namespace, collection) != (fragment_namespace, fragment_collection):
             deps.append((fragment_namespace, fragment_collection))
 
-    docs['extends_documentation_fragment'] = new_fragments
-
-    return deps
+    return deps, new_fragments
 
 
 def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
@@ -505,10 +491,37 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     except AttributeError:
         raise LookupError('No DOCUMENTATION found')
 
-    docs_parsed = yaml.safe_load(doc_val.to_python().strip('\n'))
+    docs_parsed_dict = yaml.safe_load(doc_val.to_python().strip('\n'))
+    docs_parsed_list = doc_val.to_python().split('\n')
 
-    deps = rewrite_docs_fragments(docs_parsed, collection, spec, namespace, args)
-    rewrite_version_added(docs_parsed)
+    deps, new_fragments = rewrite_docs_fragments(docs_parsed_dict, collection, spec, namespace, args)
+
+    # https://github.com/ansible-community/collection_migration/issues/81
+    # unfortunately, with PyYAML, the resulting DOCUMENTATION ended up in syntax errors when running sanity tests
+    # to prevent that, use the original string split into list for rewrites
+    new_docs = []
+    in_extends = False
+    for line in docs_parsed_list:
+        # remove version_added, it does not apply to collection in its current state
+        if 'version_added' in line:
+            continue
+
+        # remove extends_documentation_fragment, it will be replaced with rewritten one below
+        if 'extends_documentation_fragment' in line:
+            in_extends = True
+            continue
+        if in_extends and '-' in line:
+            continue
+        else:
+            in_extends = False
+
+        new_docs.append(line)
+
+    if new_fragments:
+        new_docs.append('extends_documentation_fragment:')
+        for new_fragment in new_fragments:
+            new_docs.append('- %s' % new_fragment)
+        new_docs.append('')
 
     doc_str_tmpl = RAW_STR_TMPL if doc_val.type == 'raw_string' else STR_TMPL
     # `doc_val` holds a baron representation of the string node
@@ -529,7 +542,7 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     # DOCUMENTATION = '''some string value'''
     # ```
     doc_val.value = doc_str_tmpl.format(
-        str_val=yaml.dump(docs_parsed, allow_unicode=True, default_flow_style=False, sort_keys=False),
+        str_val='\n'.join(new_docs)
     )
 
     return deps
