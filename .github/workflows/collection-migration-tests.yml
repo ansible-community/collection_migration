@@ -65,6 +65,8 @@ jobs:
         migrate
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
+        --publish-to-github
+        --target-github-org ansible-collection-migration
         -M
     - name: Smoke test ansible-minimal
       if: >-
