@@ -722,13 +722,12 @@ def read_module_txt_n_fst(path):
 
 
 def inject_init_into_tree(target_dir):
-    for initpath in (
-            os.path.join(dp, '__init__.py')
-            for dp, dn, fn in os.walk(target_dir)
-            if '__init__.py' not in fn
-            # and any(f.endwith('.py') for f in fn)
-    ):
-        write_text_into_file(initpath, '')
+    """Insert ``__init__.py`` file into unit test directories."""
+    for root, dirs, files in os.walk(target_dir):
+        python_files_exist = any(fn.endswith('.py') for fn in files)
+        possibly_subpackages_exist = len(dirs) > 0
+        if '__init__.py' not in files and (python_files_exist or possibly_subpackages_exist):
+            write_text_into_file(os.path.join(root, '__init__.py'), '')
 
 
 def inject_readme_into_collection(collection_dir, *, ctx):
