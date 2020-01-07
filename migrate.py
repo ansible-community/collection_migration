@@ -1229,7 +1229,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             )
             inject_github_actions_workflow_into_collection(
                 collection_dir,
-                ctx={'coll_ns': namespace, 'coll_name': collection},
+                ctx=j2_ctx,
             )
 
             # write collection metadata
