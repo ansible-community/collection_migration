@@ -1218,9 +1218,14 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
+            j2_ctx = {
+                'coll_ns': namespace,
+                'coll_name': collection,
+                'gh_org': target_github_org,
+            }
             inject_readme_into_collection(
                 collection_dir,
-                ctx={'coll_ns': namespace, 'coll_name': collection},
+                ctx=j2_ctx,
             )
             inject_github_actions_workflow_into_collection(
                 collection_dir,
