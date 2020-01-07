@@ -33,6 +33,7 @@ from baron.parser import ParsingError
 import redbaron
 
 from gh import GitHubOrgClient
+from rsa_utils import RSAKey
 from template_utils import render_template_into
 
 
@@ -42,7 +43,7 @@ TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
-MIGRATED_DEVEL_REMOTE = 'git@github.com:ansible-collection-migration/ansible-minimal.git'
+MIGRATED_DEVEL_REPO_NAME = 'ansible-minimal'
 
 
 ALL_THE_FILES = set()
@@ -1230,13 +1231,18 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
+            j2_ctx = {
+                'coll_ns': namespace,
+                'coll_name': collection,
+                'gh_org': target_github_org,
+            }
             inject_readme_into_collection(
                 collection_dir,
-                ctx={'coll_ns': namespace, 'coll_name': collection},
+                ctx=j2_ctx,
             )
             inject_github_actions_workflow_into_collection(
                 collection_dir,
-                ctx={'coll_ns': namespace, 'coll_name': collection},
+                ctx=j2_ctx,
             )
 
             # write collection metadata
@@ -1343,7 +1349,7 @@ def add_deps_to_metadata(deps, galaxy_metadata):
         galaxy_metadata['dependencies'][dep] = '>=1.0'
 
 
-def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app_key_path):
+def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
     """Push all migrated collections to their Git remotes."""
     collections_base_dir = os.path.join(collections_target_dir, 'collections')
     collections_root_dir = os.path.join(
@@ -1356,24 +1362,15 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
         for coll in ns_val.keys()
         if not coll.startswith('_')
     )
-    github_api = GitHubOrgClient(gh_app_id, gh_app_key_path, gh_org)
-    for collection_dir, repo_name in collection_paths_except_core:
-        git_repo_url = read_yaml_file(
-            os.path.join(collection_dir, 'galaxy.yml'),
-        )['repository']
-        with contextlib.suppress(LookupError):
-            git_repo_url = github_api.get_git_repo_write_uri(repo_name)
-        logger.debug(
-            'Using %s...%s Git URL for push',
-            git_repo_url[:5], git_repo_url[-5:],
-        )
-        logger.info(
-            'Rebasing the migrated collection on top of the Git remote',
-        )
-        # Putting our newly generated stuff on top of what's on remote:
-        # Ref: https://demisx.github.io/git/rebase/2015/07/02/git-rebase-keep-my-branch-changes.html
-        subprocess.check_call(
-            (
+    logger.debug('Using SSH key %s...', rsa_key.public_openssh)
+    with rsa_key.ssh_agent as ssh_agent:
+        for collection_dir, repo_name in collection_paths_except_core:
+            git_repo_url = read_yaml_file(
+                os.path.join(collection_dir, 'galaxy.yml'),
+            )['repository']
+            # Putting our newly generated stuff on top of what's on remote:
+            # Ref: https://demisx.github.io/git/rebase/2015/07/02/git-rebase-keep-my-branch-changes.html
+            git_pull_rebase_cmd = (
                 'git', 'pull',
                 '--allow-unrelated-histories',
                 '--rebase',
@@ -1384,36 +1381,76 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
                 # * https://dev.to/willamesoares/git-ours-or-theirs-part-2-d0o
                 '--strategy-option', 'theirs',
                 git_repo_url,
-                'master'
-            ),
-            cwd=collection_dir,
-        )
-        logger.info('Pushing the migrated collection to the Git remote')
-        subprocess.check_call(
-            ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
-            cwd=collection_dir,
-        )
-        logger.info(
-            'The migrated collection has been successfully published to '
-            '`https://github.com/%s/%s.git`...',
-            gh_org,
-            repo_name,
-        )
+                'master',
+            )
+            # with contextlib.suppress(LookupError):
+            #     git_repo_url = github_api.get_git_repo_write_uri(repo_name)
+            git_repo_url_repr = '...'.join((
+                git_repo_url[:5], git_repo_url[-5:],
+            )) if not git_repo_url.startswith('git@') else git_repo_url
+            logger.debug(
+                'Using %s Git URL for push',
+                git_repo_url_repr,
+            )
+            logger.info(
+                'Rebasing the migrated collection in '
+                'repo %s on top of the Git remote',
+                repo_name,
+            )
+            logger.debug('Invoking `%s`...', ' '.join(git_pull_rebase_cmd))
+            with github_api.tmp_deployment_key_for(repo_name):
+                try:
+                    ssh_agent.run(
+                        git_pull_rebase_cmd,
+                        cwd=collection_dir,
+                        check=True,
+                        text=True,
+                        stdin=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.PIPE,
+                    )
+                except subprocess.CalledProcessError as proc_err:
+                    # Ref: https://github.com/git/git/commit/b97e187364990fb8410355ff8b4365d0e37bbbbe
+                    acceptable_endings = {
+                        'error: nothing to do',
+                        "fatal: couldn't find remote ref master",
+                    }
+                    has_acceptable_stderr = proc_err.stderr[:-1].endswith
+                    if not any(
+                        has_acceptable_stderr(o)
+                        for o in acceptable_endings
+                    ):
+                        raise
+                logger.info('Pushing the migrated collection to the Git remote')
+                ssh_agent.check_call(
+                    ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
+                    cwd=collection_dir,
+                )
+                logger.info(
+                    'The migrated collection has been successfully published to '
+                    '`https://github.com/%s/%s.git`...',
+                    github_api.github_org_name,
+                    repo_name,
+                )
 
 
-def push_migrated_core(releases_dir):
+def push_migrated_core(releases_dir, github_api, rsa_key):
     devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    subprocess.check_call(
-        ('git', 'remote', 'add', 'migrated_core', MIGRATED_DEVEL_REMOTE),
-        cwd=devel_path,
+    migrated_devel_remote = (
+        f'git@github.com:{github_api.github_org_name}/'
+        f'{MIGRATED_DEVEL_REPO_NAME}.git'
     )
 
-    # NOTE: assumes the repo is not used and/or is locked while migration is running
-    subprocess.check_call(
-        ('git', 'push', '--force', 'migrated_core', DEVEL_BRANCH),
-        cwd=devel_path,
-    )
+    logger.debug('Using SSH key %s...', rsa_key.public_openssh)
+    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for(
+            MIGRATED_DEVEL_REPO_NAME,
+    ):
+        # NOTE: assumes the repo is not used and/or is locked while migration is running
+        ssh_agent.check_call(
+            ('git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH),
+            cwd=devel_path,
+        )
 
 
 def assert_migrating_git_tracked_resources(
@@ -1999,16 +2036,24 @@ def main():
     # doeet
     assemble_collections(devel_path, spec, args, args.target_github_org)
 
+    tmp_rsa_key = None
+    github_api = None
+    if args.publish_to_github or args.push_migrated_core:
+        tmp_rsa_key = RSAKey()
+        gh_api = GitHubOrgClient(
+            args.github_app_id, args.github_app_key_path,
+            args.target_github_org,
+            deployment_rsa_pub_key=tmp_rsa_key.public_openssh,
+        )
+
     if args.publish_to_github:
         publish_to_github(
             args.vardir, spec,
-            gh_org=args.target_github_org,
-            gh_app_id=args.github_app_id,
-            gh_app_key_path=args.github_app_key_path,
+            gh_api, tmp_rsa_key,
         )
 
     if args.push_migrated_core:
-        push_migrated_core(releases_dir)
+        push_migrated_core(releases_dir, gh_api, tmp_rsa_key)
 
     global core
     print('======= Assumed stayed in core =======\n')
