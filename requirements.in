@@ -1,4 +1,5 @@
 ansible
+cryptography  # dependency of octomachinery but imported too
 gidgethub  # dependency of octomachinery but imported too
 Jinja2
 logzero
