@@ -1,5 +1,7 @@
 """GitHub App auth and helpers."""
 
+from __future__ import annotations
+
 import asyncio
 from dataclasses import dataclass
 import contextlib
@@ -21,6 +23,8 @@ class GitHubOrgClient:
     github_app_id: int
     github_app_private_key_path: Union[pathlib.Path, str]
     github_org_name: str
+
+    deployment_rsa_pub_key: str
 
     def _read_app_id(self):
         if self.github_app_id is None:
@@ -95,3 +99,60 @@ class GitHubOrgClient:
     def get_git_repo_write_uri(self, repo_name):
         """Get a Git repo URL with embedded creds synchronously."""
         return asyncio.run(self.get_git_repo_token(repo_name))
+
+    def sync_provision_deploy_key_to(self, repo_name: str) -> int:
+        return asyncio.run(self.provision_deploy_key_to(repo_name))
+
+    async def provision_deploy_key_to(self, repo_name: str) -> int:
+        """Add deploy key to the repo."""
+        await self.create_repo_if_not_exists(repo_name)
+
+        dpl_key = self.deployment_rsa_pub_key
+        dpl_key_repr = dpl_key.split(' ')[1]
+        dpl_key_repr = '...'.join((dpl_key_repr[:16], dpl_key_repr[-16:]))
+        github_api = await self._get_github_client()
+        api_resp = await github_api.post(
+            '/repos/{owner}/{repo}/keys',
+            url_vars={
+                'owner': self.github_org_name,
+                'repo': repo_name,
+            },
+            data={
+                'title': (
+                    '[SHOULD BE AUTO-REMOVED MINUTES AFTER CREATION!] '
+                    f'Temporary key ({dpl_key_repr}) added '
+                    'by Ansible Collection Migrator'
+                ),
+                'key': dpl_key,
+                'read_only': False,
+            },
+        )
+        return api_resp['id']
+
+    def sync_drop_deploy_key_from(self, repo_name: str, key_id: int):
+        return asyncio.run(self.drop_deploy_key_from(repo_name, key_id))
+
+    async def drop_deploy_key_from(self, repo_name: str, key_id: int):
+        """Add deploy key to the repo."""
+        github_api = await self._get_github_client()
+        await github_api.delete(
+            '/repos/{owner}/{repo}/keys/{key_id}',
+            url_vars={
+                'owner': self.github_org_name,
+                'repo': repo_name,
+                'key_id': key_id,
+            },
+        )
+
+    def tmp_deployment_key_for(self, repo_name: str):
+        """Make a CM that adds and removes deployment keys."""
+        return _tmp_repo_deploy_key(self, repo_name)
+
+
+@contextlib.contextmanager
+def _tmp_repo_deploy_key(gh_api, repo_name):
+    _key_id = gh_api.sync_provision_deploy_key_to(repo_name)
+    try:
+        yield
+    finally:
+        gh_api.sync_drop_deploy_key_from(repo_name, _key_id)
