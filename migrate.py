@@ -1759,23 +1759,24 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
             except LookupError:
                 pass
 
-        for ns in spec.keys():
-            for coll in get_rewritable_collections(ns, spec):
-                if collection == coll:
-                    # https://github.com/ansible-community/collection_migration/issues/156
-                    continue
+        if isinstance(el[key], Mapping):
+            for ns in spec.keys():
+                for coll in get_rewritable_collections(ns, spec):
+                    if collection == coll:
+                        # https://github.com/ansible-community/collection_migration/issues/156
+                        continue
 
-                if key not in get_plugins_from_collection(ns, coll, 'modules', spec):
-                    continue
+                    if key not in get_plugins_from_collection(ns, coll, 'modules', spec):
+                        continue
 
-                new_module_name = get_plugin_fqcn(ns, coll, key)
-                msg = 'Rewriting to %s' % new_module_name
-                if args.fail_on_core_rewrite:
-                    raise RuntimeError(msg)
+                    new_module_name = get_plugin_fqcn(ns, coll, key)
+                    msg = 'Rewriting to %s' % new_module_name
+                    if args.fail_on_core_rewrite:
+                        raise RuntimeError(msg)
 
-                logger.debug(msg)
-                translate.append((new_module_name, key))
-                integration_tests_add_to_deps((namespace, collection), (ns, coll))
+                    logger.debug(msg)
+                    translate.append((new_module_name, key))
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     for new_key, old_key in translate:
         el[new_key] = el.pop(old_key)
