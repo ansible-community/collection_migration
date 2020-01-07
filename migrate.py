@@ -43,7 +43,7 @@ TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
-MIGRATED_DEVEL_REMOTE = 'git@github.com:ansible-collection-migration/ansible-minimal.git'
+MIGRATED_DEVEL_REPO_NAME = 'ansible-minimal'
 
 
 ALL_THE_FILES = set()
@@ -1332,7 +1332,7 @@ def add_deps_to_metadata(deps, galaxy_metadata):
         galaxy_metadata['dependencies'][dep] = '>=1.0'
 
 
-def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app_key_path):
+def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
     """Push all migrated collections to their Git remotes."""
     collections_base_dir = os.path.join(collections_target_dir, 'collections')
     collections_root_dir = os.path.join(
@@ -1345,13 +1345,8 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
         for coll in ns_val.keys()
         if not coll.startswith('_')
     )
-    tmp_rsa_key = RSAKey()
-    github_api = GitHubOrgClient(
-        gh_app_id, gh_app_key_path, gh_org,
-        deployment_rsa_pub_key=tmp_rsa_key.public_openssh,
-    )
-    logger.debug('Using SSH key %s...', tmp_rsa_key.public_openssh)
-    with tmp_rsa_key.ssh_agent as ssh_agent:
+    logger.debug('Using SSH key %s...', rsa_key.public_openssh)
+    with rsa_key.ssh_agent as ssh_agent:
         for collection_dir, repo_name in collection_paths_except_core:
             git_repo_url = read_yaml_file(
                 os.path.join(collection_dir, 'galaxy.yml'),
@@ -1417,24 +1412,28 @@ def publish_to_github(collections_target_dir, spec, *, gh_org, gh_app_id, gh_app
                 logger.info(
                     'The migrated collection has been successfully published to '
                     '`https://github.com/%s/%s.git`...',
-                    gh_org,
+                    github_api.github_org_name,
                     repo_name,
                 )
 
 
-def push_migrated_core(releases_dir):
+def push_migrated_core(releases_dir, github_api, rsa_key):
     devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    subprocess.check_call(
-        ('git', 'remote', 'add', 'migrated_core', MIGRATED_DEVEL_REMOTE),
-        cwd=devel_path,
+    migrated_devel_remote = (
+        f'git@github.com:{github_api.github_org_name}/'
+        f'{MIGRATED_DEVEL_REPO_NAME}.git'
     )
 
-    # NOTE: assumes the repo is not used and/or is locked while migration is running
-    subprocess.check_call(
-        ('git', 'push', '--force', 'migrated_core', DEVEL_BRANCH),
-        cwd=devel_path,
-    )
+    logger.debug('Using SSH key %s...', rsa_key.public_openssh)
+    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for(
+            MIGRATED_DEVEL_REPO_NAME,
+    ):
+        # NOTE: assumes the repo is not used and/or is locked while migration is running
+        ssh_agent.check_call(
+            ('git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH),
+            cwd=devel_path,
+        )
 
 
 def assert_migrating_git_tracked_resources(
@@ -2024,16 +2023,24 @@ def main():
     # doeet
     assemble_collections(devel_path, spec, args, args.target_github_org)
 
+    tmp_rsa_key = None
+    github_api = None
+    if args.publish_to_github or args.push_migrated_core:
+        tmp_rsa_key = RSAKey()
+        gh_api = GitHubOrgClient(
+            args.github_app_id, args.github_app_key_path,
+            args.target_github_org,
+            deployment_rsa_pub_key=tmp_rsa_key.public_openssh,
+        )
+
     if args.publish_to_github:
         publish_to_github(
             args.vardir, spec,
-            gh_org=args.target_github_org,
-            gh_app_id=args.github_app_id,
-            gh_app_key_path=args.github_app_key_path,
+            gh_api, tmp_rsa_key,
         )
 
     if args.push_migrated_core:
-        push_migrated_core(releases_dir)
+        push_migrated_core(releases_dir, gh_api, tmp_rsa_key)
 
     global core
     print('======= Assumed stayed in core =======\n')

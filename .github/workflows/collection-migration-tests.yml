@@ -38,18 +38,6 @@ jobs:
       run: |
         git config --global user.email "ansible_migration@example.com"
         git config --global user.name "Poor B"
-    # https://www.webfactory.de/blog/use-ssh-key-for-private-repositories-in-github-actions
-    - name: Setup SSH Keys and known_hosts
-      if: >-
-        github.event_name != 'pull_request'
-        && github.repository == 'ansible-community/collection_migration'
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-        ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY_MINIMAL }}"
     - name: >-
         Run migration scenario ${{ matrix.migration-scenario }}
         and auto-publish the migrated repos to GitHub repos
@@ -59,7 +47,6 @@ jobs:
       env:
         GITHUB_APP_IDENTIFIER: 41435
         GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: >-
         python -m
         migrate
@@ -67,7 +54,7 @@ jobs:
         -s "scenarios/${{ matrix.migration-scenario }}"
         --publish-to-github
         --target-github-org ansible-collection-migration
-        -M
+        --push-migrated-core
     - name: Smoke test ansible-minimal
       if: >-
         github.event_name != 'pull_request'
