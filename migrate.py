@@ -1723,7 +1723,7 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
                     raise RuntimeError(msg)
 
                 logger.debug(msg)
-                new_plugin_names.append(get_plugin_fqcn(namespace, plugin_collection, plugin_name))
+                new_plugin_names.append(get_plugin_fqcn(plugin_namespace, plugin_collection, plugin_name))
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 new_plugin_names.append(plugin_name)
@@ -1791,7 +1791,7 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
                     raise RuntimeError(msg)
 
                 logger.debug(msg)
-                translate.append((prefix + get_plugin_fqcn(namespace, plugin_collection, plugin_name), key))
+                translate.append((prefix + get_plugin_fqcn(plugin_namespace, plugin_collection, plugin_name), key))
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 pass
@@ -1832,7 +1832,7 @@ def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest):
             plugin_namespace, plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
             if plugin_collection in COLLECTION_SKIP_REWRITE:
                 continue
-            new_plugin_name = get_plugin_fqcn(namespace, plugin_collection, el[key])
+            new_plugin_name = get_plugin_fqcn(plugin_namespace, plugin_collection, el[key])
 
             msg = 'Rewriting to %s' % new_plugin_name
             if args.fail_on_core_rewrite:
