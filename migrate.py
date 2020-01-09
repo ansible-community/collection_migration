@@ -1365,78 +1365,31 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
     logger.debug('Using SSH key %s...', rsa_key.public_openssh)
     with rsa_key.ssh_agent as ssh_agent:
         for collection_dir, repo_name in collection_paths_except_core:
-            git_repo_url = read_yaml_file(
+            galaxy_yml = read_yaml_file(
                 os.path.join(collection_dir, 'galaxy.yml'),
-            )['repository']
-            # Putting our newly generated stuff on top of what's on remote:
-            # Ref: https://demisx.github.io/git/rebase/2015/07/02/git-rebase-keep-my-branch-changes.html
-            git_pull_rebase_cmd = (
-                'git', 'pull',
-                '--allow-unrelated-histories',
-                '--rebase',
-                '--strategy', 'recursive',
-                # Refs:
-                # * https://stackoverflow.com/a/3443225/595220
-                # * https://dev.to/willamesoares/git-ours-or-theirs-part1-agh
-                # * https://dev.to/willamesoares/git-ours-or-theirs-part-2-d0o
-                '--strategy-option', 'theirs',
-                git_repo_url,
-                'master',
             )
-            # with contextlib.suppress(LookupError):
-            #     git_repo_url = github_api.get_git_repo_write_uri(repo_name)
+            git_repo_url = galaxy_yml['repository']
+            coll_home_url = galaxy_yml['repository']
             git_repo_url_repr = '...'.join((
                 git_repo_url[:5], git_repo_url[-5:],
             )) if not git_repo_url.startswith('git@') else git_repo_url
-            logger.debug(
-                'Using %s Git URL for push',
+            logger.info(
+                'Forcefully pushing the migrated collection `%s` '
+                'to GitHub org `%s` using `%s` Git URL for push',
+                repo_name,
+                github_api.github_org_name,
                 git_repo_url_repr,
             )
-            logger.info(
-                'Rebasing the migrated collection in '
-                'repo %s on top of the Git remote',
-                repo_name,
+            git_force_push_cmd = (
+                'git', 'push', '--force', git_repo_url, 'HEAD:master',
             )
-            logger.debug('Invoking `%s`...', ' '.join(git_pull_rebase_cmd))
             with github_api.tmp_deployment_key_for(repo_name):
-                try:
-                    ssh_agent.run(
-                        git_pull_rebase_cmd,
-                        cwd=collection_dir,
-                        check=True,
-                        text=True,
-                        stdin=subprocess.DEVNULL,
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.PIPE,
-                    )
-                except subprocess.CalledProcessError as proc_err:
-                    # Ref: https://github.com/git/git/commit/b97e187364990fb8410355ff8b4365d0e37bbbbe
-                    acceptable_endings = {
-                        'error: nothing to do',
-                        "fatal: couldn't find remote ref master",
-                    }
-                    proc_stderr = proc_err.stderr[:-1]  # stripping off LF
-                    has_acceptable_stderr = proc_stderr.endswith
-                    if not any(
-                        has_acceptable_stderr(o)
-                        for o in acceptable_endings
-                    ):
-                        logger.error(
-                            'stderr output of `%s` is: %s',
-                            git_pull_rebase_cmd, proc_stderr,
-                        )
-                        raise
-                logger.info('Pushing the migrated collection to the Git remote')
-                ssh_agent.check_call(
-                    ('git', 'push', '--force', git_repo_url, 'HEAD:master'),
-                    cwd=collection_dir,
-                )
-                logger.info(
-                    'The migrated collection has been successfully published to '
-                    '`https://github.com/%s/%s.git`...',
-                    github_api.github_org_name,
-                    repo_name,
-                )
+                ssh_agent.check_call(git_force_push_cmd, cwd=collection_dir)
+            logger.info(
+                'The migrated collection has been successfully published to '
+                '`%s` GitHub repository...',
+                coll_home_url,
+            )
 
 
 def push_migrated_core(releases_dir, github_api, rsa_key):
