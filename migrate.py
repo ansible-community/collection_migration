@@ -2016,6 +2016,20 @@ def main():
                              ' migration against the list of files kept in core: spec must contain the "_core" collection.')
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False,
                         help='Skip tests and rewrite the runtime code only.')
+    parser.add_argument(
+        '--skip-migration',
+        action='store_true',
+        dest='skip_migration',
+        default=False,
+        help='Skip creating migrated collections.',
+    )
+    parser.add_argument(
+        '--skip-publish',
+        action='store_true',
+        dest='skip_publish',
+        default=False,
+        help='Skip publishing migrated collections and core repositories.',
+    )
 
     args = parser.parse_args()
 
@@ -2038,8 +2052,35 @@ def main():
     global ALL_THE_FILES
     ALL_THE_FILES = checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
 
-    # doeet
-    assemble_collections(devel_path, spec, args, args.target_github_org)
+    if args.skip_migration:
+        logger.info('Skipping the migration...')
+    else:
+        logger.info('Starting the migration...')
+
+        # doeet
+        assemble_collections(devel_path, spec, args, args.target_github_org)
+
+        global core
+        print('======= Assumed stayed in core =======\n')
+        print(yaml.dump(core))
+
+        global manual_check
+        print(
+            '======= Could not rewrite the following, '
+            'please check manually =======\n',
+        )
+        print(yaml.dump(dict(manual_check)))
+
+        print(
+            f'See {LOGFILE} for any warnings/errors '
+            'that were logged during migration.',
+        )
+
+    if args.skip_publish:
+        logger.info('Skipping the publish step...')
+        return
+
+    logger.info('Starting the publish step...')
 
     tmp_rsa_key = None
     github_api = None
@@ -2050,25 +2091,18 @@ def main():
             args.target_github_org,
             deployment_rsa_pub_key=tmp_rsa_key.public_openssh,
         )
+        logger.debug('Initialized a temporary RSA key and GitHub API client')
 
     if args.publish_to_github:
+        logger.info('Publishing the migrated collections to GitHub...')
         publish_to_github(
             args.vardir, spec,
             gh_api, tmp_rsa_key,
         )
 
     if args.push_migrated_core:
+        logger.info('Publishing the migrated "Core" to GitHub...')
         push_migrated_core(releases_dir, gh_api, tmp_rsa_key)
-
-    global core
-    print('======= Assumed stayed in core =======\n')
-    print(yaml.dump(core))
-
-    global manual_check
-    print('======= Could not rewrite the following, please check manually =======\n')
-    print(yaml.dump(dict(manual_check)))
-
-    print('See %s for any warnings/errors that were logged during migration.' % LOGFILE)
 
 
 if __name__ == "__main__":

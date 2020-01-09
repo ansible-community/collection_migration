@@ -40,7 +40,14 @@ jobs:
         git config --global user.name "Poor B"
     - name: >-
         Run migration scenario ${{ matrix.migration-scenario }}
-        and auto-publish the migrated repos to GitHub repos
+      run: >-
+        python -m
+        migrate
+        -m
+        -s "scenarios/${{ matrix.migration-scenario }}"
+        --skip-publish
+    - name: >-
+        Auto-publish the migrated collection repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'
@@ -50,10 +57,24 @@ jobs:
       run: >-
         python -m
         migrate
-        -m
         -s "scenarios/${{ matrix.migration-scenario }}"
-        --publish-to-github
         --target-github-org ansible-collection-migration
+        --skip-migration
+        --publish-to-github
+    - name: >-
+        Auto-publish ansible-minimal to GitHub repos
+      if: >-
+        github.event_name != 'pull_request'
+        && github.repository == 'ansible-community/collection_migration'
+      env:
+        GITHUB_APP_IDENTIFIER: 41435
+        GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
+      run: >-
+        python -m
+        migrate
+        -s "scenarios/${{ matrix.migration-scenario }}"
+        --target-github-org ansible-collection-migration
+        --skip-migration
         --push-migrated-core
     - name: Smoke test ansible-minimal
       if: >-
@@ -67,16 +88,6 @@ jobs:
         ansible --version
         deactivate
         rm -rf /tmp/ansible-minimal-venv
-    - name: >-
-        Run migration scenario ${{ matrix.migration-scenario }}
-      if: >-
-        github.event_name == 'pull_request'
-        || github.repository != 'ansible-community/collection_migration'
-      run: >-
-        python -m
-        migrate
-        -m
-        -s "scenarios/${{ matrix.migration-scenario }}"
     - name: >-
         List the migrated collections
       run: |
