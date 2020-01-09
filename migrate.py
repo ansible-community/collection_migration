@@ -1415,11 +1415,16 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
                         'error: nothing to do',
                         "fatal: couldn't find remote ref master",
                     }
-                    has_acceptable_stderr = proc_err.stderr[:-1].endswith
+                    proc_stderr = proc_err.stderr[:-1]  # stripping off LF
+                    has_acceptable_stderr = proc_stderr.endswith
                     if not any(
                         has_acceptable_stderr(o)
                         for o in acceptable_endings
                     ):
+                        logger.error(
+                            'stderr output of `%s` is: %s',
+                            git_pull_rebase_cmd, proc_stderr,
+                        )
                         raise
                 logger.info('Pushing the migrated collection to the Git remote')
                 ssh_agent.check_call(
