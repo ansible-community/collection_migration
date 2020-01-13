@@ -4,6 +4,6 @@ checkpoint:
     doc_fragments:
     - checkpoint_*.py
     modules:
-    - network/checkpoint/*
+    - network/check_point/*
     module_utils:
     - network/checkpoint/*

@@ -430,8 +430,7 @@ fortios:
     - network/fortios/*
 gitlab:
     modules:
-    - source_control/_gitlab_hooks.py
-    - source_control/gitlab_*
+    - source_control/gitlab/*
 hetzner:
     doc_fragments:
     - hcloud.py
@@ -659,7 +658,7 @@ misc:
     - monitoring/airbrake_deployment.py
     - monitoring/bigpanda.py
     - monitoring/circonus_annotation.py
-    - monitoring/datadog_*
+    - monitoring/datadog/*
     - monitoring/honeybadger_deployment.py
     - monitoring/icinga2_*
     - monitoring/librato_annotation.py
@@ -673,7 +672,7 @@ misc:
     - monitoring/pagerduty_alert.py
     - monitoring/pingdom.py
     - monitoring/rollbar_deployment.py
-    - monitoring/sensu_*.py
+    - monitoring/sensu/*
     - monitoring/spectrum_device.py
     - monitoring/stackdriver.py
     - monitoring/statusio_maintenance.py
@@ -795,12 +794,10 @@ misc:
     - remote_management/stacki/stacki_host.py
     - remote_management/ucs/*
     - remote_management/wakeonlan.py
-    - source_control/_github_hooks.py
-    - source_control/_github_webhook_facts.py
     - source_control/bitbucket/*
     - source_control/bzr.py
     - source_control/git_config.py
-    - source_control/github_*
+    - source_control/github/*
     - source_control/hg.py
     - storage/glusterfs/_gluster_heal_facts.py
     - storage/glusterfs/gluster_heal_info.py

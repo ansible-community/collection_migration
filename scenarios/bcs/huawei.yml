@@ -16,6 +16,5 @@ cloud:
     - hwc.py
     module_utils:
     - hwc_utils.py
-    - cloud/hwc/*
     modules:
     - cloud/huawei/*
