@@ -1911,6 +1911,7 @@ community:
     - monitoring/zabbix/zabbix_mediatype.py
     - monitoring/zabbix/zabbix_proxy.py
     - monitoring/zabbix/zabbix_screen.py
+    - monitoring/zabbix/zabbix_service.py
     - monitoring/zabbix/zabbix_template.py
     - monitoring/zabbix/zabbix_template_info.py
     - monitoring/zabbix/zabbix_user.py
