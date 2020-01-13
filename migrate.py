@@ -1709,15 +1709,12 @@ def _rewrite_yaml(contents, namespace, collection, spec, args, dest):
 def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest):
     assert isinstance(el, Mapping)
 
-    _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest)
-    _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args)
+    _rewrite_yaml_mapping_keys_vars(el, namespace, collection, spec, args, dest)
+    _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest)
     _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest)
 
 
-KEYWORD_TO_PLUGIN_MAP = {
-    'ansible_become_method': 'become',
-    'ansible_connection': 'connection',
-    'ansible_shell_type': 'shell',
+KEYWORDS_TO_PLUGIN_MAP = {
     'become_method': 'become',
     'cache_plugin': 'cache',
     'connection': 'connection',
@@ -1726,10 +1723,10 @@ KEYWORD_TO_PLUGIN_MAP = {
 }
 
 
-def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
+def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest):
     translate = []
     for key in el.keys():
-        if is_reserved_name(key):
+        if key not in KEYWORDS_TO_PLUGIN_MAP and is_reserved_name(key):
             continue
 
         prefix = 'with_'
@@ -1773,44 +1770,54 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args):
                     translate.append((new_module_name, key))
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
+        if key in KEYWORDS_TO_PLUGIN_MAP:
+            _rewrite_yaml_mapping_value(namespace, collection, el, key, KEYWORDS_TO_PLUGIN_MAP[key], spec, args, dest)
+
     for new_key, old_key in translate:
         el[new_key] = el.pop(old_key)
 
 
-def _rewrite_yaml_mapping_keys(el, namespace, collection, spec, args, dest):
+def _rewrite_yaml_mapping_value(namespace, collection, el, key, plugin_type, spec, args, dest):
+    try:
+        plugin_namespace, plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
+    except LookupError:
+        if '{{' in el[key]:
+            add_manual_check(key, el[key], dest)
+        return
+
+    if plugin_collection in COLLECTION_SKIP_REWRITE:
+        return
+    new_plugin_name = get_plugin_fqcn(plugin_namespace, plugin_collection, el[key])
+
+    msg = 'Rewriting to %s' % new_plugin_name
+    if args.fail_on_core_rewrite:
+        raise RuntimeError(msg)
+
+    logger.debug(msg)
+    el[key] = new_plugin_name
+    integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
+
+
+VARNAMES_TO_PLUGIN_MAP = {
+    'ansible_become_method': 'become',
+    'ansible_connection': 'connection',
+    'ansible_shell_type': 'shell',
+}
+
+
+def _rewrite_yaml_mapping_keys_vars(el, namespace, collection, spec, args, dest):
     for key in el.keys():
-        if is_reserved_name(key):
-            continue
-
-        plugin_type = KEYWORD_TO_PLUGIN_MAP.get(key)
-        if plugin_type is None:
-            continue
-
-        try:
-            plugin_namespace, plugin_collection = get_plugin_collection(el[key], plugin_type, spec)
-            if plugin_collection in COLLECTION_SKIP_REWRITE:
-                continue
-            new_plugin_name = get_plugin_fqcn(plugin_namespace, plugin_collection, el[key])
-
-            msg = 'Rewriting to %s' % new_plugin_name
-            if args.fail_on_core_rewrite:
-                raise RuntimeError(msg)
-
-            logger.debug(msg)
-            el[key] = new_plugin_name
-            integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
-        except LookupError:
-            if '{{' in el[key]:
-                add_manual_check(key, el[key], dest)
+        if key in VARNAMES_TO_PLUGIN_MAP:
+            _rewrite_yaml_mapping_value(namespace, collection, el, key, VARNAMES_TO_PLUGIN_MAP[key], spec, args, dest)
 
 
 def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
     for key, value in el.items():
         if isinstance(value, Mapping):
             if key == 'vars':
-                _rewrite_yaml_mapping_keys(el[key], namespace, collection, spec, args, dest)
+                _rewrite_yaml_mapping_keys_vars(el[key], namespace, collection, spec, args, dest)
             if key != 'vars':
-                _rewrite_yaml_mapping_keys_non_vars(el[key], namespace, collection, spec, args)
+                _rewrite_yaml_mapping_keys_non_vars(el[key], namespace, collection, spec, args, dest)
         elif isinstance(value, list):
             for idx, item in enumerate(value):
                 if isinstance(item, Mapping):
