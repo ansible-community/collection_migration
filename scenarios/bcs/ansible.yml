@@ -515,7 +515,6 @@ misc:
     - ldap.py
     - lxca_common.py
     - manageiq.py
-    - meraki.py
     - mysql.py
     - netscaler.py
     - ovirt.py
@@ -713,7 +712,6 @@ misc:
     - network/ingate/ig_unit_information.py
     - network/itential/iap_start_workflow.py
     - network/itential/iap_token.py
-    - network/meraki/*
     - network/netscaler/*
     - network/netvisor/*
     - network/nos/*

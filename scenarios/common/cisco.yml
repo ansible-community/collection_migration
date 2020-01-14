@@ -23,6 +23,13 @@ iosxr:
     - iosxr.py
     terminal:
     - iosxr.py
+meraki:
+    doc_fragments:
+    - meraky.py
+    modules:
+    - network/meraki/*
+    module_utils:
+    - network/meraki/*
 nxos:
     doc_fragments:
     - nxos.py

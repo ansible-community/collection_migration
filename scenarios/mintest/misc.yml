@@ -1516,8 +1516,7 @@ not_a_real_collection:
     - network/junos/*
     - network/junos/*/*
     - network/junos/*/*/*
-    - network/meraki/__init__.py
-    - network/meraki/meraki.py
+    - network/meraki/*
     - network/netconf/__init__.py
     - network/netconf/netconf.py
     - network/netscaler/__init__.py
