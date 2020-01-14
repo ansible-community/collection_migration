@@ -96,6 +96,9 @@ core = {}
 manual_check = defaultdict(list)
 
 
+class UnmovablePathStr(str): ...
+
+
 def add_core(ptype, name):
 
     global core
@@ -971,7 +974,7 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
     # TODO: figure out the bug with path maps
     compat_mock_helpers = (
         (
-            src_f,
+            UnmovablePathStr(src_f),
             replace_path_prefix(src_f),
         )
         for hd in {'compat', 'mock', 'modules/utils.py'}
@@ -980,8 +983,7 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
             checkout_path,
         )
     )
-    for src_f, dst_f in compat_mock_helpers:
-        copy_map[src_f] = dst_f
+    copy_map.update(compat_mock_helpers)
 
     def discover_file_migrations(paths, *, find_related=False):
         """Generate the migration map for given paths.
@@ -1044,16 +1046,20 @@ def copy_unit_tests(copy_map, collection_dir, checkout_path):
         if os.path.splitext(src_f)[1] in BAD_EXT:
             continue
 
+        should_be_preserved = isinstance(src_f, UnmovablePathStr)
+
         dest = os.path.join(collection_dir, dest_f)
         # Ensure target dir exists
         os.makedirs(os.path.dirname(dest), exist_ok=True)
 
         src = os.path.join(checkout_path, src_f)
-        logger.info('Copying %s -> %s', src, dest)
+        logger.info(
+            f'{"Copying" if should_be_preserved else "Moving"} %s -> %s',
+            src, dest,
+        )
         shutil.copy(src, dest)
 
-        if src == '.cache/releases/devel.git/test/units/modules/utils.py':
-            # FIXME this appears to be bundled with each collection (above), so do not remove it, this should stay in core?
+        if should_be_preserved:
             continue
 
         remove(src)
@@ -1431,6 +1437,7 @@ def assert_migrating_git_tracked_resources(
 
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
     """Mark migrated paths in botmeta."""
+    migrated_to_collection = {str(k): str(v) for k, v in migrated_to_collection.items()}
     assert_migrating_git_tracked_resources(migrated_to_collection)
 
     migrated_to = '.'.join((namespace, collection))
