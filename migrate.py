@@ -732,26 +732,38 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
 
 def rewrite_py(src, dest, collection, spec, namespace, args):
-    mod_src_text, mod_fst = read_module_txt_n_fst(src)
+    with fst_rewrite_session(src, dest) as mod_fst:
+        import_deps = rewrite_imports(
+            mod_fst, collection, spec, namespace, args,
+        )
 
-    import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
+        try:
+            docs_deps = rewrite_plugin_documentation(
+                mod_fst, collection, spec, namespace, args,
+            )
+        except LookupError as err:
+            docs_deps = []
+            logger.debug('%s in %s', err, src)
 
-    try:
-        docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
-    except LookupError as err:
-        docs_deps = []
-        logger.debug('%s in %s', err, src)
-
-    rewrite_class_property(mod_fst, collection, namespace, dest)
-
-    plugin_data_new = mod_fst.dumps()
-
-    if mod_src_text != plugin_data_new:
-        logger.info('Rewriting plugin references in %s', dest)
-
-    write_text_into_file(dest, plugin_data_new)
+        rewrite_class_property(mod_fst, collection, namespace, dest)
 
     return (import_deps, docs_deps)
+
+
+@contextlib.contextmanager
+def fst_rewrite_session(src_path, dst_path):
+    """Parse the module FST and save it to disk afterwards."""
+    mod_src_text, mod_fst = read_module_txt_n_fst(src_path)
+
+    yield mod_fst
+
+    new_mod_src_text = mod_fst.dumps()
+
+    if src_path == dst_path and mod_src_text == new_mod_src_text:
+        return
+
+    logger.info('Rewriting plugin references in %s', dst_path)
+    write_text_into_file(dst_path, new_mod_src_text)
 
 
 def read_module_txt_n_fst(path):
@@ -1378,11 +1390,16 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
             (os.path.join(dp, f) for f in fn if f.endswith('.py'))
             for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
     ):
-        _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
-        deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
-        normalize_implicit_relative_imports_in_unit_tests(unit_test_module_fst, file_path)
-        write_text_into_file(file_path, unit_test_module_fst.dumps())
+        with fst_rewrite_session(file_path, file_path) as unit_test_module_fst:
+            deps += rewrite_imports(
+                unit_test_module_fst, collection, spec, namespace, args,
+            )
+            deps += rewrite_unit_tests_patch(
+                unit_test_module_fst, collection, spec, namespace, args,
+            )
+            normalize_implicit_relative_imports_in_unit_tests(
+                unit_test_module_fst, file_path,
+            )
 
     return deps
 
