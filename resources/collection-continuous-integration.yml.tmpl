@@ -92,6 +92,7 @@ jobs:
       run: >-
         ~/.local/bin/ansible-test
         sanity
+        --color
         --requirements
         --venv
         --python
@@ -149,6 +150,7 @@ jobs:
       run: >-
         ~/.local/bin/ansible-test
         sanity
+        --color
         --requirements
         --docker
         --python
@@ -204,7 +206,7 @@ jobs:
     - name: Run collection unit tests
       run: |
         [[ ! -d 'tests/unit' ]] && echo This collection does not have unit tests. Skipping... || \
-        ~/.local/bin/ansible-test units --requirements --venv --python "${{ matrix.python-version }}" -vvv
+        ~/.local/bin/ansible-test units --color --coverage --requirements --venv --python "${{ matrix.python-version }}" -vvv
       working-directory: >-
         /${{ runner.os == 'Linux' && 'home' || 'Users' }}/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
 
@@ -259,6 +261,6 @@ jobs:
     - name: Run collection unit tests
       run: |
         [[ ! -d 'tests/unit' ]] && echo This collection does not have unit tests. Skipping... || \
-        ~/.local/bin/ansible-test units --requirements --docker "${{ matrix.container-image }}" -vvv
+        ~/.local/bin/ansible-test units --color --coverage --requirements --docker "${{ matrix.container-image }}" -vvv
       working-directory: >-
         /home/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}
