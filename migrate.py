@@ -5,6 +5,7 @@
 import argparse
 import configparser
 import contextlib
+import functools
 import glob
 import itertools
 import logging
@@ -352,6 +353,44 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
             # so this might be something like:
             # transport = CONNECTION_TRANSPORT
             add_manual_check(property_name, val.value, filename)
+
+
+def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
+    """Locate implicit imports and prepend them with dot."""
+    cur_pkg_dir = os.path.dirname(file_path)
+    make_pkg_subpath = functools.partial(os.path.join, cur_pkg_dir)
+    for imp in mod_fst.find_all(('from_import', )):
+        if not imp.value:  # from . import something
+            continue
+
+        *pkg_path_parts, pkg_or_mod = tuple(t.value for t in imp.value)
+        if (
+                (pkg_path_parts and not pkg_path_parts[0])
+                or (not pkg_path_parts and pkg_or_mod == '__future__')
+        ):  # import is already absolute
+            continue
+
+        relative_mod_path = make_pkg_subpath(
+            *pkg_path_parts, f'{pkg_or_mod}.py',
+        )
+        if relative_mod_path == file_path:  # self-import? nope! def other mod
+            continue
+
+        relative_pkg_init_path = make_pkg_subpath(
+            *pkg_path_parts, pkg_or_mod, '__init__.py',
+        )
+
+        possible_relative_targets = {relative_mod_path, relative_pkg_init_path}
+        relative_imp_target_exists = any(
+            os.path.exists(p) for p in possible_relative_targets
+        )
+
+        if not relative_imp_target_exists:
+            continue
+
+        # turn implicit relative import into an explicit absolute import
+        # that is relative to the current module
+        imp.value = f'.{imp.value.dumps()!s}'
 
 
 def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
@@ -1342,6 +1381,7 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
         _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
         deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
         deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
+        normalize_implicit_relative_imports_in_unit_tests(unit_test_module_fst, file_path)
         write_text_into_file(file_path, unit_test_module_fst.dumps())
 
     return deps
