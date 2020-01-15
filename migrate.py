@@ -5,6 +5,7 @@
 import argparse
 import configparser
 import contextlib
+import functools
 import glob
 import itertools
 import logging
@@ -354,6 +355,44 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
             add_manual_check(property_name, val.value, filename)
 
 
+def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
+    """Locate implicit imports and prepend them with dot."""
+    cur_pkg_dir = os.path.dirname(file_path)
+    make_pkg_subpath = functools.partial(os.path.join, cur_pkg_dir)
+    for imp in mod_fst.find_all(('from_import', )):
+        if not imp.value:  # from . import something
+            continue
+
+        *pkg_path_parts, pkg_or_mod = tuple(t.value for t in imp.value)
+        if (
+                (pkg_path_parts and not pkg_path_parts[0])
+                or (not pkg_path_parts and pkg_or_mod == '__future__')
+        ):  # import is already absolute
+            continue
+
+        relative_mod_path = make_pkg_subpath(
+            *pkg_path_parts, f'{pkg_or_mod}.py',
+        )
+        if relative_mod_path == file_path:  # self-import? nope! def other mod
+            continue
+
+        relative_pkg_init_path = make_pkg_subpath(
+            *pkg_path_parts, pkg_or_mod, '__init__.py',
+        )
+
+        possible_relative_targets = {relative_mod_path, relative_pkg_init_path}
+        relative_imp_target_exists = any(
+            os.path.exists(p) for p in possible_relative_targets
+        )
+
+        if not relative_imp_target_exists:
+            continue
+
+        # turn implicit relative import into an explicit absolute import
+        # that is relative to the current module
+        imp.value = f'.{imp.value.dumps()!s}'
+
+
 def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
@@ -693,26 +732,38 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
 
 def rewrite_py(src, dest, collection, spec, namespace, args):
-    mod_src_text, mod_fst = read_module_txt_n_fst(src)
+    with fst_rewrite_session(src, dest) as mod_fst:
+        import_deps = rewrite_imports(
+            mod_fst, collection, spec, namespace, args,
+        )
 
-    import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
+        try:
+            docs_deps = rewrite_plugin_documentation(
+                mod_fst, collection, spec, namespace, args,
+            )
+        except LookupError as err:
+            docs_deps = []
+            logger.debug('%s in %s', err, src)
 
-    try:
-        docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
-    except LookupError as err:
-        docs_deps = []
-        logger.debug('%s in %s', err, src)
-
-    rewrite_class_property(mod_fst, collection, namespace, dest)
-
-    plugin_data_new = mod_fst.dumps()
-
-    if mod_src_text != plugin_data_new:
-        logger.info('Rewriting plugin references in %s', dest)
-
-    write_text_into_file(dest, plugin_data_new)
+        rewrite_class_property(mod_fst, collection, namespace, dest)
 
     return (import_deps, docs_deps)
+
+
+@contextlib.contextmanager
+def fst_rewrite_session(src_path, dst_path):
+    """Parse the module FST and save it to disk afterwards."""
+    mod_src_text, mod_fst = read_module_txt_n_fst(src_path)
+
+    yield mod_fst
+
+    new_mod_src_text = mod_fst.dumps()
+
+    if src_path == dst_path and mod_src_text == new_mod_src_text:
+        return
+
+    logger.info('Rewriting plugin references in %s', dst_path)
+    write_text_into_file(dst_path, new_mod_src_text)
 
 
 def read_module_txt_n_fst(path):
@@ -1042,6 +1093,12 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
 
 def copy_unit_tests(copy_map, collection_dir, checkout_path):
     """Copy unit tests into a collection using a copy map."""
+    if not copy_map:
+        logger.info(
+            'No unit tests scheduled for copying to %s', collection_dir,
+        )
+        return
+
     for src_f, dest_f in copy_map.items():
         if os.path.splitext(src_f)[1] in BAD_EXT:
             continue
@@ -1339,10 +1396,16 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
             (os.path.join(dp, f) for f in fn if f.endswith('.py'))
             for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
     ):
-        _unit_test_module_src_text, unit_test_module_fst = read_module_txt_n_fst(file_path)
-        deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args)
-        deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args)
-        write_text_into_file(file_path, unit_test_module_fst.dumps())
+        with fst_rewrite_session(file_path, file_path) as unit_test_module_fst:
+            deps += rewrite_imports(
+                unit_test_module_fst, collection, spec, namespace, args,
+            )
+            deps += rewrite_unit_tests_patch(
+                unit_test_module_fst, collection, spec, namespace, args,
+            )
+            normalize_implicit_relative_imports_in_unit_tests(
+                unit_test_module_fst, file_path,
+            )
 
     return deps
 
