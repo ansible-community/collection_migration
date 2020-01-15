@@ -25,7 +25,7 @@ iosxr:
     - iosxr.py
 meraki:
     doc_fragments:
-    - meraky.py
+    - meraki.py
     modules:
     - network/meraki/*
     module_utils:
