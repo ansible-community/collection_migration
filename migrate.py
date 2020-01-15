@@ -1042,6 +1042,12 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
 
 def copy_unit_tests(copy_map, collection_dir, checkout_path):
     """Copy unit tests into a collection using a copy map."""
+    if not copy_map:
+        logger.info(
+            'No unit tests scheduled for copying to %s', collection_dir,
+        )
+        return
+
     for src_f, dest_f in copy_map.items():
         if os.path.splitext(src_f)[1] in BAD_EXT:
             continue
