@@ -9,32 +9,31 @@ on:
 jobs:
   build-collection-artifact:
     name: Build collection
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner-os }}
     strategy:
       matrix:
-        os:
+        runner-os:
         - ubuntu-latest
-        python-version:
-        - 3.7
+        ansible-version:
+        - git+https://github.com/ansible/ansible.git@devel
+        runner-python-version:
+        - 3.8
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.runner-python-version }}
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Uninstall previously installed Ansible via Apt
-      run: sudo apt remove --yes ansible
-    - name: Uninstall previously installed Ansible via Pip
-      run: python -m pip uninstall ansible
-    - name: Install Ansible==devel
+        python-version: ${{ matrix.runner-python-version }}
+    - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
         pip
         install
-        git+https://github.com/ansible/ansible.git@devel
+        --user
+        ${{ matrix.ansible-version }}
     - name: Build a collection tarball
       run: >-
-        ansible-galaxy
+        ~/.local/bin/ansible-galaxy
         collection
         build
         --output-path
@@ -47,7 +46,7 @@ jobs:
         path: .cache/collection-tarballs
 
   sanity-test-collection-via-vms:
-    name: Run sanity tests in collections via VM ${{ matrix.os.vm || 'ubuntu-latest' }}
+    name: Sanity in VM ${{ matrix.os.vm || 'ubuntu-latest' }}
     needs:
     - build-collection-artifact
     runs-on: ${{ matrix.os.vm || 'ubuntu-latest' }}
@@ -55,7 +54,6 @@ jobs:
       fail-fast: false
       matrix:
         ansible-version:
-        - ansible==2.9
         - git+https://github.com/ansible/ansible.git@devel
         os:
         - vm: ubuntu-latest
@@ -73,16 +71,12 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Uninstall previously installed Ansible via Apt
-      run: sudo apt remove --yes ansible
-      if: startsWith(matrix.os.vm, 'ubuntu')
-    - name: Uninstall previously installed Ansible via Pip
-      run: python -m pip uninstall ansible
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
         pip
         install
+        --user
         ${{ matrix.ansible-version }}
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
@@ -92,53 +86,55 @@ jobs:
         path: .cache/collection-tarballs
     - name: Install the collection tarball
       run: >-
-        ansible-galaxy
+        ~/.local/bin/ansible-galaxy
         collection
         install
         .cache/collection-tarballs/*.tar.gz
     - name: Run collection sanity tests
       run: >-
-        ansible-test
+        ~/.local/bin/ansible-test
         sanity
         --requirements
+        --venv
         --python
         "${{ matrix.python-version }}"
         -vvv
       working-directory: >-
-        /home/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
+        /${{ runner.os == 'Linux' && 'home' || 'Users' }}/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
 
   sanity-test-collection-via-containers:
-    name: Run sanity tests in collections via container ${{ matrix.os.image }}
+    name: Sanity in container via Python ${{ matrix.python-version }}
     needs:
     - build-collection-artifact
-    runs-on: ubuntu-latest
-    container: ${{ matrix.os.image }}
+    runs-on: ${{ matrix.runner-os }}
     strategy:
       fail-fast: false
       matrix:
+        runner-os:
+        - ubuntu-latest
+        runner-python-version:
+        - 3.8
         ansible-version:
-        - ansible==2.9
         - git+https://github.com/ansible/ansible.git@devel
-        os:
-        - image: quay.io/ansible/default-test-container:1.10.1
-        - image: quay.io/ansible/fedora30-test-container:1.9.2
         python-version:
         - 3.8
+        - 2.7
         - 3.7
         - 3.6
         - 3.5
-        - 2.7
+        - 2.6
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.runner-python-version }}
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.runner-python-version }}
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
         pip
         install
+        --user
         ${{ matrix.ansible-version }}
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
@@ -148,15 +144,16 @@ jobs:
         path: .cache/collection-tarballs
     - name: Install the collection tarball
       run: >-
-        ansible-galaxy
+        ~/.local/bin/ansible-galaxy
         collection
         install
         .cache/collection-tarballs/*.tar.gz
     - name: Run collection sanity tests
       run: >-
-        ansible-test
+        ~/.local/bin/ansible-test
         sanity
         --requirements
+        --docker
         --python
         "${{ matrix.python-version }}"
         -vvv
@@ -164,7 +161,7 @@ jobs:
         /home/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
 
   unit-test-collection-via-vms:
-    name: Run unit tests in collections via VM ${{ matrix.os.vm || 'ubuntu-latest' }}
+    name: Units in VM ${{ matrix.os.vm || 'ubuntu-latest' }}
     needs:
     - build-collection-artifact
     runs-on: ${{ matrix.os.vm || 'ubuntu-latest' }}
@@ -172,7 +169,6 @@ jobs:
       fail-fast: false
       matrix:
         ansible-version:
-        - ansible==2.9
         - git+https://github.com/ansible/ansible.git@devel
         os:
         - vm: ubuntu-latest
@@ -190,16 +186,12 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Uninstall previously installed Ansible via Apt
-      run: sudo apt remove --yes ansible
-      if: startsWith(matrix.os.vm, 'ubuntu')
-    - name: Uninstall previously installed Ansible via Pip
-      run: python -m pip uninstall ansible
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
         pip
         install
+        --user
         ${{ matrix.ansible-version }}
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
@@ -209,49 +201,53 @@ jobs:
         path: .cache/collection-tarballs
     - name: Install the collection tarball
       run: >-
-        ansible-galaxy
+        ~/.local/bin/ansible-galaxy
         collection
         install
         .cache/collection-tarballs/*.tar.gz
     - name: Run collection unit tests
       run: |
         [[ ! -d 'tests/unit' ]] && echo This collection does not have unit tests. Skipping... || \
-        ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
+        ~/.local/bin/ansible-test units --requirements --venv --python "${{ matrix.python-version }}" -vvv
       working-directory: >-
-        /home/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
+        /${{ runner.os == 'Linux' && 'home' || 'Users' }}/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}{% raw %}
 
   unit-test-collection-via-containers:
-    name: Run unit tests in collections via container ${{ matrix.os.image }}
+    name: Units in container ${{ matrix.container-image }}
     needs:
     - build-collection-artifact
-    runs-on: ubuntu-latest
-    container: ${{ matrix.os.image }}
+    runs-on: ${{ matrix.runner-os }}
     strategy:
       fail-fast: false
       matrix:
-        ansible-version:
-        - ansible==2.9
-        - git+https://github.com/ansible/ansible.git@devel
-        os:
-        - image: quay.io/ansible/default-test-container:1.10.1
-        - image: quay.io/ansible/fedora30-test-container:1.9.2
-        python-version:
+        runner-os:
+        - ubuntu-latest
+        runner-python-version:
         - 3.8
-        - 3.7
-        - 3.6
-        - 3.5
-        - 2.7
+        ansible-version:
+        - git+https://github.com/ansible/ansible.git@devel
+        container-image:
+        - fedora31
+        - ubuntu1804
+        - centos8
+        - opensuse15
+        - fedora30
+        - centos7
+        - opensuse15py2
+        - ubuntu1604
+        - centos6
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.runner-python-version }}
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.runner-python-version }}
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
         pip
         install
+        --user
         ${{ matrix.ansible-version }}
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
@@ -261,13 +257,13 @@ jobs:
         path: .cache/collection-tarballs
     - name: Install the collection tarball
       run: >-
-        ansible-galaxy
+        ~/.local/bin/ansible-galaxy
         collection
         install
         .cache/collection-tarballs/*.tar.gz
     - name: Run collection unit tests
       run: |
         [[ ! -d 'tests/unit' ]] && echo This collection does not have unit tests. Skipping... || \
-        ansible-test units --requirements --python "${{ matrix.python-version }}" -vvv
+        ~/.local/bin/ansible-test units --requirements --docker "${{ matrix.container-image }}" -vvv
       working-directory: >-
         /home/runner/.ansible/collections/ansible_collections/{% endraw %}{{ coll_ns }}/{{ coll_name }}
