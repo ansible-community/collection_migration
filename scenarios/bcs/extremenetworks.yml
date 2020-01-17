@@ -1,16 +1,14 @@
 exos:
+    action:
+    - exos.py
     cliconf:
     - exos.py
     httpapi:
     - exos.py
     module_utils:
-    - network/exos/exos.py
-    - network/exos/argspec/facts/facts.py
-    - network/exos/argspec/lldp_global/lldp_global.py
-    - network/exos/config/lldp_global/lldp_global.py
-    - network/exos/facts/legacy/base.py
-    - network/exos/facts/facts.py
-    - network/exos/facts/lldp_global/lldp_global.py
+    - network/exos/*
+    - network/exos/*/*
+    - network/exos/*/*/*
     modules:
     - network/exos/*
     terminal:
@@ -19,7 +17,7 @@ voss:
     cliconf:
     - voss.py
     module_utils:
-    - network/voss/voss.py
+    - network/voss/*
     modules:
     - network/voss/*
     terminal:

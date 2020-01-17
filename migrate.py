@@ -197,7 +197,7 @@ def actually_remove(checkout_path, namespace, collection):
     subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
 
     # commit the changes
-    subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection)), cwd=checkout_path)
+    subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection), '--allow-empty'), cwd=checkout_path)
 
 
 def read_yaml_file(path):

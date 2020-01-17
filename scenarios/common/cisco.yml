@@ -19,6 +19,13 @@ ios:
     - network/ios/*/*/*
     - network/ios/*/*/*/*
 iosxr:
+    doc_fragments:
+    - iosxr.py
+    module_utils:
+    - network/iosxr/*
+    - network/iosxr/*/*
+    - network/iosxr/*/*/*
+    - network/iosxr/*/*/*/*
     netconf:
     - iosxr.py
     terminal:

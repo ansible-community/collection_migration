@@ -4,5 +4,6 @@ netapp:
     module_utils:
     - netapp.py
     - netapp_module.py
+    - netapp_elementsw_module.py
     modules:
     - storage/netapp/*

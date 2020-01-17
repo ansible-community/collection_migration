@@ -14,5 +14,6 @@ eos:
     - network/eos/*/*
     - network/eos/*/*/*
     - network/eos/*/*/*/*
+    - network/eos/*/*/*/*/*
     terminal:
     - eos.py

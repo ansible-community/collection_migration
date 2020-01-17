@@ -1,4 +1,4 @@
-_grafana:
+grafana:
     callback:
     - grafana_annotations.py
     lookup:

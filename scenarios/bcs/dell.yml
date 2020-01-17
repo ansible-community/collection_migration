@@ -6,7 +6,7 @@ os6:
     doc_fragments:
     - dellos6.py
     module_utils:
-    - network/dellos6/dellos6.py
+    - network/dellos6/*
     modules:
     - network/dellos6/*
     terminal:
@@ -19,7 +19,7 @@ os9:
     doc_fragments:
     - dellos9.py
     module_utils:
-    - network/dellos9/dellos9.py
+    - network/dellos9/*
     modules:
     - network/dellos9/*
     terminal:
@@ -32,7 +32,7 @@ os10:
     doc_fragments:
     - dellos10.py
     module_utils:
-    - network/dellos10/dellos10.py
+    - network/dellos10/*
     modules:
     - network/dellos10/*
     terminal:

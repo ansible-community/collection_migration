@@ -4,4 +4,8 @@ sros:
     modules:
     - network/sros/*
     module_utils:
-    - network/sros/sros.py
+    - network/sros/*
+    netconf:
+    - sros.py
+    terminal:
+    - sros.py

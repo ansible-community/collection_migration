@@ -1,4 +1,6 @@
 azure:
+    inventory:
+    - azure_rm.py
     doc_fragments:
     - azure.py
     - azure_tags.py

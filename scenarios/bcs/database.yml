@@ -1,5 +1,7 @@
 influxdb:
     doc_fragments:
     - influxdb.py
+    module_utils:
+    - influxdb.py
     modules:
     - database/influxdb/*
