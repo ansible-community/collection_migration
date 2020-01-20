@@ -96,3 +96,22 @@ Things to be aware of
   result in various sanity and/or other tests failures.
   E.g. `action plugin has no matching module to provide documentation`
   (`action-plugin-docs`).
+  
+Definitions for the 2.10 Ansible Release
+----------------------------------------
+
+There are a few terms that are important to the understanding of the
+Ansible 2.10 release, that impact and indicate how ansible will be
+structured, and distributed.
+
+stdlib
+: The bare essentials needed to make Ansible functional, while providing
+  no ability to perform work against a target host. This will largely be
+  a release or distribution with little to no plugins or modules.
+  
+base
+: This uses stdlib as it's foundation, while also including a small number
+  or plugins and modules that roughly track the 2.9 definition of "core"
+  supported plugins and modules. This will provide a limited functionality
+  to support a standard use case that may involve bootstrapping a host,
+  to a point where additionall collections can then be used.
