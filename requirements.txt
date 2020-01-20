@@ -104,9 +104,9 @@ environ-config==19.1.0 \
 envparse==0.2.0 \
     --hash=sha256:4f3b9a27bb55d27f124eb4adf006fec05e4588891c9a054a183a112645056eb7 \
     # via octomachinery
-gidgethub==3.2.0 \
-    --hash=sha256:4f1a4cd8ea73ee44245fa510f01ce602cd328745bf83a3342d08d168a604f4c6 \
-    --hash=sha256:8f4b69063a256994d38243cc0eba4e1453017b5b8b04a173216d02d47ffc3989
+gidgethub==3.3.0 \
+    --hash=sha256:3692d2df48a23c87ec4a5e74053ce343bc59cea7c34488a9136754a35aeb177a \
+    --hash=sha256:4a456758a5fc8bfd581f297df90f2d09efbb830ccd209b1ceba4723705607d70
 idna==2.8 \
     --hash=sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407 \
     --hash=sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c \
