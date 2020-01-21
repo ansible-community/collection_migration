@@ -1204,15 +1204,18 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
                     src = os.path.join(checkout_path, relative_src_plugin_path)
 
-                    if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
-                        if os.path.islink(src):
-                            logger.info("Removing plugin alias from checkout and skipping: %s (%s in %s.%s)",
-                                         plugin, plugin_type, namespace, collection)
-                            remove(src)
-                        else:
-                            logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)",
-                                         plugin, plugin_type, namespace, collection)
-                        continue
+                    # TODO: colleciotns are now scheduled to handle deprecations and aliases, until we get an implementation
+                    # we are just treating them as normal files for now (previouslly we were avoiding them.
+
+                    #if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
+                    #    if os.path.islink(src):
+                    #        logger.info("Removing plugin alias from checkout and skipping: %s (%s in %s.%s)",
+                    #                     plugin, plugin_type, namespace, collection)
+                    #        remove(src)
+                    #    else:
+                    #        logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)",
+                    #                     plugin, plugin_type, namespace, collection)
+                    #    continue
 
                     remove(src)
 
