@@ -6,18 +6,8 @@ f5_modules:
     - f5.py
     module_utils:
     - f5_utils.py
-    - network/f5/__init__.py
-    - network/f5/bigip.py
-    - network/f5/bigiq.py
-    - network/f5/common.py
-    - network/f5/compare.py
-    - network/f5/icontrol.py
-    - network/f5/ipaddress.py
-    - network/f5/iworkflow.py
-    - network/f5/legacy.py
-    - network/f5/urls.py
+    - network/f5/*
     modules:
-    - network/f5/bigip_*
-    - network/f5/bigiq_*
+    - network/f5/*
     terminal:
     - bigip.py

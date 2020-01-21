@@ -26,6 +26,8 @@ iosxr:
     - iosxr.py
     doc_fragments:
     - iosxr.py
+    modules:
+    - network/iosxr/*
     module_utils:
     - network/iosxr/*
     - network/iosxr/*/*

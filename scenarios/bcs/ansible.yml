@@ -137,6 +137,7 @@ _core:
     - files/stat.py
     - inventory/add_host.py
     - inventory/group_by.py
+    - network/netconf/*
     - net_tools/basics/get_url.py
     - net_tools/basics/slurp.py
     - net_tools/basics/uri.py
@@ -460,6 +461,8 @@ infoblox:
     - nios.py
     - nios_next_ip.py
     - nios_next_network.py
+    modules:
+    - net_tools/nios/*
     module_utils:
     - net_tools/nios/*
 ironware:
@@ -630,6 +633,7 @@ misc:
     modules:
     - cloud/atomic/*
     - cloud/centurylink/*
+    - cloud/cloudvision/*
     - cloud/heroku/heroku_collaborator.py
     - cloud/linode/*
     - cloud/memset/*
@@ -653,7 +657,7 @@ misc:
     - cloud/univention/*
     - cloud/webfaction/*
     - cloud/xenserver/*
-    - clustering/consul*
+    - clustering/consul/*
     - clustering/etcd3.py
     - clustering/pacemaker_cluster.py
     - clustering/znode.py
@@ -682,6 +686,7 @@ misc:
     - files/iso_extract.py
     - files/read_csv.py
     - files/xml.py
+    - identity/cyberark/*
     - identity/ipa/*
     - identity/_onepassword_facts.py
     - identity/onepassword_info.py
@@ -714,6 +719,7 @@ misc:
     - net_tools/dnsimple.py
     - net_tools/dnsmadeeasy.py
     - net_tools/haproxy.py
+    - net_tools/infinity/*
     - net_tools/ip_netns.py
     - net_tools/ipify_facts.py
     - net_tools/ipinfoio_facts.py
@@ -983,6 +989,8 @@ netcommon:
     - network/icx/*
     - network/interface/_net_*.py
     - network/netvisor/*
+    - network/netact/*
+    - network/nxos/*
     - network/protocol/_net_lldp.py
     - network/restconf/*
     - network/routing/_net_static_route.py
