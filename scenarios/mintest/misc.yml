@@ -585,8 +585,6 @@ not_a_real_collection:
     - net_tools/dnsimple.py
     - net_tools/dnsmadeeasy.py
     - net_tools/exoscale/*
-    - net_tools/exoscale/exo_dns_domain.py
-    - net_tools/exoscale/exo_dns_record.py
     - net_tools/haproxy.py
     - net_tools/hetzner_*
     - net_tools/infinity/__init__.py
