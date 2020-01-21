@@ -663,6 +663,7 @@ misc:
     - database/misc/riak.py
     - database/mongodb/*
     - database/mssql/*
+    - database/mysql/*
     - database/postgresql/*
     - database/proxysql/*
     - database/vertica/*

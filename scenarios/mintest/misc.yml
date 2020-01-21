@@ -505,12 +505,7 @@ not_a_real_collection:
     - database/mongodb/mongodb_user.py
     - database/mssql/__init__.py
     - database/mssql/mssql_db.py
-    - database/mysql/__init__.py
-    - database/mysql/mysql_db.py
-    - database/mysql/mysql_info.py
-    - database/mysql/mysql_replication.py
-    - database/mysql/mysql_user.py
-    - database/mysql/mysql_variables.py
+    - database/mysql/*
     - database/postgresql/__init__.py
     - database/postgresql/postgresql_copy.py
     - database/postgresql/postgresql_db.py
@@ -1531,8 +1526,7 @@ not_a_real_collection:
     - network/nxos/*
     - network/nxos/*/*
     - network/nxos/*/*/*
-    - network/onyx/__init__.py
-    - network/onyx/onyx.py
+    - network/onyx/*
     - network/ordnance/__init__.py
     - network/ordnance/ordnance.py
     - network/panos/__init__.py

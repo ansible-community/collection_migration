@@ -177,6 +177,7 @@ community:
     - voss.py
     - vyos.py
   connection:
+    - aws_ssm.py
     - buildah.py
     - chroot.py
     - docker.py
@@ -576,6 +577,7 @@ community:
     - cloud/amazon/cloudwatchevent_rule.py
     - cloud/amazon/cloudwatchlogs_log_group.py
     - cloud/amazon/cloudwatchlogs_log_group_info.py
+    - cloud/amazon/cloudwatchlogs_log_group_metric_filter.py
     - cloud/amazon/data_pipeline.py
     - cloud/amazon/dms_endpoint.py
     - cloud/amazon/dms_replication_subnet_group.py
@@ -1548,6 +1550,7 @@ community:
     - cloud/vmware/vmware_guest_boot_info.py
     - cloud/vmware/vmware_guest_boot_manager.py
     - cloud/vmware/vmware_guest_controller.py
+    - cloud/vmware/vmware_guest_cross_vc_clone.py
     - cloud/vmware/vmware_guest_custom_attribute_defs.py
     - cloud/vmware/vmware_guest_custom_attributes.py
     - cloud/vmware/vmware_guest_customization_info.py
@@ -1760,6 +1763,7 @@ community:
     - database/mysql/__init__.py
     - database/mysql/mysql_db.py
     - database/mysql/mysql_info.py
+    - database/mysql/mysql_query.py
     - database/mysql/mysql_replication.py
     - database/mysql/mysql_user.py
     - database/mysql/mysql_variables.py
@@ -3415,6 +3419,8 @@ community:
     - network/nxos/storage/nxos_vsan.py
     - network/nxos/storage/nxos_zone_zoneset.py
     - network/onyx/__init__.py
+    - network/onyx/onyx_aaa.py
+    - network/onyx/onyx_bfd.py
     - network/onyx/onyx_bgp.py
     - network/onyx/onyx_buffer_pool.py
     - network/onyx/onyx_command.py
@@ -3441,6 +3447,7 @@ community:
     - network/onyx/onyx_ptp_interface.py
     - network/onyx/onyx_qos.py
     - network/onyx/onyx_snmp.py
+    - network/onyx/onyx_snmp_hosts.py
     - network/onyx/onyx_snmp_users.py
     - network/onyx/onyx_syslog_files.py
     - network/onyx/onyx_syslog_remote.py
