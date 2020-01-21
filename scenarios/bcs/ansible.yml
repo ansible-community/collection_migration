@@ -730,7 +730,7 @@ misc:
     - network/cumulus/*
     - network/edgeos/*
     - network/edgeswitch/*
-    - network/eric_eccli/eric_eccli_command.py
+    - network/eric_eccli/*
     - network/fortimanager/*
     - network/illumos/*
     - network/ingate/*
@@ -993,7 +993,7 @@ netcommon:
     - network/common/*/*
     - network/edgeos/*
     - network/edgeswitch/*
-    - network/eric_eccli/
+    - network/eric_eccli/*
     - network/ftd/*
     - network/icx/*
     - network/netvisor/*
