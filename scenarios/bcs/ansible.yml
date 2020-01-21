@@ -633,7 +633,6 @@ misc:
     modules:
     - cloud/atomic/*
     - cloud/centurylink/*
-    - cloud/cloudvision/*
     - cloud/heroku/heroku_collaborator.py
     - cloud/linode/*
     - cloud/memset/*
@@ -732,6 +731,7 @@ misc:
     - net_tools/snmp_facts.py
     - network/aos/*
     - network/bigswitch/*
+    - network/cloudvision/*
     - network/citrix/*
     - network/cumulus/*
     - network/edgeos/*
