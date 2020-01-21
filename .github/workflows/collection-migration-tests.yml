@@ -19,7 +19,9 @@ jobs:
         python-version:
         - 3.7
         migration-scenario:
-        - minimal
+        - base
+        - mintest
+        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
@@ -62,7 +64,7 @@ jobs:
         --skip-migration
         --publish-to-github
     - name: >-
-        Auto-publish ansible-minimal to GitHub repos
+        Auto-publish ansible-base and ansible-mintest to GitHub repos
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'
@@ -76,18 +78,18 @@ jobs:
         --target-github-org ansible-collection-migration
         --skip-migration
         --push-migrated-core
-    - name: Smoke test ansible-minimal
+    - name: Smoke test ansible repos
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'
       run: |
-        python -m venv /tmp/ansible-minimal-venv
-        source /tmp/ansible-minimal-venv/bin/activate
-        pip install git+https://github.com/ansible-collection-migration/ansible-minimal
+        python -m venv /tmp/ansible-${{matrix.migration-scenario}}-venv
+        source /tmp/ansible-${{matrix.migration-scenario}}-venv/bin/activate
+        pip install git+https://github.com/ansible-collection-migration/ansible-${{matrix.migration-scenario}}
         ansible --help
         ansible --version
         deactivate
-        rm -rf /tmp/ansible-minimal-venv
+        rm -rf /tmp/ansible-${{matrix.migration-scenario}}-venv
     - name: >-
         List the migrated collections
       run: |
@@ -124,7 +126,9 @@ jobs:
         python-version:
         - 3.7
         migration-scenario:
-        - minimal
+        - base
+        - mintest
+        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
@@ -179,7 +183,9 @@ jobs:
         python-version:
         - 3.7
         migration-scenario:
-        - minimal
+        - base
+        - mintest
+        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
