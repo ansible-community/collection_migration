@@ -522,7 +522,7 @@ misc:
     - sesu.py
     doc_fragments:
     - auth_basic.py
-    - ecs_credentials.py
+    - ecs_credential.py
     - ingate.py
     - ipa.py
     - ldap.py
