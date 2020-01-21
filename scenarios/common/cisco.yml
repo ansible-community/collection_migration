@@ -18,7 +18,12 @@ ios:
     - network/ios/*/*
     - network/ios/*/*/*
     - network/ios/*/*/*/*
+    - network/ios/*/*/*/*/*
 iosxr:
+    action:
+    - iosxr.py
+    cliconf:
+    - iosxr.py
     doc_fragments:
     - iosxr.py
     module_utils:
@@ -26,6 +31,7 @@ iosxr:
     - network/iosxr/*/*
     - network/iosxr/*/*/*
     - network/iosxr/*/*/*/*
+    - network/iosxr/*/*/*/*/*
     netconf:
     - iosxr.py
     terminal:
