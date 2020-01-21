@@ -887,7 +887,7 @@ misc:
     - mysql.py
     - network/aos/*
     - network/bigswitch/*
-    - network/fortimanager
+    - network/fortimanager/*
     - network/ingate/*
     - net_tools/netbox/*
     - network/netscaler/*
