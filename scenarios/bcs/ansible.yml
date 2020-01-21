@@ -6,7 +6,6 @@ _core:
     - gather_facts.py
     - group_by.py
     - netconf.py
-    - netcommon.py
     - normal.py
     - package.py
     - patch.py
@@ -398,6 +397,8 @@ enos:
     - enos.py
     modules:
     - network/enos/*
+    module_utils:
+    - network/enos/*
     terminal:
     - enos.py
 exoscale:
@@ -462,6 +463,8 @@ infoblox:
     module_utils:
     - net_tools/nios/*
 ironware:
+    action:
+    - ironware.py
     doc_fragments:
     - ironware.py
     module_utils:
@@ -515,6 +518,8 @@ layer3:
     modules:
     - network/layer3/*
 misc:
+    action:
+    - slxos.py
     become:
     - dzdo.py
     - pbrun.py
@@ -579,6 +584,10 @@ misc:
     - sumologic.py
     - timer.py
     - yaml.py
+    cliconf:
+    - edgeswitch.py
+    - routeros.py
+    - slxos.py
     connection:
     - funcd.py
     - saltstack.py
@@ -610,6 +619,7 @@ misc:
     - random_choice.py
     - redis.py
     inventory:
+    - foreman.py
     - netbox.py
     - online.py
     - openstack.py
@@ -716,30 +726,24 @@ misc:
     - net_tools/snmp_facts.py
     - network/aos/*
     - network/bigswitch/*
-    - network/citrix/_netscaler.py
+    - network/citrix/*
     - network/cumulus/*
     - network/edgeos/*
-    - network/edgeswitch/edgeswitch_facts.py
-    - network/edgeswitch/edgeswitch_vlan.py
+    - network/edgeswitch/*
     - network/eric_eccli/eric_eccli_command.py
     - network/fortimanager/*
     - network/illumos/*
-    - network/ingate/ig_config.py
-    - network/ingate/ig_unit_information.py
-    - network/itential/iap_start_workflow.py
-    - network/itential/iap_token.py
+    - network/ingate/*
+    - network/itential/*
     - network/netscaler/*
     - network/nos/*
     - network/nuage/nuage_vspk.py
     - network/onyx/*
-    - network/opx/opx_cps.py
+    - network/opx/*
     - network/ordnance/*
     - network/panos/*
-    - network/radware/vdirect_commit.py
-    - network/radware/vdirect_file.py
-    - network/radware/vdirect_runnable.py
-    - network/routeros/routeros_command.py
-    - network/routeros/routeros_facts.py
+    - network/radware/*
+    - network/routeros/*
     - network/slxos/*
     - notification/bearychat.py
     - notification/campfire.py
@@ -883,12 +887,14 @@ misc:
     - mysql.py
     - network/aos/*
     - network/bigswitch/*
+    - network/fortimanager
     - network/ingate/*
     - net_tools/netbox/*
     - network/netscaler/*
     - network/nos/*
     - network/onyx/*
     - network/ordnance/*
+    - network/panos/*
     - network/slxos/*
     - oneandone.py
     - oneview.py
@@ -922,6 +928,7 @@ netcommon:
     - net_base.py
     - net_l2_interface.py
     - net_l3_interface.py
+    - net_lldp.py
     - net_lldp_interface.py
     - net_linkagg.py
     - net_logging.py
@@ -934,6 +941,7 @@ netcommon:
     - net_user.py
     - net_vlan.py
     - net_vrf.py
+    - network.py
     - nos_config.py
     - nxos.py
     - nxos_file_copy.py
@@ -942,6 +950,10 @@ netcommon:
     become:
     - enable.py
     cliconf:
+    - eric_eccli.py
+    - icx.py
+    - netvisor.py
+    - nos.py
     - nxos.py
     connection:
     - paramiko_ssh.py
@@ -980,7 +992,10 @@ netcommon:
     - network/common/*
     - network/common/*/*
     - network/edgeos/*
+    - network/edgeswitch/*
+    - network/eric_eccli/
     - network/ftd/*
+    - network/icx/*
     - network/netvisor/*
     - network/restconf/*
     - network/routeros/*
@@ -1004,7 +1019,7 @@ nso:
     modules:
     - network/nso/*
     module_utils:
-    - network/nso/nso.py
+    - network/nso/*
 ovs:
     modules:
     - network/ovs/*

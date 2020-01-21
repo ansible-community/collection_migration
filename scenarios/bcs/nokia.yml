@@ -1,4 +1,6 @@
 sros:
+    action:
+    - sros.py
     doc_fragments:
     - sros.py
     modules:

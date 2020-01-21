@@ -14,6 +14,8 @@ exos:
     terminal:
     - exos.py
 voss:
+    action:
+    - voss.py
     cliconf:
     - voss.py
     module_utils:

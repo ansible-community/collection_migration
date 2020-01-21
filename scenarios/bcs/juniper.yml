@@ -1,4 +1,8 @@
 junos:
+    action:
+    - junos.py
+    cliconf:
+    - junos.py
     doc_fragments:
     - junos.py
     netconf:

@@ -1,4 +1,9 @@
 cloudengine:
+    action:
+    - ce.py
+    - ce_template.py
+    cliconf:
+    - ce.py
     doc_fragments:
     - ce.py
     netconf:
