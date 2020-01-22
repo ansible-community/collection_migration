@@ -1,4 +1,4 @@
-community:
+moveitallout:
   action:
     - add_host.py
     - aireos.py
