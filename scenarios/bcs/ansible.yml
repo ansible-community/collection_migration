@@ -949,8 +949,6 @@ netcommon:
     - net_vrf.py
     - network.py
     - nos_config.py
-    - nxos.py
-    - nxos_file_copy.py
     - onyx_config.py
     - telnet.py
     become:
@@ -960,7 +958,6 @@ netcommon:
     - icx.py
     - netvisor.py
     - nos.py
-    - nxos.py
     connection:
     - paramiko_ssh.py
     - napalm.py
@@ -973,7 +970,6 @@ netcommon:
     - fortianalyzer.py
     - fortimanager.py
     - ftd.py
-    - nxos.py
     - qradar.py
     - restconf.py
     - splunk.py
@@ -990,7 +986,6 @@ netcommon:
     - network/interface/_net_*.py
     - network/netvisor/*
     - network/netact/*
-    - network/nxos/*
     - network/protocol/_net_lldp.py
     - network/restconf/*
     - network/routing/_net_static_route.py
@@ -1017,7 +1012,6 @@ netcommon:
     - ios.py
     - netvisor.py
     - nos.py
-    - nxos.py
     - onyx.py
     - routeros.py
     - slxos.py

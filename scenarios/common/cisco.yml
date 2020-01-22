@@ -46,6 +46,8 @@ meraki:
     module_utils:
     - network/meraki/*
 nxos:
+    action:
+    - nxos.py
     doc_fragments:
     - nxos.py
     modules:
@@ -54,3 +56,5 @@ nxos:
     - network/nxos/*
     - network/nxos/*/*
     - network/nxos/*/*/*
+    terminal:
+    - nxos.py
