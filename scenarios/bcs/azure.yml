@@ -1,4 +1,4 @@
-azure:
+azcollection:
     inventory:
     - azure_rm.py
     doc_fragments:

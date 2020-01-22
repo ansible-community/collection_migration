@@ -1,4 +1,4 @@
-gcp:
+cloud:
     doc_fragments:
     - gcp.py
     inventory:

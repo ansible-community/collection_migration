@@ -929,7 +929,6 @@ netcommon:
     - cli_command.py
     - cli_config.py
     - edgeos_config.py
-    - ios.py
     - net_banner.py
     - net_base.py
     - net_l2_interface.py
@@ -1009,7 +1008,6 @@ netcommon:
     - edgeswitch.py
     - eric_eccli.py
     - icx.py
-    - ios.py
     - netvisor.py
     - nos.py
     - onyx.py

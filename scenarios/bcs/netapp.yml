@@ -1,4 +1,4 @@
-netapp:
+common: # not real, but netapp is ignoring deprecated and copying common content to every collection
     doc_fragments:
     - netapp.py
     module_utils:
@@ -6,4 +6,11 @@ netapp:
     - netapp_module.py
     - netapp_elementsw_module.py
     modules:
-    - storage/netapp/*
+    - storage/netapp/_sf_*
+ontap:
+    modules:
+    - storage/netapp/_na_ontap_gather_facts.py
+    - storage/netapp/na_ontap_*
+elementsw:
+    modules:
+    - storage/netapp/na_elementsw_*

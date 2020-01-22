@@ -7,6 +7,8 @@ aci:
     module_utils:
     - network/aci/*
 ios:
+    action:
+    - ios.py
     cliconf:
     - ios.py
     doc_fragments:
@@ -19,6 +21,8 @@ ios:
     - network/ios/*/*/*
     - network/ios/*/*/*/*
     - network/ios/*/*/*/*/*
+    terminal:
+    - ios.py
 iosxr:
     action:
     - iosxr.py
@@ -52,6 +56,7 @@ nxos:
     - nxos.py
     modules:
     - network/nxos/*
+    - network/nxos/*/*
     module_utils:
     - network/nxos/*
     - network/nxos/*/*
