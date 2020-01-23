@@ -21,7 +21,7 @@ from collections import defaultdict
 from collections.abc import Mapping
 from importlib import import_module
 from string import Template
-from typing import Dict, Set
+from typing import Any, Dict, Iterable, Set, Union
 
 from ansible.parsing.yaml.dumper import AnsibleDumper
 from ansible.parsing.yaml.loader import AnsibleLoader
@@ -283,6 +283,36 @@ def resolve_spec(spec, checkoutdir):
 
                         # clean out glob entry
                         spec[ns][coll][ptype].remove(entry)
+
+                def dir_to_path(path):
+                    if not (os.path.isdir(path) and os.path.exists(path)):
+                        return path
+                    return next(
+                        subpath
+                        for subpath in glob.glob(
+                            os.path.join(path, '**'), recursive=True,
+                        )
+                        if not os.path.isdir(subpath)
+                    )
+                logger.info(
+                    'Verifying that all %s '
+                    'that are scheduled for migration '
+                    'to %s.%s exist...',
+                    ptype, ns, coll,
+                )
+                assert_migrating_git_tracked_resources(
+                    os.path.relpath(dir_to_path(p_abs), checkoutdir)
+                    for p in spec[ns][coll][ptype]
+                    for p_abs in (
+                        glob.glob(os.path.join(plugin_base, p))
+                        or [os.path.join(plugin_base, p)]
+                    )
+                )
+                logger.info(
+                    'All %s entries for %s.%s '
+                    'are valid',
+                    ptype, ns, coll,
+                )
 
 
 # ===== GET_PLUGINS utils =====
@@ -1484,9 +1514,13 @@ def push_migrated_core(releases_dir, github_api, rsa_key):
 
 
 def assert_migrating_git_tracked_resources(
-        migrated_to_collection: Dict[str, str],
+        migrated_to_collection: Union[Iterable[str], Dict[str, Any]],
 ):
-    """Make sure that non-tracked files aren't scheduled for migration."""
+    """Make sure that non-tracked files aren't scheduled for migration.
+
+    :param migrated_to_collection: Iterable of paths relative \
+                                   to the ansible/ansible root.
+    """
     logger.info(
         'Verifying that only legitimate files are being migrated...',
     )
