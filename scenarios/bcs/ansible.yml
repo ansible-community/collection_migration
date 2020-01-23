@@ -166,6 +166,7 @@ _core:
     - system/getent.py
     - system/group.py
     - system/hostname.py
+    - system/iptables.py
     - system/known_hosts.py
     - system/ping.py
     - system/reboot.py
@@ -1112,6 +1113,7 @@ unix:
     - packaging/os/zypper_repository.py
     - system/alternatives.py
     - system/aix_*.py
+    - system/apk.py
     - system/at.py
     - system/authorized_key.py
     - system/capabilities.py
@@ -1120,7 +1122,6 @@ unix:
     - system/filesystem.py
     - system/firewalld.py
     - system/gconftool2.py
-    - system/iptables.py
     - system/lbu.py
     - system/locale_gen.py
     - system/lvg.py
