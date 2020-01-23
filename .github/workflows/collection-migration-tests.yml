@@ -40,16 +40,14 @@ jobs:
       run: |
         git config --global user.email "ansible_migration@example.com"
         git config --global user.name "Poor B"
-    - name: >-
-        Run migration scenario ${{ matrix.migration-scenario }}
+    - name: Run migration scenario ${{ matrix.migration-scenario }}
       run: >-
         python -m
         migrate
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
         --skip-publish
-    - name: >-
-        Auto-publish the migrated collection repos to GitHub repos
+    - name: Auto-publish the migrated collection repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'
@@ -63,8 +61,7 @@ jobs:
         --target-github-org ansible-collection-migration
         --skip-migration
         --publish-to-github
-    - name: >-
-        Auto-publish ansible-base and ansible-mintest to GitHub repos
+    - name: Auto-publish remainig ansible to GitHub repo
       if: >-
         github.event_name != 'pull_request'
         && github.repository == 'ansible-community/collection_migration'

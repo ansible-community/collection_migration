@@ -44,8 +44,6 @@ TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
-MIGRATED_DEVEL_REPO_NAME = 'ansible-minimal'
-
 
 ALL_THE_FILES = set()
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
@@ -53,9 +51,7 @@ COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory'}
 PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory'}
 
-
 COLLECTION_SKIP_REWRITE = ('_core',)
-
 
 RAW_STR_TMPL = "r'''{str_val}'''"
 STR_TMPL = "'''{str_val}'''"
@@ -84,8 +80,8 @@ VALID_PLUGIN_TYPES = frozenset({
     'vars',
     'inventory_scripts',
 })
-NOT_PLUGINS=frozenset(set(['inventory_scripts']))
 
+NOT_PLUGINS = frozenset(set(['inventory_scripts']))
 
 LOGFILE = os.path.join(VARDIR, 'errors.log')
 
@@ -1494,18 +1490,14 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
             )
 
 
-def push_migrated_core(releases_dir, github_api, rsa_key):
+def push_migrated_core(releases_dir, github_api, rsa_key, spec_dir):
     devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    migrated_devel_remote = (
-        f'git@github.com:{github_api.github_org_name}/'
-        f'{MIGRATED_DEVEL_REPO_NAME}.git'
-    )
+    MIGRATED_DEVEL_REPO_NAME = 'ansible-%s' % os.path.basename(spec_dir.rstrip('/'))
+    migrated_devel_remote = ( f'git@github.com:{github_api.github_org_name}/' f'{MIGRATED_DEVEL_REPO_NAME}.git')
 
     logger.debug('Using SSH key %s...', rsa_key.public_openssh)
-    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for(
-            MIGRATED_DEVEL_REPO_NAME,
-    ):
+    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for( MIGRATED_DEVEL_REPO_NAME,):
         # NOTE: assumes the repo is not used and/or is locked while migration is running
         ssh_agent.check_call(
             ('git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH),
@@ -2169,7 +2161,7 @@ def main():
 
     if args.push_migrated_core:
         logger.info('Publishing the migrated "Core" to GitHub...')
-        push_migrated_core(releases_dir, gh_api, tmp_rsa_key)
+        push_migrated_core(releases_dir, gh_api, tmp_rsa_key, args.spec_dir)
 
 
 if __name__ == "__main__":
