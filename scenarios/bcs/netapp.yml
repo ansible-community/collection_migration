@@ -1,4 +1,6 @@
-common: # not real, but netapp is ignoring deprecated and copying common content to every collection
+# fragments and module_utils are being copied to both collections,
+# since migration wont handle dupes, just assigned to first one for our deps purposes
+ontap:
     doc_fragments:
     - netapp.py
     module_utils:
@@ -6,11 +8,10 @@ common: # not real, but netapp is ignoring deprecated and copying common content
     - netapp_module.py
     - netapp_elementsw_module.py
     modules:
-    - storage/netapp/_sf_*
-ontap:
-    modules:
-    - storage/netapp/_na_ontap_gather_facts.py
     - storage/netapp/na_ontap_*
+    # netapp is ignoring deprecated, but added these here anyways
+    - storage/netapp/_sf_*
+    - storage/netapp/_na_ontap_gather_facts.py
 elementsw:
     modules:
     - storage/netapp/na_elementsw_*
