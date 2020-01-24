@@ -349,7 +349,7 @@ def get_plugin_collection(plugin_name, plugin_type, spec):
 
     # keep info
     plugin_name = plugin_name.replace('/', '.')
-    logger.debug('Assuming "%s.%s " stays in core', plugin_type, plugin_name)
+    logger.debug('Assuming "%s.%s" stays in core', plugin_type, plugin_name)
     add_core(plugin_type, plugin_name.replace('/', '.'))
 
     raise LookupError('Could not find "%s" named "%s" in any collection in the spec' % (plugin_type, plugin_name))
