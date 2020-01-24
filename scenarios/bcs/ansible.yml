@@ -197,7 +197,6 @@ _core:
     - utilities/logic/wait_for.py
     - utilities/logic/wait_for_connection.py
     shell:
-    - powershell.py
     - sh.py
     strategy:
     - debug.py
@@ -990,6 +989,7 @@ netcommon:
     - network/restconf/*
     - network/routing/_net_static_route.py
     - network/system/_net_*.py
+    - network/system/net_ping.py
     module_utils:
     - compat/ipaddress.py
     - network/common/*
@@ -1196,3 +1196,4 @@ windows:
     - windows/*
     shell:
     - cmd.py
+    - powershell.py
