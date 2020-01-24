@@ -47,7 +47,7 @@ _core:
     - return_common.py
     - shell_common.py
     - url.py
-    - vars_plugins_staging.py
+    - vars_plugin_staging.py
     - validate.py
     filter:
     - core.py
@@ -1077,6 +1077,7 @@ unix:
     - net_tools/nmcli.py
     - notification/_osx_say.py
     - notification/say.py
+    - packaging/os/apk.py
     - packaging/os/flatpak.py
     - packaging/os/flatpak_remote.py
     - packaging/os/homebrew.py
@@ -1113,7 +1114,6 @@ unix:
     - packaging/os/zypper_repository.py
     - system/alternatives.py
     - system/aix_*.py
-    - system/apk.py
     - system/at.py
     - system/authorized_key.py
     - system/capabilities.py
