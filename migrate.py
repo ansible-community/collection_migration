@@ -33,6 +33,8 @@ from logzero import logger
 from baron.parser import ParsingError
 import redbaron
 
+import backoff
+
 from gh import GitHubOrgClient
 from rsa_utils import RSAKey
 from template_utils import render_template_into
@@ -91,6 +93,31 @@ logzero.logfile(LOGFILE, loglevel=logging.WARNING)
 
 core = {}
 manual_check = defaultdict(list)
+
+
+def _is_unexpected_error(proc_err):
+    err_out = proc_err.stderr
+    return not (
+        err_out.startswith('ERROR: Permission to ')
+        and ' denied to deploy key' in err_out
+    )
+
+
+retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-name
+    backoff.expo, subprocess.CalledProcessError,
+    max_time=8, jitter=backoff.full_jitter,
+    giveup=_is_unexpected_error,
+)
+
+
+@retry_on_permission_denied
+def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
+    """Perform cmd"""
+    cmd_out = ssh_agent.check_output(
+        cmd, stderr=subprocess.PIPE, cwd=cwd,
+        text=True,
+    )
+    print(cmd_out)
 
 
 class UnmovablePathStr(str): ...
@@ -1482,7 +1509,9 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
                 'git', 'push', '--force', git_repo_url, 'HEAD:master',
             )
             with github_api.tmp_deployment_key_for(repo_name):
-                ssh_agent.check_call(git_force_push_cmd, cwd=collection_dir)
+                ensure_cmd_succeeded(
+                    ssh_agent, git_force_push_cmd, collection_dir,
+                )
             logger.info(
                 'The migrated collection has been successfully published to '
                 '`%s` GitHub repository...',
@@ -1493,16 +1522,22 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
 def push_migrated_core(releases_dir, github_api, rsa_key, spec_dir):
     devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
 
-    MIGRATED_DEVEL_REPO_NAME = 'ansible-%s' % os.path.basename(spec_dir.rstrip('/'))
-    migrated_devel_remote = ( f'git@github.com:{github_api.github_org_name}/' f'{MIGRATED_DEVEL_REPO_NAME}.git')
+    scenario_name = os.path.basename(spec_dir.rstrip('/'))
+    migrated_devel_repo_name = f'ansible-{scenario_name}'
+    migrated_devel_remote = (
+        f'git@github.com:{github_api.github_org_name}/'
+        f'{migrated_devel_repo_name}.git'
+    )
+    git_force_push_cmd = (
+        'git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH,
+    )
 
     logger.debug('Using SSH key %s...', rsa_key.public_openssh)
-    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for( MIGRATED_DEVEL_REPO_NAME,):
+    with rsa_key.ssh_agent as ssh_agent, github_api.tmp_deployment_key_for(
+            migrated_devel_repo_name,
+    ):
         # NOTE: assumes the repo is not used and/or is locked while migration is running
-        ssh_agent.check_call(
-            ('git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH),
-            cwd=devel_path,
-        )
+        ensure_cmd_succeeded(ssh_agent, git_force_push_cmd, devel_path)
 
 
 def assert_migrating_git_tracked_resources(
