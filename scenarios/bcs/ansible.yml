@@ -772,8 +772,6 @@ misc:
     - notification/rocketchat.py
     - notification/sendgrid.py
     - notification/slack.py
-    - notification/snow_record.py
-    - notification/snow_record_find.py
     - notification/syslogger.py
     - notification/telegram.py
     - notification/twilio.py
@@ -917,7 +915,6 @@ misc:
     - remote_management/lxca/*
     - remote_management/ucs.py
     - scaleway.py
-    - service_now.py
     - source_control/bitbucket.py
     - univention_umc.py
     - utm_utils.py

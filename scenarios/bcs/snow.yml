@@ -1,0 +1,8 @@
+snow:
+    doc_fragments:
+    - service_now.py
+    modules:
+    - notification/snow_record.py
+    - notification/snow_record_find.py
+    module_utils:
+    - service_now.py
