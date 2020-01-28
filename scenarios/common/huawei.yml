@@ -1,0 +1,25 @@
+_cloudengine:
+    action:
+    - ce.py
+    - ce_template.py
+    cliconf:
+    - ce.py
+    doc_fragments:
+    - ce.py
+    netconf:
+    - ce.py
+    terminal:
+    - ce.py
+    module_utils:
+    - network/cloudengine/*
+    modules:
+    - network/cloudengine/*
+    terminal:
+    - ce.py
+_cloud:
+    doc_fragments:
+    - hwc.py
+    module_utils:
+    - hwc_utils.py
+    modules:
+    - cloud/huawei/*

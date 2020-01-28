@@ -1,0 +1,13 @@
+_fortios:
+    action:
+    - fortios_config.py
+    doc_fragments:
+    - fortios.py
+    httpapi:
+    - fortios.py
+    module_utils:
+    - network/fortios/*
+    - network/fortios/*/*
+    - network/fortios/*/*/*
+    modules:
+    - network/fortios/*

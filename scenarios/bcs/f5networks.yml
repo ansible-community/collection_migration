@@ -1,13 +1,1 @@
-f5_modules:
-    action:
-    - bigip.py
-    - bigiq.py
-    doc_fragments:
-    - f5.py
-    module_utils:
-    - f5_utils.py
-    - network/f5/*
-    modules:
-    - network/f5/*
-    terminal:
-    - bigip.py
+../common/f5networks.yml

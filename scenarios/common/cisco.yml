@@ -1,4 +1,4 @@
-aci:
+_aci:
     doc_fragments:
     - aci.py
     - mso.py
@@ -6,7 +6,27 @@ aci:
     - network/aci/*
     module_utils:
     - network/aci/*
-ios:
+_asa:
+    action:
+    - asa.py
+    cliconf:
+    - asa.py
+    doc_fragments:
+    - asa.py
+    module_utils:
+    - network/asa/*
+    modules:
+    - network/asa/*
+    terminal:
+    - asa.py
+ftd:
+    httpapi:
+    - ftd.py
+    module_utils:
+    - network/ftd/*
+    modules:
+    - network/ftd/*
+_ios:
     action:
     - ios.py
     cliconf:
@@ -23,7 +43,7 @@ ios:
     - network/ios/*/*/*/*/*
     terminal:
     - ios.py
-iosxr:
+_iosxr:
     action:
     - iosxr.py
     cliconf:
@@ -42,14 +62,21 @@ iosxr:
     - iosxr.py
     terminal:
     - iosxr.py
-meraki:
+_meraki:
     doc_fragments:
     - meraki.py
     modules:
     - network/meraki/*
     module_utils:
     - network/meraki/*
-nxos:
+_nso:
+    doc_fragments:
+    - nso.py
+    modules:
+    - network/nso/*
+    module_utils:
+    - network/nso/*
+_nxos:
     action:
     - nxos.py
     doc_fragments:
@@ -63,3 +90,10 @@ nxos:
     - network/nxos/*/*/*
     terminal:
     - nxos.py
+_ucs:
+    doc_fragments:
+    - ucs.py
+    module_utils:
+    - remote_management/ucs.py
+    modules:
+    - remote_management/ucs/*

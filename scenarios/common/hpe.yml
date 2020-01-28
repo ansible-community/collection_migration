@@ -1,12 +1,7 @@
-hpe3par:
+_hpe3par:
     doc_fragments:
     - hpe3par.py
     module_utils:
     - storage/hpe3par/*
     modules:
     - storage/hpe3par/ss_3par_cpg.py
-ibm:
-    doc_fragments:
-    - ibm_storage.py
-    modules:
-    - storage/ibm/*

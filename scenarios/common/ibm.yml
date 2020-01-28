@@ -1,0 +1,11 @@
+_aix:
+    modules:
+    - system/aix_*.py
+_qradar:
+    httpapi:
+    - qradar.py
+_storage:
+    doc_fragments:
+    - ibm_storage.py
+    modules:
+    - storage/ibm/*

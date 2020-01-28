@@ -1,0 +1,13 @@
+_sros:
+    action:
+    - sros.py
+    doc_fragments:
+    - sros.py
+    modules:
+    - network/sros/*
+    module_utils:
+    - network/sros/*
+    netconf:
+    - sros.py
+    terminal:
+    - sros.py

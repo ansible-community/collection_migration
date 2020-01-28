@@ -1,0 +1,17 @@
+# fragments and module_utils are being copied to both collections,
+# since migration wont handle dupes, just assigned to first one for our deps purposes
+_ontap:
+    doc_fragments:
+    - netapp.py
+    module_utils:
+    - netapp.py
+    - netapp_module.py
+    - netapp_elementsw_module.py
+    modules:
+    - storage/netapp/na_ontap_*
+    # netapp is ignoring deprecated, but added these here anyways
+    - storage/netapp/_sf_*
+    - storage/netapp/_na_ontap_gather_facts.py
+_elementsw:
+    modules:
+    - storage/netapp/na_elementsw_*

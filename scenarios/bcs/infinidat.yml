@@ -1,7 +1,1 @@
-infinity:
-    doc_fragments:
-    - infinibox.py
-    module_utils:
-    - infinibox.py
-    modules:
-    - storage/infinidat/*
+../common/infinidat.yml

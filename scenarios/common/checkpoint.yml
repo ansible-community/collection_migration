@@ -1,0 +1,9 @@
+_checkpoint:
+    httpapi:
+    - checkpoint.py
+    doc_fragments:
+    - checkpoint_*.py
+    modules:
+    - network/check_point/*
+    module_utils:
+    - network/checkpoint/*

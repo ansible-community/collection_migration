@@ -1,0 +1,10 @@
+_ilo:
+    modules:
+    - remote_management/hpilo/*
+_oneview:
+    doc_fragments:
+    - oneview.py
+    modules:
+    - remote_management/oneview/*
+    module_utils:
+    - oneview.py

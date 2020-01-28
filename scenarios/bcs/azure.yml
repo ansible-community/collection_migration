@@ -1,12 +1,1 @@
-azcollection:
-    inventory:
-    - azure_rm.py
-    doc_fragments:
-    - azure.py
-    - azure_tags.py
-    modules:
-    - cloud/azure/*
-    module_utils:
-    - azure_rm_common.py
-    - azure_rm_common_ext.py
-    - azure_rm_common_rest.py
+../common/azure.yml

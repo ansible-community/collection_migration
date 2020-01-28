@@ -1,0 +1,9 @@
+_avi:
+    doc_fragments:
+    - avi.py
+    lookup:
+    - avi.py
+    module_utils:
+    - network/avi/*
+    modules:
+    - network/avi/*

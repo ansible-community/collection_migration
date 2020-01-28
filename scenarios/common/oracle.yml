@@ -1,0 +1,8 @@
+_cloud:
+    doc_fragments:
+    - oracle.py
+    - oracle_*.py
+    module_utils:
+    - oracle/*
+    modules:
+    - cloud/oracle/oci_vcn.py
