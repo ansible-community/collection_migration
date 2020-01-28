@@ -1,0 +1,11 @@
+_nios: # best guess, only hard info is the namespace
+    doc_fragments:
+    - nios.py
+    lookup:
+    - nios.py
+    - nios_next_ip.py
+    - nios_next_network.py
+    modules:
+    - net_tools/nios/*
+    module_utils:
+    - net_tools/nios/*

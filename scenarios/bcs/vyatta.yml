@@ -1,4 +1,4 @@
-vyos:
+_vyos:
     action:
     - vyos.py
     cliconf:

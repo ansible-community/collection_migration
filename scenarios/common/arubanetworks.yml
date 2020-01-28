@@ -1,0 +1,13 @@
+_aruba:
+    action:
+    - aruba.py
+    cliconf:
+    - aruba.py
+    doc_fragments:
+    - aruba.py
+    module_utils:
+    - network/aruba/*
+    modules:
+    - network/aruba/*
+    terminal:
+    - aruba.py

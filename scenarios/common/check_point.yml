@@ -1,4 +1,4 @@
-checkpoint:
+_mgmt:
     httpapi:
     - checkpoint.py
     doc_fragments:

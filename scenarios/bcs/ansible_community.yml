@@ -1,7 +1,0 @@
-grafana:
-    callback:
-    - grafana_annotations.py
-    lookup:
-    - grafana_dashboard.py
-    modules:
-    - monitoring/grafana/*

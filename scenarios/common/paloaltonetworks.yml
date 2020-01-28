@@ -1,0 +1,7 @@
+_panos:
+    doc_fragments:
+    - panos.py
+    module_utils:
+    - network/panos/*
+    modules:
+    - network/panos/*

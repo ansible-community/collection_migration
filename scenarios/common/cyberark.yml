@@ -1,0 +1,5 @@
+_pas:
+    modules:
+    - identity/cyberark/*
+    lookup:
+    - cyberarkpassword.py

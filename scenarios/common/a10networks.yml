@@ -1,0 +1,7 @@
+_a10:
+    doc_fragments:
+    - a10.py
+    module_utils:
+    - network/a10/*
+    modules:
+    - network/a10/*

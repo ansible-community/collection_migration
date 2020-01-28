@@ -1,4 +1,4 @@
-influxdb:
+_influxdb:
     doc_fragments:
     - influxdb.py
     module_utils:

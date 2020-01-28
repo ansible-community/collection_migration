@@ -1,0 +1,4 @@
+_nginx:
+  modules:
+    - web_infrastructure/_nginx_status_facts.py
+    - web_infrastructure/nginx_status_info.py

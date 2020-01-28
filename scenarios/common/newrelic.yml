@@ -1,0 +1,3 @@
+_newrelic:
+    modules:
+    - monitoring/newrelic_deployment.py

@@ -1,0 +1,13 @@
+_frr:
+    cliconf:
+    - frr.py
+    modules:
+    - network/frr/*
+    module_utils:
+    - network/frr/*
+    - network/frr/*/*
+    - network/frr/*/*/*
+    - network/frr/*/*/*/*
+    - network/frr/*/*/*/*/*
+    terminal:
+    - frr.py
