@@ -127,11 +127,26 @@ manual_check = defaultdict(list)
 ### FUNCTION DEFS
 
 def _is_unexpected_error(proc_err):
+    proc_id = hex(id(proc_err))
     err_out = proc_err.stderr
-    return not (
-        err_out.startswith('ERROR: Permission to ')
-        and ' denied to deploy key' in err_out
+    std_out = proc_err.stdout
+    legit_errors = {
+        'ERROR: Permission to ',
+        ' denied to deploy key',
+        'ERROR: Unknown public SSH key.',
+        'fatal: Could not read from remote repository.',
+    }
+    should_retry = any(msg in err_out for msg in legit_errors)
+    logger.info(
+        '[%s] Expected failure: should retry' if should_retry
+        else '[%s] Unexpected failure: should fail loudly',
+        proc_id,
     )
+    logger.error('[%s] stderr:', proc_id)
+    logger.error(err_out)
+    logger.error('[%s] stdout:', proc_id)
+    logger.error(std_out)
+    return not should_retry
 
 
 retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-name
@@ -143,8 +158,11 @@ retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-na
 
 @retry_on_permission_denied
 def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
-    """Perform cmd"""
-    cmd_out = ssh_agent.check_output(cmd, stderr=subprocess.PIPE, cwd=cwd, text=True)
+    """Perform cmd in cwd dir using a subprocess wrapper."""
+    logger.info('Executing "%s"...', ' '.join(cmd))
+    cmd_out = ssh_agent.check_output(
+        cmd, stderr=subprocess.PIPE, cwd=cwd, text=True,
+    )
     print(cmd_out)
 
 
