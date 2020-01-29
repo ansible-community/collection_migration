@@ -2078,11 +2078,10 @@ def main():
         logger.info('Skipping the publish step...')
         return
 
-    logger.info('Starting the publish step...')
-
     tmp_rsa_key = None
     github_api = None
     if args.publish_to_github or args.push_migrated_core:
+        logger.info('Starting the publish step...')
         tmp_rsa_key = RSAKey()
         gh_api = GitHubOrgClient(
             args.github_app_id, args.github_app_key_path,
