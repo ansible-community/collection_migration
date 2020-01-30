@@ -62,7 +62,7 @@ STR_TMPL = "'''{str_val}'''"
 
 BAD_EXT = frozenset({'.pyo', '.pyc'})
 
-VALID_SPEC_ENTRIES= frozenset({
+VALID_SPEC_ENTRIES = frozenset({
     'action',
     'become',
     'cache',
@@ -101,14 +101,14 @@ KEYWORDS_TO_PLUGIN_MAP = {
     'strategy': 'strategy',
 }
 
-rewrite_map = {
+REWRITE_CLASS_PROPERTY_MAP = {
     'BecomeModule': 'name',
     'CallbackModule': 'CALLBACK_NAME',
     'Connection': 'transport',
     'InventoryModule': 'NAME',
 }
 
-rewrite_ignored_plugins = {
+REWRITE_CLASS_PROPERTY_PLUGINS= {
     'become',
     'callback',
     'connection',
@@ -124,7 +124,7 @@ core = {}
 manual_check = defaultdict(list)
 
 
-# funciton defs
+### FUNCTION DEFS
 
 def _is_unexpected_error(proc_err):
     err_out = proc_err.stderr
@@ -187,7 +187,8 @@ def checkout_repo(
     )
 
 
-# ===== FILE utils =====
+### FILE utils
+
 def remove(path):
     global REMOVE
     REMOVE.add(path)
@@ -211,7 +212,7 @@ def actually_remove(checkout_path, namespace, collection):
             init_files.add(path)
             continue
 
-        subprocess.check_call( ('git', 'rm', actual_devel_path), cwd=checkout_path)
+        subprocess.check_call(('git', 'rm', actual_devel_path), cwd=checkout_path)
         new_sanity_ignore.pop(actual_devel_path, None)
 
     # process the __init__.py files from module dirs now that all files are removed,
@@ -288,9 +289,9 @@ def working_directory(target_dir):
         os.chdir(current_working_dir)
 
 
-# ===== SPEC utils =====
-def load_spec_file(spec_file):
+### SPEC UTILS
 
+def load_spec_file(spec_file):
     spec = read_yaml_file(spec_file)  # TODO: capture yamlerror?
 
     if not isinstance(spec, Mapping):
@@ -302,7 +303,6 @@ def load_spec_file(spec_file):
 
 
 def resolve_spec(spec, checkoutdir):
-
     # TODO: add negation? entry: x/* \n entry: !x/base.py
     for ns in spec.keys():
         for coll in spec[ns].keys():
@@ -355,7 +355,8 @@ def resolve_spec(spec, checkoutdir):
                 )
 
 
-# ===== GET_PLUGINS utils =====
+### GET_PLUGINS UTILS
+
 def get_plugin_collection(plugin_name, plugin_type, spec):
     for ns in spec.keys():
         for collection in spec[ns].keys():
@@ -386,13 +387,13 @@ def get_rewritable_collections(namespace, spec):
     return (collection for collection in spec[namespace].keys() if collection not in COLLECTION_SKIP_REWRITE)
 
 
-# ===== REWRITE FUNCTIONS =====
-def rewrite_class_property(mod_fst, collection, namespace, filename):
+### REWRITE FUNCTIONS
 
-    if all(f'plugins/{p}' not in filename for p in rewrite_ignored_plugins):
+def rewrite_class_property(mod_fst, collection, namespace, filename):
+    if all(f'plugins/{p}' not in filename for p in REWRITE_CLASS_PROPERTY_PLUGINS):
         return
 
-    for class_name, property_name in rewrite_map.items():
+    for class_name, property_name in REWRITE_CLASS_PROPERTY_MAP.items():
         try:
             val = (
                 mod_fst.
@@ -404,7 +405,7 @@ def rewrite_class_property(mod_fst, collection, namespace, filename):
 
         try:
             val.value = "'%s'" % get_plugin_fqcn(namespace, collection, val.to_python())
-        except ValueError as e:
+        except ValueError:
             # so this might be something like:
             # transport = CONNECTION_TRANSPORT
             add_manual_check(property_name, val.value, filename)
@@ -425,11 +426,11 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
         ):  # import is already absolute
             continue
 
-        relative_mod_path = make_pkg_subpath( *pkg_path_parts, f'{pkg_or_mod}.py')
+        relative_mod_path = make_pkg_subpath(*pkg_path_parts, f'{pkg_or_mod}.py')
         if relative_mod_path == file_path:  # self-import? nope! def other mod
             continue
 
-        relative_pkg_init_path = make_pkg_subpath( *pkg_path_parts, pkg_or_mod, '__init__.py')
+        relative_pkg_init_path = make_pkg_subpath(*pkg_path_parts, pkg_or_mod, '__init__.py')
 
         possible_relative_targets = {relative_mod_path, relative_pkg_init_path}
         relative_imp_target_exists = any(
@@ -635,7 +636,7 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     # ```
     # DOCUMENTATION = '''some string value'''
     # ```
-    doc_val.value = doc_str_tmpl.format( str_val='\n'.join(new_docs))
+    doc_val.value = doc_str_tmpl.format(str_val='\n'.join(new_docs))
 
     return deps
 
@@ -751,7 +752,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
             try:
                 plugin_name = '/'.join(plugin_name.split('/')[:-1])
                 plugin_namespace, plugin_collection = get_plugin_collection(plugin_name, plugin_type, spec)
-            except LookupError as e:
+            except LookupError:
                 # plugin not in spec, assuming it stays in core and skipping
                 continue
 
@@ -782,10 +783,10 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
 def rewrite_py(src, dest, collection, spec, namespace, args):
     with fst_rewrite_session(src, dest) as mod_fst:
-        import_deps = rewrite_imports( mod_fst, collection, spec, namespace, args)
+        import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
 
         try:
-            docs_deps = rewrite_plugin_documentation( mod_fst, collection, spec, namespace, args)
+            docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
         except LookupError as err:
             docs_deps = []
             logger.debug('%s in %s', err, src)
@@ -837,7 +838,7 @@ def inject_readme_into_collection(collection_dir, *, ctx):
     and a GitHub Actions Workflow badge.
     """
     target_file = 'README.md'
-    render_template_into( f'{target_file}.tmpl', ctx, os.path.join(collection_dir, target_file))
+    render_template_into(f'{target_file}.tmpl', ctx, os.path.join(collection_dir, target_file))
 
 
 def inject_github_actions_workflow_into_collection(collection_dir, *, ctx):
@@ -858,7 +859,7 @@ def inject_gitignore_into_collection(collection_dir):
 
       curl -sL https://www.gitignore.io/api/git%2Clinux%2Cpydev%2Cpython%2Cwindows%2Cpycharm%2Ball%2Cjupyternotebook%2Cvim%2Cwebstorm%2Cemacs%2Cdotenv > resources/.gitignore.tmpl
     """
-    gitignore_resource_path = os.path.join( os.path.dirname(__file__), 'resources', '.gitignore.tmpl')
+    gitignore_resource_path = os.path.join(os.path.dirname(__file__), 'resources', '.gitignore.tmpl')
     shutil.copy(gitignore_resource_path, os.path.join(collection_dir, '.gitignore'))
 
 
@@ -881,10 +882,10 @@ def generate_converted_ignore_contents(original_ignore_contents, file_map):
             yield sep.join((file_map[file_path], ignored_rules))
 
 
-def inject_ignore_into_sanity_tests( checkout_path, collection_dir, migrated_files_map):
+def inject_ignore_into_sanity_tests(checkout_path, collection_dir, migrated_files_map):
     """Inject sanity test ignore lists into collection sanity tests."""
     coll_sanity_tests_dir = os.path.join(collection_dir, 'tests', 'sanity')
-    original_ignore_contents = read_text_from_file( os.path.join(checkout_path, 'test', 'sanity', 'ignore.txt'))
+    original_ignore_contents = read_text_from_file(os.path.join(checkout_path, 'test', 'sanity', 'ignore.txt'))
     converted_ignore_contents = '\n'.join(
         generate_converted_ignore_contents(
             original_ignore_contents,
@@ -897,15 +898,15 @@ def inject_ignore_into_sanity_tests( checkout_path, collection_dir, migrated_fil
 
     os.makedirs(coll_sanity_tests_dir, exist_ok=True)
     # latest stable
-    write_text_into_file( os.path.join(coll_sanity_tests_dir, 'ignore-2.9.txt'), converted_ignore_contents)
+    write_text_into_file(os.path.join(coll_sanity_tests_dir, 'ignore-2.9.txt'), converted_ignore_contents)
     # devel/future release
-    write_text_into_file( os.path.join(coll_sanity_tests_dir, 'ignore-2.10.txt'), converted_ignore_contents)
+    write_text_into_file(os.path.join(coll_sanity_tests_dir, 'ignore-2.10.txt'), converted_ignore_contents)
 
 
 def inject_requirements_into_unit_tests(checkout_path, collection_dir):
     """Inject unit tests dependencies into collection."""
     coll_unit_tests_dir = os.path.join(collection_dir, 'tests', 'unit')
-    original_unit_tests_req_file = os.path.join( checkout_path, 'test', 'units', 'requirements.txt')
+    original_unit_tests_req_file = os.path.join(checkout_path, 'test', 'units', 'requirements.txt')
 
     os.makedirs(coll_unit_tests_dir, exist_ok=True)
     shutil.copy(original_unit_tests_req_file, coll_unit_tests_dir)
@@ -915,15 +916,15 @@ def inject_requirements_into_unit_tests(checkout_path, collection_dir):
 
 def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
     """Inject sanity tests Python dependencies into collection."""
-    coll_sanity_tests_dir = os.path.join( collection_dir, 'tests', 'sanity',)
-    original_sanity_tests_req_file = os.path.join( checkout_path, 'test', 'sanity', 'requirements.txt')
+    coll_sanity_tests_dir = os.path.join(collection_dir, 'tests', 'sanity',)
+    original_sanity_tests_req_file = os.path.join(checkout_path, 'test', 'sanity', 'requirements.txt')
 
     os.makedirs(coll_sanity_tests_dir, exist_ok=True)
     shutil.copy(original_sanity_tests_req_file, coll_sanity_tests_dir)
     logger.info('Sanity tests deps injected into collection')
 
 
-def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugin):
+def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
     """Find all unit tests and related artifacts for the given plugin.
 
     Return the copy map.
@@ -1002,8 +1003,7 @@ def create_unit_tests_copy_map(checkout_path, collection_dir, plugin_type, plugi
             )
             yield target_file
 
-    # Discover constest.py's from
-    # parent dirs:
+    # Discover constest.py's from parent dirs:
     conftest_modules = set(
         p
         for m in matching_test_modules.copy()
@@ -1126,10 +1126,7 @@ def copy_unit_tests(copy_map, collection_dir, checkout_path):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
 
         src = os.path.join(checkout_path, src_f)
-        logger.info(
-            f'{"Copying" if should_be_preserved else "Moving"} %s -> %s',
-            src, dest,
-        )
+        logger.info('Migrating %s -> %s', src, dest)
         shutil.copy(src, dest)
 
         if should_be_preserved:
@@ -1140,7 +1137,8 @@ def copy_unit_tests(copy_map, collection_dir, checkout_path):
     inject_requirements_into_unit_tests(checkout_path, collection_dir)
 
 
-# ===== MAKE COLLECTIONS =====
+### MAKE COLLECTIONS
+
 def assemble_collections(checkout_path, spec, args, target_github_org):
     collections_base_dir = os.path.join(args.vardir, 'collections')
 
@@ -1220,8 +1218,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
                     src = os.path.join(checkout_path, relative_src_plugin_path)
 
-                    # TODO: colleciotns are now scheduled to handle deprecations and aliases, until we get an implementation
-                    # we are just treating them as normal files for now (previouslly we were avoiding them.
+                    # TODO: collections are now scheduled to handle deprecations and aliases, until we get an implementation
+                    # we are just treating them as normal files for now (previously we were avoiding them).
 
                     #if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
                     #    if os.path.islink(src):
@@ -1280,7 +1278,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     # process unit tests
                     plugin_unit_tests_copy_map = create_unit_tests_copy_map(
-                        checkout_path, collection_dir, plugin_type, plugin,
+                        checkout_path, plugin_type, plugin,
                     )
                     unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
@@ -1579,9 +1577,7 @@ def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collec
     )
 
 
-##############################################################################
-# Rewrite integration tests
-##############################################################################
+### Rewrite integration tests
 
 integration_tests_deps = set()
 
@@ -1646,7 +1642,6 @@ def process_needs_target(checkout_dir, fname):
 
 def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args):
     # FIXME module_defaults groups
-
     logger.info('Processing integration tests for %s.%s', namespace, collection)
 
     migrated = {}
@@ -1811,7 +1806,6 @@ def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest):
     _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest)
 
 
-
 def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest):
     translate = []
     for key in el.keys():
@@ -1887,8 +1881,6 @@ def _rewrite_yaml_mapping_value(namespace, collection, el, key, plugin_type, spe
     integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
 
 
-
-
 def _rewrite_yaml_mapping_keys_vars(el, namespace, collection, spec, args, dest):
     for key in el.keys():
         if key in VARNAMES_TO_PLUGIN_MAP:
@@ -1919,7 +1911,6 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
                                     el[key][idx] = new_plugin_name
                                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
                     if isinstance(el[key][idx], str):
-                        # FIXME move to a func
                         el[key][idx] = _rewrite_yaml_lookup(el[key][idx], namespace, collection, spec, args)
                         el[key][idx] = _rewrite_yaml_filter(el[key][idx], namespace, collection, spec, args)
                         el[key][idx] = _rewrite_yaml_test(el[key][idx], namespace, collection, spec, args)
@@ -2000,37 +1991,31 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args):
                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
     return value
-##############################################################################
-# Rewrite integration tests END
-##############################################################################
 
 
 def setup_options(parser):
-
     parser.add_argument('-s', '--spec', required=True, dest='spec_dir', help='A directory spec with YAML files that describe how to organize collections')
     parser.add_argument('-r', '--refresh', action='store_true', dest='refresh', default=False, help='force refreshing local Ansible checkout')
     parser.add_argument('-t', '--target-dir', dest='vardir', default=VARDIR, help='target directory for resulting collections and rpm')
     parser.add_argument('-p', '--preserve-module-subdirs', action='store_true', dest='preserve_module_subdirs', default=False, help='preserve module subdirs per spec')
-    parser.add_argument( '--github-app-id', action='store', type=int, dest='github_app_id', default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,
-        help='Use this GitHub App ID for GH auth',)
-    parser.add_argument( '--github-app-key-path', action='store', type=str, dest='github_app_key_path',
-        default=None if 'GITHUB_PRIVATE_KEY' in os.environ else '~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
-        help='Use this PEM key file for GH auth. Altertanively, put its contents into `GITHUB_PRIVATE_KEY` env var.',)
-    parser.add_argument( '--target-github-org', action='store', type=str, dest='target_github_org', default='ansible-collection-migration', help='Push migrated collections to this GH org',)
-    parser.add_argument( '-P', '--publish-to-github', action='store_true', dest='publish_to_github', default=False, help='Push all migrated collections to their Git remotes')
+    parser.add_argument('--github-app-id', action='store', type=int, dest='github_app_id', default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,
+                        help='Use this GitHub App ID for GH auth',)
+    parser.add_argument('--github-app-key-path', action='store', type=str, dest='github_app_key_path',
+                        default=None if 'GITHUB_PRIVATE_KEY' in os.environ else '~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
+                        help='Use this PEM key file for GH auth. Altertanively, put its contents into `GITHUB_PRIVATE_KEY` env var.',)
+    parser.add_argument('--target-github-org', action='store', type=str, dest='target_github_org', default='ansible-collection-migration', help='Push migrated collections to this GH org',)
+    parser.add_argument('-P', '--publish-to-github', action='store_true', dest='publish_to_github', default=False, help='Push all migrated collections to their Git remotes')
     parser.add_argument('-m', '--move-plugins', action='store_true', dest='move_plugins', default=False, help='remove plugins from source instead of just copying them')
     parser.add_argument('-M', '--push-migrated-core', action='store_true', dest='push_migrated_core', default=False, help='Push migrated core to the Git repo')
     parser.add_argument('-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
                         help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running'
                              ' migration against the list of files kept in core: spec must contain the "_core" collection.')
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False, help='Skip tests and rewrite the runtime code only.')
-    parser.add_argument( '--skip-migration', action='store_true', dest='skip_migration', default=False, help='Skip creating migrated collections.',)
-    parser.add_argument( '--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
-
+    parser.add_argument('--skip-migration', action='store_true', dest='skip_migration', default=False, help='Skip creating migrated collections.',)
+    parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
 
 
 def main():
-
     parser = argparse.ArgumentParser()
 
     setup_options(parser)
@@ -2069,17 +2054,16 @@ def main():
         print(yaml.dump(core))
 
         global manual_check
-        print( '======= Could not rewrite the following, ' 'please check manually =======\n',)
+        print('======= Could not rewrite the following, ' 'please check manually =======\n',)
         print(yaml.dump(dict(manual_check)))
 
-        print( f'See {LOGFILE} for any warnings/errors ' 'that were logged during migration.',)
+        print(f'See {LOGFILE} for any warnings/errors ' 'that were logged during migration.',)
 
     if args.skip_publish:
         logger.info('Skipping the publish step...')
         return
 
     tmp_rsa_key = None
-    github_api = None
     if args.publish_to_github or args.push_migrated_core:
         logger.info('Starting the publish step...')
         tmp_rsa_key = RSAKey()
