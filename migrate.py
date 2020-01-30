@@ -1856,6 +1856,14 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, d
         if key in KEYWORDS_TO_PLUGIN_MAP:
             _rewrite_yaml_mapping_value(namespace, collection, el, key, KEYWORDS_TO_PLUGIN_MAP[key], spec, args, dest)
 
+        # https://github.com/ansible-community/collection_migration/issues/98
+        if key == 'mode' and isinstance(el[key], int):
+            # Workaround of PyYAML converting "mode: 0755" (no quotes around 0755) into "mode: 493" (dec).
+            # "mode: '0755'" is not converted and stays intact.
+            # So if mode is an integer, we know it was converted to its decimal value,
+            # in that case convert it back to an octal value and make it a string.
+            el[key] = '0' + '%o' % el[key]
+
     for new_key, old_key in translate:
         el[new_key] = el.pop(old_key)
 
