@@ -1,0 +1,8 @@
+epdb==0.15.1
+GitPython==3.0.5
+logzero==1.5.0
+PyYAML==5.3
+requests==2.22.0
+requests-cache==0.5.2
+ruamel.yaml==0.16.6
+sh==1.12.14

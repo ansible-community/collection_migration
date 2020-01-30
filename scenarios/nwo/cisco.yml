@@ -1,0 +1,306 @@
+aci:
+  modules:
+  - network/aci/aci_aaa_user.py
+  - network/aci/aci_aaa_user_certificate.py
+  - network/aci/aci_access_port_block_to_access_port.py
+  - network/aci/aci_access_port_to_interface_policy_leaf_profile.py
+  - network/aci/aci_access_sub_port_block_to_access_port.py
+  - network/aci/aci_aep.py
+  - network/aci/aci_aep_to_domain.py
+  - network/aci/aci_ap.py
+  - network/aci/aci_bd.py
+  - network/aci/aci_bd_subnet.py
+  - network/aci/aci_bd_to_l3out.py
+  - network/aci/aci_config_rollback.py
+  - network/aci/aci_config_snapshot.py
+  - network/aci/aci_contract.py
+  - network/aci/aci_contract_subject.py
+  - network/aci/aci_contract_subject_to_filter.py
+  - network/aci/aci_domain.py
+  - network/aci/aci_domain_to_encap_pool.py
+  - network/aci/aci_domain_to_vlan_pool.py
+  - network/aci/aci_encap_pool.py
+  - network/aci/aci_encap_pool_range.py
+  - network/aci/aci_epg.py
+  - network/aci/aci_epg_monitoring_policy.py
+  - network/aci/aci_epg_to_contract.py
+  - network/aci/aci_epg_to_domain.py
+  - network/aci/aci_fabric_node.py
+  - network/aci/aci_fabric_scheduler.py
+  - network/aci/aci_filter.py
+  - network/aci/aci_filter_entry.py
+  - network/aci/aci_firmware_group.py
+  - network/aci/aci_firmware_group_node.py
+  - network/aci/aci_firmware_policy.py
+  - network/aci/aci_firmware_source.py
+  - network/aci/aci_interface_policy_cdp.py
+  - network/aci/aci_interface_policy_fc.py
+  - network/aci/aci_interface_policy_l2.py
+  - network/aci/aci_interface_policy_leaf_policy_group.py
+  - network/aci/aci_interface_policy_leaf_profile.py
+  - network/aci/aci_interface_policy_lldp.py
+  - network/aci/aci_interface_policy_mcp.py
+  - network/aci/aci_interface_policy_ospf.py
+  - network/aci/aci_interface_policy_port_channel.py
+  - network/aci/aci_interface_policy_port_security.py
+  - network/aci/aci_interface_selector_to_switch_policy_leaf_profile.py
+  - network/aci/aci_l3out.py
+  - network/aci/aci_l3out_extepg.py
+  - network/aci/aci_l3out_extsubnet.py
+  - network/aci/aci_l3out_route_tag_policy.py
+  - network/aci/aci_maintenance_group.py
+  - network/aci/aci_maintenance_group_node.py
+  - network/aci/aci_maintenance_policy.py
+  - network/aci/aci_rest.py
+  - network/aci/aci_static_binding_to_epg.py
+  - network/aci/aci_switch_leaf_selector.py
+  - network/aci/aci_switch_policy_leaf_profile.py
+  - network/aci/aci_switch_policy_vpc_protection_group.py
+  - network/aci/aci_taboo_contract.py
+  - network/aci/aci_tenant.py
+  - network/aci/aci_tenant_action_rule_profile.py
+  - network/aci/aci_tenant_ep_retention_policy.py
+  - network/aci/aci_tenant_span_dst_group.py
+  - network/aci/aci_tenant_span_src_group.py
+  - network/aci/aci_tenant_span_src_group_to_dst_group.py
+  - network/aci/aci_vlan_pool.py
+  - network/aci/aci_vlan_pool_encap_block.py
+  - network/aci/aci_vmm_credential.py
+  - network/aci/aci_vrf.py
+  module_utils:
+  - network/aci/aci.py
+intersight:
+  modules:
+  - remote_management/intersight/_intersight_facts.py
+  - remote_management/intersight/intersight_rest_api.py
+  module_utils:
+  - remote_management/intersight.py
+  doc_fragments:
+  - intersight.py
+ios:
+  modules:
+  - network/ios/_ios_interface.py
+  - network/ios/_ios_l2_interface.py
+  - network/ios/_ios_l3_interface.py
+  - network/ios/_ios_vlan.py
+  - network/ios/ios_banner.py
+  - network/ios/ios_bgp.py
+  - network/ios/ios_command.py
+  - network/ios/ios_config.py
+  - network/ios/ios_facts.py
+  - network/ios/ios_interfaces.py
+  - network/ios/ios_l2_interfaces.py
+  - network/ios/ios_l3_interfaces.py
+  - network/ios/ios_lacp.py
+  - network/ios/ios_lacp_interfaces.py
+  - network/ios/ios_lag_interfaces.py
+  - network/ios/ios_linkagg.py
+  - network/ios/ios_lldp.py
+  - network/ios/ios_lldp_global.py
+  - network/ios/ios_lldp_interfaces.py
+  - network/ios/ios_logging.py
+  - network/ios/ios_ntp.py
+  - network/ios/ios_ping.py
+  - network/ios/ios_static_route.py
+  - network/ios/ios_system.py
+  - network/ios/ios_user.py
+  - network/ios/ios_vlans.py
+  - network/ios/ios_vrf.py
+  terminal:
+  - ios.py
+  action:
+  - ios.py
+  cliconf:
+  - ios.py
+  doc_fragments:
+  - ios.py
+iosxr:
+  modules:
+  - network/iosxr/_iosxr_interface.py
+  - network/iosxr/iosxr_banner.py
+  - network/iosxr/iosxr_bgp.py
+  - network/iosxr/iosxr_command.py
+  - network/iosxr/iosxr_config.py
+  - network/iosxr/iosxr_facts.py
+  - network/iosxr/iosxr_interfaces.py
+  - network/iosxr/iosxr_l2_interfaces.py
+  - network/iosxr/iosxr_l3_interfaces.py
+  - network/iosxr/iosxr_lacp.py
+  - network/iosxr/iosxr_lacp_interfaces.py
+  - network/iosxr/iosxr_lag_interfaces.py
+  - network/iosxr/iosxr_lldp_global.py
+  - network/iosxr/iosxr_lldp_interfaces.py
+  - network/iosxr/iosxr_logging.py
+  - network/iosxr/iosxr_netconf.py
+  - network/iosxr/iosxr_system.py
+  - network/iosxr/iosxr_user.py
+  terminal:
+  - iosxr.py
+  action:
+  - iosxr.py
+  cliconf:
+  - iosxr.py
+  doc_fragments:
+  - iosxr.py
+  netconf:
+  - iosxr.py
+meraki:
+  modules:
+  - network/meraki/meraki_admin.py
+  - network/meraki/meraki_config_template.py
+  - network/meraki/meraki_content_filtering.py
+  - network/meraki/meraki_device.py
+  - network/meraki/meraki_firewalled_services.py
+  - network/meraki/meraki_malware.py
+  - network/meraki/meraki_mr_l3_firewall.py
+  - network/meraki/meraki_mx_l3_firewall.py
+  - network/meraki/meraki_mx_l7_firewall.py
+  - network/meraki/meraki_nat.py
+  - network/meraki/meraki_network.py
+  - network/meraki/meraki_organization.py
+  - network/meraki/meraki_snmp.py
+  - network/meraki/meraki_ssid.py
+  - network/meraki/meraki_static_route.py
+  - network/meraki/meraki_switchport.py
+  - network/meraki/meraki_syslog.py
+  - network/meraki/meraki_vlan.py
+  - network/meraki/meraki_webhook.py
+mso:
+  modules:
+  - network/aci/mso_label.py
+  - network/aci/mso_role.py
+  - network/aci/mso_schema.py
+  - network/aci/mso_schema_site.py
+  - network/aci/mso_schema_site_anp.py
+  - network/aci/mso_schema_site_anp_epg.py
+  - network/aci/mso_schema_site_anp_epg_domain.py
+  - network/aci/mso_schema_site_anp_epg_staticleaf.py
+  - network/aci/mso_schema_site_anp_epg_staticport.py
+  - network/aci/mso_schema_site_anp_epg_subnet.py
+  - network/aci/mso_schema_site_bd.py
+  - network/aci/mso_schema_site_bd_l3out.py
+  - network/aci/mso_schema_site_bd_subnet.py
+  - network/aci/mso_schema_site_vrf.py
+  - network/aci/mso_schema_site_vrf_region.py
+  - network/aci/mso_schema_site_vrf_region_cidr.py
+  - network/aci/mso_schema_site_vrf_region_cidr_subnet.py
+  - network/aci/mso_schema_template.py
+  - network/aci/mso_schema_template_anp.py
+  - network/aci/mso_schema_template_anp_epg.py
+  - network/aci/mso_schema_template_anp_epg_contract.py
+  - network/aci/mso_schema_template_anp_epg_subnet.py
+  - network/aci/mso_schema_template_bd.py
+  - network/aci/mso_schema_template_bd_subnet.py
+  - network/aci/mso_schema_template_contract_filter.py
+  - network/aci/mso_schema_template_deploy.py
+  - network/aci/mso_schema_template_externalepg.py
+  - network/aci/mso_schema_template_filter_entry.py
+  - network/aci/mso_schema_template_l3out.py
+  - network/aci/mso_schema_template_vrf.py
+  - network/aci/mso_site.py
+  - network/aci/mso_tenant.py
+  - network/aci/mso_user.py
+  module_utils:
+  - network/aci/mso.py
+nxos:
+  modules:
+  - network/nxos/_nxos_interface.py
+  - network/nxos/_nxos_ip_interface.py
+  - network/nxos/_nxos_l2_interface.py
+  - network/nxos/_nxos_l3_interface.py
+  - network/nxos/_nxos_linkagg.py
+  - network/nxos/_nxos_mtu.py
+  - network/nxos/_nxos_portchannel.py
+  - network/nxos/_nxos_switchport.py
+  - network/nxos/_nxos_vlan.py
+  - network/nxos/nxos_aaa_server.py
+  - network/nxos/nxos_aaa_server_host.py
+  - network/nxos/nxos_acl.py
+  - network/nxos/nxos_acl_interface.py
+  - network/nxos/nxos_banner.py
+  - network/nxos/nxos_bfd_global.py
+  - network/nxos/nxos_bfd_interfaces.py
+  - network/nxos/nxos_bgp.py
+  - network/nxos/nxos_bgp_af.py
+  - network/nxos/nxos_bgp_neighbor.py
+  - network/nxos/nxos_bgp_neighbor_af.py
+  - network/nxos/nxos_command.py
+  - network/nxos/nxos_config.py
+  - network/nxos/nxos_evpn_global.py
+  - network/nxos/nxos_evpn_vni.py
+  - network/nxos/nxos_facts.py
+  - network/nxos/nxos_feature.py
+  - network/nxos/nxos_file_copy.py
+  - network/nxos/nxos_gir.py
+  - network/nxos/nxos_gir_profile_management.py
+  - network/nxos/nxos_hsrp.py
+  - network/nxos/nxos_hsrp_interfaces.py
+  - network/nxos/nxos_igmp.py
+  - network/nxos/nxos_igmp_interface.py
+  - network/nxos/nxos_igmp_snooping.py
+  - network/nxos/nxos_install_os.py
+  - network/nxos/nxos_interface_ospf.py
+  - network/nxos/nxos_interfaces.py
+  - network/nxos/nxos_l2_interfaces.py
+  - network/nxos/nxos_l3_interfaces.py
+  - network/nxos/nxos_lacp.py
+  - network/nxos/nxos_lacp_interfaces.py
+  - network/nxos/nxos_lag_interfaces.py
+  - network/nxos/nxos_lldp.py
+  - network/nxos/nxos_lldp_global.py
+  - network/nxos/nxos_logging.py
+  - network/nxos/nxos_ntp.py
+  - network/nxos/nxos_ntp_auth.py
+  - network/nxos/nxos_ntp_options.py
+  - network/nxos/nxos_nxapi.py
+  - network/nxos/nxos_ospf.py
+  - network/nxos/nxos_ospf_vrf.py
+  - network/nxos/nxos_overlay_global.py
+  - network/nxos/nxos_pim.py
+  - network/nxos/nxos_pim_interface.py
+  - network/nxos/nxos_pim_rp_address.py
+  - network/nxos/nxos_ping.py
+  - network/nxos/nxos_reboot.py
+  - network/nxos/nxos_rollback.py
+  - network/nxos/nxos_rpm.py
+  - network/nxos/nxos_smu.py
+  - network/nxos/nxos_snapshot.py
+  - network/nxos/nxos_snmp_community.py
+  - network/nxos/nxos_snmp_contact.py
+  - network/nxos/nxos_snmp_host.py
+  - network/nxos/nxos_snmp_location.py
+  - network/nxos/nxos_snmp_traps.py
+  - network/nxos/nxos_snmp_user.py
+  - network/nxos/nxos_static_route.py
+  - network/nxos/nxos_system.py
+  - network/nxos/nxos_telemetry.py
+  - network/nxos/nxos_udld.py
+  - network/nxos/nxos_udld_interface.py
+  - network/nxos/nxos_user.py
+  - network/nxos/nxos_vlans.py
+  - network/nxos/nxos_vpc.py
+  - network/nxos/nxos_vpc_interface.py
+  - network/nxos/nxos_vrf.py
+  - network/nxos/nxos_vrf_af.py
+  - network/nxos/nxos_vrf_interface.py
+  - network/nxos/nxos_vrrp.py
+  - network/nxos/nxos_vtp_domain.py
+  - network/nxos/nxos_vtp_password.py
+  - network/nxos/nxos_vtp_version.py
+  - network/nxos/nxos_vxlan_vtep.py
+  - network/nxos/nxos_vxlan_vtep_vni.py
+  action:
+  - nxos_file_copy.py
+ucs:
+  modules:
+  - remote_management/ucs/ucs_ip_pool.py
+  - remote_management/ucs/ucs_mac_pool.py
+  - remote_management/ucs/ucs_managed_objects.py
+  - remote_management/ucs/ucs_query.py
+  - remote_management/ucs/ucs_service_profile_template.py
+  - remote_management/ucs/ucs_uuid_pool.py
+  - remote_management/ucs/ucs_vlans.py
+  module_utils:
+  - remote_management/ucs.py
+  doc_fragments:
+  - ucs.py

@@ -1,0 +1,29 @@
+awx:
+  modules:
+  - web_infrastructure/ansible_tower/tower_credential.py
+  - web_infrastructure/ansible_tower/tower_credential_type.py
+  - web_infrastructure/ansible_tower/tower_group.py
+  - web_infrastructure/ansible_tower/tower_host.py
+  - web_infrastructure/ansible_tower/tower_inventory.py
+  - web_infrastructure/ansible_tower/tower_inventory_source.py
+  - web_infrastructure/ansible_tower/tower_job_cancel.py
+  - web_infrastructure/ansible_tower/tower_job_launch.py
+  - web_infrastructure/ansible_tower/tower_job_list.py
+  - web_infrastructure/ansible_tower/tower_job_template.py
+  - web_infrastructure/ansible_tower/tower_job_wait.py
+  - web_infrastructure/ansible_tower/tower_label.py
+  - web_infrastructure/ansible_tower/tower_notification.py
+  - web_infrastructure/ansible_tower/tower_organization.py
+  - web_infrastructure/ansible_tower/tower_project.py
+  - web_infrastructure/ansible_tower/tower_receive.py
+  - web_infrastructure/ansible_tower/tower_role.py
+  - web_infrastructure/ansible_tower/tower_send.py
+  - web_infrastructure/ansible_tower/tower_settings.py
+  - web_infrastructure/ansible_tower/tower_team.py
+  - web_infrastructure/ansible_tower/tower_user.py
+  - web_infrastructure/ansible_tower/tower_workflow_launch.py
+  - web_infrastructure/ansible_tower/tower_workflow_template.py
+  module_utils:
+  - ansible_tower.py
+  inventory:
+  - tower.py

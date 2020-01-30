@@ -1,0 +1,39 @@
+flasharray:
+  modules:
+  - storage/purestorage/purefa_alert.py
+  - storage/purestorage/purefa_arrayname.py
+  - storage/purestorage/purefa_banner.py
+  - storage/purestorage/purefa_connect.py
+  - storage/purestorage/purefa_dns.py
+  - storage/purestorage/purefa_ds.py
+  - storage/purestorage/purefa_dsrole.py
+  - storage/purestorage/purefa_hg.py
+  - storage/purestorage/purefa_host.py
+  - storage/purestorage/purefa_info.py
+  - storage/purestorage/purefa_ntp.py
+  - storage/purestorage/purefa_offload.py
+  - storage/purestorage/purefa_pg.py
+  - storage/purestorage/purefa_pgsnap.py
+  - storage/purestorage/purefa_phonehome.py
+  - storage/purestorage/purefa_ra.py
+  - storage/purestorage/purefa_smtp.py
+  - storage/purestorage/purefa_snap.py
+  - storage/purestorage/purefa_snmp.py
+  - storage/purestorage/purefa_syslog.py
+  - storage/purestorage/purefa_user.py
+  - storage/purestorage/purefa_vg.py
+  - storage/purestorage/purefa_volume.py
+flashblade:
+  modules:
+  - storage/purestorage/purefb_bucket.py
+  - storage/purestorage/purefb_ds.py
+  - storage/purestorage/purefb_dsrole.py
+  - storage/purestorage/purefb_fs.py
+  - storage/purestorage/purefb_info.py
+  - storage/purestorage/purefb_network.py
+  - storage/purestorage/purefb_ra.py
+  - storage/purestorage/purefb_s3acc.py
+  - storage/purestorage/purefb_s3user.py
+  - storage/purestorage/purefb_smtp.py
+  - storage/purestorage/purefb_snap.py
+  - storage/purestorage/purefb_subnet.py

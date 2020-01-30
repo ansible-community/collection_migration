@@ -1,0 +1,3 @@
+qradar:
+  httpapi:
+  - qradar.py

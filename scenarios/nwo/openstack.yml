@@ -1,0 +1,62 @@
+cloud:
+  modules:
+  - cloud/openstack/os_auth.py
+  - cloud/openstack/os_client_config.py
+  - cloud/openstack/os_coe_cluster.py
+  - cloud/openstack/os_coe_cluster_template.py
+  - cloud/openstack/os_flavor_info.py
+  - cloud/openstack/os_floating_ip.py
+  - cloud/openstack/os_group.py
+  - cloud/openstack/os_group_info.py
+  - cloud/openstack/os_image.py
+  - cloud/openstack/os_image_info.py
+  - cloud/openstack/os_ironic.py
+  - cloud/openstack/os_ironic_inspect.py
+  - cloud/openstack/os_ironic_node.py
+  - cloud/openstack/os_keypair.py
+  - cloud/openstack/os_keystone_domain.py
+  - cloud/openstack/os_keystone_domain_info.py
+  - cloud/openstack/os_keystone_endpoint.py
+  - cloud/openstack/os_keystone_role.py
+  - cloud/openstack/os_keystone_service.py
+  - cloud/openstack/os_listener.py
+  - cloud/openstack/os_loadbalancer.py
+  - cloud/openstack/os_member.py
+  - cloud/openstack/os_network.py
+  - cloud/openstack/os_networks_info.py
+  - cloud/openstack/os_nova_flavor.py
+  - cloud/openstack/os_nova_host_aggregate.py
+  - cloud/openstack/os_object.py
+  - cloud/openstack/os_pool.py
+  - cloud/openstack/os_port.py
+  - cloud/openstack/os_port_info.py
+  - cloud/openstack/os_project.py
+  - cloud/openstack/os_project_access.py
+  - cloud/openstack/os_project_info.py
+  - cloud/openstack/os_quota.py
+  - cloud/openstack/os_recordset.py
+  - cloud/openstack/os_router.py
+  - cloud/openstack/os_security_group.py
+  - cloud/openstack/os_security_group_rule.py
+  - cloud/openstack/os_server.py
+  - cloud/openstack/os_server_action.py
+  - cloud/openstack/os_server_group.py
+  - cloud/openstack/os_server_info.py
+  - cloud/openstack/os_server_metadata.py
+  - cloud/openstack/os_server_volume.py
+  - cloud/openstack/os_stack.py
+  - cloud/openstack/os_subnet.py
+  - cloud/openstack/os_subnets_info.py
+  - cloud/openstack/os_user.py
+  - cloud/openstack/os_user_group.py
+  - cloud/openstack/os_user_info.py
+  - cloud/openstack/os_user_role.py
+  - cloud/openstack/os_volume.py
+  - cloud/openstack/os_volume_snapshot.py
+  - cloud/openstack/os_zone.py
+  module_utils:
+  - openstack.py
+  doc_fragments:
+  - openstack.py
+  inventory:
+  - openstack.py

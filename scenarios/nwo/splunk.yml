@@ -1,0 +1,3 @@
+enterprise_security:
+  httpapi:
+  - splunk.py
