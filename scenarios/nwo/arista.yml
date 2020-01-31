@@ -1,31 +1,12 @@
 eos:
+  module_utils:
+  - network/eos/*
+  - network/eos/*/*
+  - network/eos/*/*/*
+  - network/eos/*/*/*/*
+  - network/eos/*/*/*/*/*
   modules:
-  - network/eos/_eos_interface.py
-  - network/eos/_eos_l2_interface.py
-  - network/eos/_eos_l3_interface.py
-  - network/eos/_eos_linkagg.py
-  - network/eos/_eos_vlan.py
-  - network/eos/eos_banner.py
-  - network/eos/eos_bgp.py
-  - network/eos/eos_command.py
-  - network/eos/eos_config.py
-  - network/eos/eos_eapi.py
-  - network/eos/eos_facts.py
-  - network/eos/eos_interfaces.py
-  - network/eos/eos_l2_interfaces.py
-  - network/eos/eos_l3_interfaces.py
-  - network/eos/eos_lacp.py
-  - network/eos/eos_lacp_interfaces.py
-  - network/eos/eos_lag_interfaces.py
-  - network/eos/eos_lldp.py
-  - network/eos/eos_lldp_global.py
-  - network/eos/eos_lldp_interfaces.py
-  - network/eos/eos_logging.py
-  - network/eos/eos_static_route.py
-  - network/eos/eos_system.py
-  - network/eos/eos_user.py
-  - network/eos/eos_vlans.py
-  - network/eos/eos_vrf.py
+  - network/eos/*
   terminal:
   - eos.py
   httpapi:
