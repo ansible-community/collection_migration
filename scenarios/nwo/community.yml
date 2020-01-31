@@ -2517,11 +2517,9 @@ general:
   - oc.py
   - paramiko_ssh.py
   - podman.py
-  - psrp.py
   - qubes.py
   - saltstack.py
   - vmware_tools.py
-  - winrm.py
   - zone.py
   terminal:
   - aireos.py
@@ -2826,10 +2824,8 @@ general:
   - mongodb.py
   - redis.py
   shell:
-  - cmd.py
   - csh.py
   - fish.py
-  - powershell.py
   #scripts:
   #- contrib/inventory/abiquo.ini
   #- contrib/inventory/abiquo.py

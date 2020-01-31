@@ -204,7 +204,9 @@ _core:
   - local.py
   - netconf.py
   - network_cli.py
+  - psrp.py
   - ssh.py
+  - winrm.py
   test:
   - core.py
   - files.py
@@ -314,6 +316,8 @@ _core:
   - pickle.py
   - yaml.py
   shell:
+  - cmd.py
+  - powershell.py
   - sh.py
 netcommon:
   modules:
