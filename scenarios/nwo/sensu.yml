@@ -2,5 +2,4 @@ sensu_go:
   module_utils:
   - network/common/utils.py
   - network/exos/utils/utils.py
-  - network/iosxr/utils/utils.py
   - network/nxos/utils/utils.py

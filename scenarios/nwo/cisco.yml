@@ -95,25 +95,14 @@ ios:
   doc_fragments:
   - ios.py
 iosxr:
+  module_utils:
+  - network/iosxr/*
+  - network/iosxr/*/*
+  - network/iosxr/*/*/*
+  - network/iosxr/*/*/*/*
+  - network/iosxr/*/*/*/*/*
   modules:
-  - network/iosxr/_iosxr_interface.py
-  - network/iosxr/iosxr_banner.py
-  - network/iosxr/iosxr_bgp.py
-  - network/iosxr/iosxr_command.py
-  - network/iosxr/iosxr_config.py
-  - network/iosxr/iosxr_facts.py
-  - network/iosxr/iosxr_interfaces.py
-  - network/iosxr/iosxr_l2_interfaces.py
-  - network/iosxr/iosxr_l3_interfaces.py
-  - network/iosxr/iosxr_lacp.py
-  - network/iosxr/iosxr_lacp_interfaces.py
-  - network/iosxr/iosxr_lag_interfaces.py
-  - network/iosxr/iosxr_lldp_global.py
-  - network/iosxr/iosxr_lldp_interfaces.py
-  - network/iosxr/iosxr_logging.py
-  - network/iosxr/iosxr_netconf.py
-  - network/iosxr/iosxr_system.py
-  - network/iosxr/iosxr_user.py
+  - network/iosxr/*
   terminal:
   - iosxr.py
   action:
