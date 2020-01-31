@@ -4,4 +4,3 @@ sensu_go:
   - network/exos/utils/utils.py
   - network/iosxr/utils/utils.py
   - network/nxos/utils/utils.py
-  - network/vyos/utils/utils.py
