@@ -1136,8 +1136,6 @@ general:
   - files/iso_extract.py
   - files/read_csv.py
   - files/synchronize.py
-  - files/tempfile.py
-  - files/unarchive.py
   - files/xattr.py
   - files/xml.py
   - identity/_onepassword_facts.py
@@ -2620,7 +2618,6 @@ general:
   - sros.py
   - synchronize.py
   - telnet.py
-  - unarchive.py
   - voss.py
   - win_copy.py
   - win_reboot.py

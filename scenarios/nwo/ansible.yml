@@ -14,7 +14,9 @@ _core:
   - files/patch.py
   - files/replace.py
   - files/stat.py
+  - files/tempfile.py
   - files/template.py
+  - files/unarchive.py
   - inventory/add_host.py
   - inventory/group_by.py
   - net_tools/basics/get_url.py
@@ -245,6 +247,7 @@ _core:
   - set_stats.py
   - shell.py
   - template.py
+  - unarchive.py
   - uri.py
   - wait_for_connection.py
   - yum.py
