@@ -1,36 +1,10 @@
 junos:
+  module_utils:
+  - network/junos/*
+  - network/junos/*/*
+  - network/junos/*/*/*
   modules:
-  - network/junos/_junos_interface.py
-  - network/junos/_junos_l2_interface.py
-  - network/junos/_junos_l3_interface.py
-  - network/junos/_junos_linkagg.py
-  - network/junos/_junos_lldp.py
-  - network/junos/_junos_lldp_interface.py
-  - network/junos/_junos_static_route.py
-  - network/junos/_junos_vlan.py
-  - network/junos/junos_banner.py
-  - network/junos/junos_command.py
-  - network/junos/junos_config.py
-  - network/junos/junos_facts.py
-  - network/junos/junos_interfaces.py
-  - network/junos/junos_l2_interfaces.py
-  - network/junos/junos_l3_interfaces.py
-  - network/junos/junos_lacp.py
-  - network/junos/junos_lacp_interfaces.py
-  - network/junos/junos_lag_interfaces.py
-  - network/junos/junos_lldp_global.py
-  - network/junos/junos_lldp_interfaces.py
-  - network/junos/junos_logging.py
-  - network/junos/junos_netconf.py
-  - network/junos/junos_package.py
-  - network/junos/junos_ping.py
-  - network/junos/junos_rpc.py
-  - network/junos/junos_scp.py
-  - network/junos/junos_static_routes.py
-  - network/junos/junos_system.py
-  - network/junos/junos_user.py
-  - network/junos/junos_vlans.py
-  - network/junos/junos_vrf.py
+  - network/junos/*
   terminal:
   - junos.py
   action:

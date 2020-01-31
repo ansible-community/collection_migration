@@ -3,6 +3,5 @@ sensu_go:
   - network/common/utils.py
   - network/exos/utils/utils.py
   - network/iosxr/utils/utils.py
-  - network/junos/utils/utils.py
   - network/nxos/utils/utils.py
   - network/vyos/utils/utils.py
