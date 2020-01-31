@@ -270,7 +270,6 @@ _core:
   strategy:
   - debug.py
   - free.py
-  - host_pinned.py
   - linear.py
   lookup:
   - config.py
