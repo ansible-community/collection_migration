@@ -215,13 +215,11 @@ _core:
   - urls.py
   - urlsplit.py
   callback:
-  - debug.py
   - default.py
   - junit.py
   - minimal.py
   - oneline.py
   - tree.py
-  - yaml.py
   action:
   - add_host.py
   - assert.py
@@ -268,7 +266,6 @@ _core:
   - su.py
   - sudo.py
   strategy:
-  - debug.py
   - free.py
   - linear.py
   lookup:
