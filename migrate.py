@@ -136,7 +136,7 @@ def _is_unexpected_error(proc_err):
 
 retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-name
     backoff.expo, subprocess.CalledProcessError,
-    max_time=8, jitter=backoff.full_jitter,
+    max_tries=8, max_time=15, jitter=backoff.full_jitter,
     giveup=_is_unexpected_error,
 )
 
