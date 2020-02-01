@@ -40,8 +40,6 @@ _core:
   - packaging/os/rpm_key.py
   - packaging/os/yum.py
   - packaging/os/yum_repository.py
-  - remote_management/ipmi/ipmi_boot.py
-  - remote_management/ipmi/ipmi_power.py
   - source_control/git.py
   - source_control/subversion.py
   - system/cron.py
