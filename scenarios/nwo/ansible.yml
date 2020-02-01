@@ -11,7 +11,6 @@ _core:
   - files/file.py
   - files/find.py
   - files/lineinfile.py
-  - files/patch.py
   - files/replace.py
   - files/stat.py
   - files/tempfile.py
@@ -235,7 +234,6 @@ _core:
   - netconf.py
   - normal.py
   - package.py
-  - patch.py
   - pause.py
   - raw.py
   - reboot.py
