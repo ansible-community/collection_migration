@@ -311,7 +311,6 @@ _core:
   - yaml.py
   cache:
   - jsonfile.py
-  - memcached.py
   - memory.py
   - pickle.py
   - yaml.py
