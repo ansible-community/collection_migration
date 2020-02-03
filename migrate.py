@@ -126,6 +126,26 @@ manual_check = defaultdict(list)
 
 ### FUNCTION DEFS
 
+def log_subprocess_failure(func):
+    def func_wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except subprocess.CalledProcessError as proc_err:
+            proc_id = hex(id(proc_err))
+            logger.error(
+                '[%s] Running "%s" failed with return code %s',
+                proc_id,
+                proc_err.cmd,
+                proc_err.returncode,
+            )
+            logger.error('[%s] stderr:', proc_id)
+            logger.error(proc_err.stderr)
+            logger.error('[%s] stdout:', proc_id)
+            logger.error(proc_err.stdout)
+            raise
+    return func_wrapper
+
+
 def _is_unexpected_error(proc_err):
     proc_id = hex(id(proc_err))
     err_out = proc_err.stderr
@@ -156,6 +176,7 @@ retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-na
 )
 
 
+@log_subprocess_failure
 @retry_on_permission_denied
 def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
     """Perform cmd in cwd dir using a subprocess wrapper."""
