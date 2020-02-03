@@ -165,11 +165,7 @@ def add_manual_check(key, value, filename):
     manual_check[filename].append((key, value))
 
 
-def checkout_repo(
-        git_url: str, checkout_path: str,
-        *,
-        refresh: bool = False,
-) -> Set[str]:
+def checkout_repo( git_url: str, checkout_path: str, *, refresh: bool = False,) -> Set[str]:
     """Fetch and optionally refresh the repo."""
     if not os.path.exists(checkout_path):
         subprocess.check_call(('git', 'clone', git_url, checkout_path))
@@ -212,7 +208,7 @@ def actually_remove(checkout_path, namespace, collection):
             init_files.add(path)
             continue
 
-        subprocess.check_call(('git', 'rm', actual_devel_path), cwd=checkout_path)
+        subprocess.check_call(('git', 'rm', '-f', actual_devel_path), cwd=checkout_path)
         new_sanity_ignore.pop(actual_devel_path, None)
 
     # process the __init__.py files from module dirs now that all files are removed,
@@ -2021,6 +2017,8 @@ def setup_options(parser):
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False, help='Skip tests and rewrite the runtime code only.')
     parser.add_argument('--skip-migration', action='store_true', dest='skip_migration', default=False, help='Skip creating migrated collections.',)
     parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
+    parser.add_argument('--convert-symlinks', action='store_true', dest='convert_symlinks', default=False,
+                        help='Convert symlinks to data copies to allow aliases to exist in different collections from original.',)
 
 
 def main():
@@ -2052,6 +2050,16 @@ def main():
     if args.skip_migration:
         logger.info('Skipping the migration...')
     else:
+
+        if args.convert_symlinks:
+            logger.info('Converting symlinks ...')
+            script = '%s/undolinks.sh' %  os.path.dirname(os.path.realpath(__file__))
+
+            for plugin in VALID_SPEC_ENTRIES:
+                logger.info('Converting symlinks %s ...' % plugin)
+                plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin, os.path.join('lib', 'ansible', 'plugins', plugin))
+                subprocess.check_call((script, os.path.join(devel_path, plugin_base)))
+
         logger.info('Starting the migration...')
 
         # doeet
