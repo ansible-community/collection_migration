@@ -94,9 +94,8 @@ class UpdateNWO:
         self.get_plugins()
         self.map_plugins_to_collections()
 
-        self.make_compiled_csv()
         self.make_spec()
-
+        self.make_compiled_csv()
 
     def map_existing_files_to_rules(self):
 
@@ -287,6 +286,7 @@ class UpdateNWO:
         ''' Make the human readable aggregated spreadsheet '''
 
         fn = os.path.join(self.scenario_output_dir, 'compiled.csv')        
+        logger.info('compiling %s' % fn)
         with open(fn, 'w') as csvfile:
             spamwriter = csv.writer(csvfile)
             spamwriter.writerow([
@@ -332,6 +332,13 @@ class UpdateNWO:
                     row[6] = 'unclaimed!'
                 spamwriter.writerow(row)
 
+    def _make_relpath(self, filename, plugintype):
+        # .cache/checkouts/ansible/lib/ansible/module_utils/foo/bar/acme.py
+        # foo/bar/acme.py
+        pindex = filename.index(plugintype)
+        relpath = filename[pindex+len(plugintype)+1:]
+        return relpath
+
     def make_spec(self):
 
         # make specfile ready dicts for each collection
@@ -341,6 +348,10 @@ class UpdateNWO:
             ckey = (ns, name)
             ptype = x[0]
             matcher = x[-1]['matcher']            
+
+            # use the relative path for unmatched community files
+            if 'unclaimed' in matcher:
+                matcher =  self._make_relpath(x[3], ptype)
 
             if ckey not in self.collections:
                 self.collections[ckey] = {}
