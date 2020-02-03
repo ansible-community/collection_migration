@@ -6,3 +6,12 @@ requests==2.22.0
 requests-cache==0.5.2
 ruamel.yaml==0.16.6
 sh==1.12.14
+
+# ansibot
+bs4
+textblob
+fuzzywuzzy
+python-LevenShtein
+sqlalchemy
+git+git://github.com/ansible/ansibullbot
+
