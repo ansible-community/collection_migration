@@ -50,6 +50,15 @@ jobs:
         -s "scenarios/${{ matrix.migration-scenario }}"
         --skip-publish
         --convert-symlinks
+    - name: Prepare user's SSH config dir
+      run: |
+        mkdir -p ~/.ssh
+        chmod u=rwx,g=,o= ~/.ssh
+    - name: Ensure GitHub's public SSH keys are in known hosts
+      run: >-
+        cat resources/github_known_hosts.tmpl
+        >>
+        ~/.ssh/known_hosts
     - name: Auto-publish the migrated collection repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
