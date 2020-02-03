@@ -22,7 +22,11 @@ jobs:
         - base
         - mintest
         - stdlib
-        scenario_options: {base = ['--convert-symlinks'], mintest = [], stdlib = [] }
+    scenario_options:
+            base:
+                - '--convert-symlinks'
+            mintest: []
+            stdlib: []
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
@@ -50,7 +54,7 @@ jobs:
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
         --skip-publish
-        {{ join(matrix.scenario_options[matrix.migration-scenario]) }}
+        {{ join(job.scenario_options[matrix.migration-scenario]) }}
     - name: Auto-publish the migrated collection repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
