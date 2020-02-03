@@ -54,7 +54,7 @@ jobs:
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
         --skip-publish
-        ${{ join(matrix.scenario_options) }}
+        ${{ join(matrix.scenario_options[matrix.migration-scenario]) }}
     - name: Auto-publish the migrated collection repos to GitHub repos
       if: >-
         github.event_name != 'pull_request'
