@@ -5,16 +5,43 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 import contextlib
+from http import HTTPStatus
 import os
 import pathlib
 from typing import Union
 
 from aiohttp.client import ClientSession
+import backoff
 import gidgethub
 from logzero import logger
 
 from octomachinery.github.api.app_client import GitHubApp
 from octomachinery.github.config.app import GitHubAppIntegrationConfig
+
+
+def _is_not_404_response(gh_err_resp):
+    """Check whether the HTTP response is 404 Not Found."""
+    is_404 = gh_err_resp.status_code == HTTPStatus.NOT_FOUND
+
+    logger.info(
+        'Expected failure: should retry' if is_404
+        else 'Unexpected failure: should fail loudly'
+    )
+    logger.error(
+        'Error: %r; status: %r; args: %s.',
+        gh_err_resp,
+        gh_err_resp.status_code,
+        gh_err_resp.args,
+    )
+
+    return not is_404
+
+
+retry_on_not_found = backoff.on_exception(  # pylint: disable=invalid-name
+    backoff.expo, gidgethub.BadRequest,
+    max_tries=3, max_time=15, jitter=backoff.full_jitter,
+    giveup=_is_not_404_response,
+)
 
 
 def provision_http_session(async_method):
@@ -98,6 +125,7 @@ class GitHubOrgClient:
                 f'/{repo_name}.git'
             )
 
+    @retry_on_not_found
     @provision_http_session
     async def get_org_repo_token(
             self, repo_name: str,
@@ -123,6 +151,7 @@ class GitHubOrgClient:
     def sync_provision_deploy_key_to(self, repo_name: str) -> int:
         return asyncio.run(self.provision_deploy_key_to(repo_name))
 
+    @retry_on_not_found
     @provision_http_session
     async def provision_deploy_key_to(
             self, repo_name: str,
