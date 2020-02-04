@@ -21,9 +21,6 @@ _core:
   - net_tools/basics/get_url.py
   - net_tools/basics/slurp.py
   - net_tools/basics/uri.py
-  - notification/irc.py
-  - notification/jabber.py
-  - notification/mail.py
   - packaging/language/pip.py
   - packaging/os/apt.py
   - packaging/os/apt_key.py
