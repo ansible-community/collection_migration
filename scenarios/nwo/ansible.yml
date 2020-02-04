@@ -21,9 +21,6 @@ _core:
   - net_tools/basics/get_url.py
   - net_tools/basics/slurp.py
   - net_tools/basics/uri.py
-  - network/netconf/netconf_config.py
-  - network/netconf/netconf_get.py
-  - network/netconf/netconf_rpc.py
   - notification/irc.py
   - notification/jabber.py
   - notification/mail.py
@@ -175,10 +172,7 @@ _core:
   - json_utils.py
   - k8s/raw.py
   - net_tools/nios/api.py
-  - network/common/config.py
-  - network/common/netconf.py
   - network/f5/urls.py
-  - network/netconf/netconf.py
   - network/skydive/api.py
   - parsing/convert_bool.py
   - powershell/Ansible.ModuleUtils.AddType.psm1
@@ -197,10 +191,7 @@ _core:
   - urls.py
   - yumdnf.py
   connection:
-  - httpapi.py
   - local.py
-  - netconf.py
-  - network_cli.py
   - psrp.py
   - ssh.py
   - winrm.py
@@ -231,7 +222,6 @@ _core:
   - gather_facts.py
   - group_by.py
   - include_vars.py
-  - netconf.py
   - normal.py
   - package.py
   - pause.py
@@ -254,7 +244,6 @@ _core:
   - default_callback.py
   - files.py
   - inventory_cache.py
-  - netconf.py
   - return_common.py
   - shell_common.py
   - url.py
@@ -291,8 +280,6 @@ _core:
   - url.py
   - varnames.py
   - vars.py
-  netconf:
-  - default.py
   vars:
   - host_group_vars.py
   inventory:
@@ -316,53 +303,40 @@ _core:
   - sh.py
 netcommon:
   modules:
-  - network/cli/cli_command.py
-  - network/cli/cli_config.py
-  - network/files/net_get.py
-  - network/files/net_put.py
-  - network/interface/_net_interface.py
-  - network/interface/_net_linkagg.py
-  - network/interface/_net_lldp_interface.py
-  - network/layer2/_net_l2_interface.py
-  - network/layer2/_net_vlan.py
-  - network/layer3/_net_l3_interface.py
-  - network/layer3/_net_vrf.py
-  - network/protocol/_net_lldp.py
-  - network/restconf/restconf_config.py
-  - network/restconf/restconf_get.py
-  - network/routing/_net_static_route.py
-  - network/system/_net_banner.py
-  - network/system/_net_logging.py
-  - network/system/_net_system.py
-  - network/system/_net_user.py
-  - network/system/net_ping.py
+  - network/cli/*
+  - network/files/*
+  - network/interface/*
+  - network/layer2/*
+  - network/layer3/*
+  - network/netconf/*
+  - network/protocol/*
+  - network/restconf/*
+  - network/routing/*
+  - network/system/*
+  module_utils:
+  - network/common/*
+  - network/common/*/*
+  - network/netconf/*
+  - network/restconf/*
+  action:
+  - cli_command.py
+  - cli_config.py
+  - net_*
+  - netconf.py
+  - network.py
+  become:
+  - enable.py
   connection:
+  - httpapi.py
   - napalm.py
+  - netconf.py
+  - network_cli.py
   - persistent.py
+  doc_fragments:
+  - netconf.py
   filter:
   - network.py
   httpapi:
   - restconf.py
-  action:
-  - cli_command.py
-  - cli_config.py
-  - net_banner.py
-  - net_base.py
-  - net_get.py
-  - net_interface.py
-  - net_l2_interface.py
-  - net_l3_interface.py
-  - net_linkagg.py
-  - net_lldp.py
-  - net_lldp_interface.py
-  - net_logging.py
-  - net_ping.py
-  - net_put.py
-  - net_static_route.py
-  - net_system.py
-  - net_user.py
-  - net_vlan.py
-  - net_vrf.py
-  - network.py
-  become:
-  - enable.py
+  netconf:
+  - default.py
