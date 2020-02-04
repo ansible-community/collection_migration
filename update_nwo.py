@@ -344,8 +344,8 @@ class UpdateNWO:
     def _make_relpath(self, filename, plugintype):
         # .cache/checkouts/ansible/lib/ansible/module_utils/foo/bar/acme.py
         # foo/bar/acme.py
-        pindex = filename.index(plugintype)
-        relpath = filename[pindex+len(plugintype)+1:]
+        pindex = filename.index('/'+plugintype)
+        relpath = filename[pindex+len(plugintype)+2:]
         return relpath
 
     def make_spec(self):
