@@ -172,94 +172,24 @@ mso:
   module_utils:
   - network/aci/mso.py
 nxos:
+  module_utils:
+  - network/nxos/*
+  - network/nxos/*/*
+  - network/nxos/*/*/*
   modules:
-  - network/nxos/_nxos_interface.py
-  - network/nxos/_nxos_ip_interface.py
-  - network/nxos/_nxos_l2_interface.py
-  - network/nxos/_nxos_l3_interface.py
-  - network/nxos/_nxos_linkagg.py
-  - network/nxos/_nxos_mtu.py
-  - network/nxos/_nxos_portchannel.py
-  - network/nxos/_nxos_switchport.py
-  - network/nxos/_nxos_vlan.py
-  - network/nxos/nxos_aaa_server.py
-  - network/nxos/nxos_aaa_server_host.py
-  - network/nxos/nxos_acl.py
-  - network/nxos/nxos_acl_interface.py
-  - network/nxos/nxos_banner.py
-  - network/nxos/nxos_bfd_global.py
-  - network/nxos/nxos_bfd_interfaces.py
-  - network/nxos/nxos_bgp.py
-  - network/nxos/nxos_bgp_af.py
-  - network/nxos/nxos_bgp_neighbor.py
-  - network/nxos/nxos_bgp_neighbor_af.py
-  - network/nxos/nxos_command.py
-  - network/nxos/nxos_config.py
-  - network/nxos/nxos_evpn_global.py
-  - network/nxos/nxos_evpn_vni.py
-  - network/nxos/nxos_facts.py
-  - network/nxos/nxos_feature.py
-  - network/nxos/nxos_file_copy.py
-  - network/nxos/nxos_gir.py
-  - network/nxos/nxos_gir_profile_management.py
-  - network/nxos/nxos_hsrp.py
-  - network/nxos/nxos_hsrp_interfaces.py
-  - network/nxos/nxos_igmp.py
-  - network/nxos/nxos_igmp_interface.py
-  - network/nxos/nxos_igmp_snooping.py
-  - network/nxos/nxos_install_os.py
-  - network/nxos/nxos_interface_ospf.py
-  - network/nxos/nxos_interfaces.py
-  - network/nxos/nxos_l2_interfaces.py
-  - network/nxos/nxos_l3_interfaces.py
-  - network/nxos/nxos_lacp.py
-  - network/nxos/nxos_lacp_interfaces.py
-  - network/nxos/nxos_lag_interfaces.py
-  - network/nxos/nxos_lldp.py
-  - network/nxos/nxos_lldp_global.py
-  - network/nxos/nxos_logging.py
-  - network/nxos/nxos_ntp.py
-  - network/nxos/nxos_ntp_auth.py
-  - network/nxos/nxos_ntp_options.py
-  - network/nxos/nxos_nxapi.py
-  - network/nxos/nxos_ospf.py
-  - network/nxos/nxos_ospf_vrf.py
-  - network/nxos/nxos_overlay_global.py
-  - network/nxos/nxos_pim.py
-  - network/nxos/nxos_pim_interface.py
-  - network/nxos/nxos_pim_rp_address.py
-  - network/nxos/nxos_ping.py
-  - network/nxos/nxos_reboot.py
-  - network/nxos/nxos_rollback.py
-  - network/nxos/nxos_rpm.py
-  - network/nxos/nxos_smu.py
-  - network/nxos/nxos_snapshot.py
-  - network/nxos/nxos_snmp_community.py
-  - network/nxos/nxos_snmp_contact.py
-  - network/nxos/nxos_snmp_host.py
-  - network/nxos/nxos_snmp_location.py
-  - network/nxos/nxos_snmp_traps.py
-  - network/nxos/nxos_snmp_user.py
-  - network/nxos/nxos_static_route.py
-  - network/nxos/nxos_system.py
-  - network/nxos/nxos_telemetry.py
-  - network/nxos/nxos_udld.py
-  - network/nxos/nxos_udld_interface.py
-  - network/nxos/nxos_user.py
-  - network/nxos/nxos_vlans.py
-  - network/nxos/nxos_vpc.py
-  - network/nxos/nxos_vpc_interface.py
-  - network/nxos/nxos_vrf.py
-  - network/nxos/nxos_vrf_af.py
-  - network/nxos/nxos_vrf_interface.py
-  - network/nxos/nxos_vrrp.py
-  - network/nxos/nxos_vtp_domain.py
-  - network/nxos/nxos_vtp_password.py
-  - network/nxos/nxos_vtp_version.py
-  - network/nxos/nxos_vxlan_vtep.py
-  - network/nxos/nxos_vxlan_vtep_vni.py
+  - network/nxos/*
+  - network/nxos/*/*
   action:
+  - nxos.py
   - nxos_file_copy.py
+  cliconf:
+  - nxos.py
+  doc_fragments:
+  - nxos.py
+  httpapi:
+  - nxos.py
+  terminal:
+  - nxos.py
 ucs:
   modules:
   - remote_management/ucs/ucs_ip_pool.py
