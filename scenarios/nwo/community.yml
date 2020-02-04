@@ -1,4 +1,155 @@
 general:
+  module_utils:
+  - acme.py
+  - alicloud_ecs.py
+  - aws/acm.py
+  - aws/batch.py
+  - aws/cloudfront_facts.py
+  - aws/direct_connect.py
+  - aws/elb_utils.py
+  - aws/elbv2.py
+  - aws/iam.py
+  - aws/rds.py
+  - aws/s3.py
+  - aws/waf.py
+  - aws/waiters.py
+  - cloud.py
+  - cloudscale.py
+  - cloudstack.py
+  - crypto.py
+  - database.py
+  - digital_ocean.py
+  - dimensiondata.py
+  - docker/swarm.py
+  - ec2.py
+  - exoscale.py
+  - f5_utils.py
+  - firewalld.py
+  - gcdns.py
+  - gce.py
+  - gcp.py
+  - gitlab.py
+  - hcloud.py
+  - heroku.py
+  - hetzner.py
+  - hwc_utils.py
+  - ibm_sa_utils.py
+  - identity/keycloak/keycloak.py
+  - infinibox.py
+  - influxdb.py
+  - ipa.py
+  - ismount.py
+  - k8s/scale.py
+  - known_hosts.py
+  - kubevirt.py
+  - ldap.py
+  - linode.py
+  - lxd.py
+  - manageiq.py
+  - memset.py
+  - mysql.py
+  - network/a10/a10.py
+  - network/aireos/aireos.py
+  - network/aos/aos.py
+  - network/apconos/apconos.py
+  - network/aruba/aruba.py
+  - network/asa/asa.py
+  - network/avi/ansible_utils.py
+  - network/avi/avi.py
+  - network/avi/avi_api.py
+  - network/bigswitch/bigswitch.py
+  - network/cloudengine/ce.py
+  - network/cnos/cnos.py
+  - network/cnos/cnos_devicerules.py
+  - network/cnos/cnos_errorcodes.py
+  - network/dellos10/dellos10.py
+  - network/dellos6/dellos6.py
+  - network/dellos9/dellos9.py
+  - network/edgeos/edgeos.py
+  - network/edgeswitch/edgeswitch.py
+  - network/edgeswitch/edgeswitch_interface.py
+  - network/enos/enos.py
+  - network/eric_eccli/eric_eccli.py
+  - network/exos/argspec/facts/facts.py
+  - network/exos/argspec/l2_interfaces/l2_interfaces.py
+  - network/exos/argspec/lldp_global/lldp_global.py
+  - network/exos/argspec/lldp_interfaces/lldp_interfaces.py
+  - network/exos/argspec/vlans/vlans.py
+  - network/exos/config/l2_interfaces/l2_interfaces.py
+  - network/exos/config/lldp_global/lldp_global.py
+  - network/exos/config/lldp_interfaces/lldp_interfaces.py
+  - network/exos/config/vlans/vlans.py
+  - network/exos/exos.py
+  - network/exos/facts/facts.py
+  - network/exos/facts/l2_interfaces/l2_interfaces.py
+  - network/exos/facts/legacy/base.py
+  - network/exos/facts/lldp_global/lldp_global.py
+  - network/exos/facts/lldp_interfaces/lldp_interfaces.py
+  - network/exos/facts/vlans/vlans.py
+  - network/f5/iworkflow.py
+  - network/f5/legacy.py
+  - network/fortianalyzer/fortianalyzer.py
+  - network/fortimanager/fortimanager.py
+  - network/fortios/argspec/facts/facts.py
+  - network/fortios/argspec/system/system.py
+  - network/fortios/facts/facts.py
+  - network/fortios/facts/system/system.py
+  - network/fortios/fortios.py
+  - network/frr/frr.py
+  - network/frr/providers/cli/config/base.py
+  - network/frr/providers/cli/config/bgp/address_family.py
+  - network/frr/providers/cli/config/bgp/neighbors.py
+  - network/frr/providers/cli/config/bgp/process.py
+  - network/frr/providers/module.py
+  - network/frr/providers/providers.py
+  - network/ftd/configuration.py
+  - network/ftd/device.py
+  - network/ftd/fdm_swagger_client.py
+  - network/ftd/operation.py
+  - network/icx/icx.py
+  - network/ironware/ironware.py
+  - network/meraki/meraki.py
+  - network/netscaler/netscaler.py
+  - network/netvisor/netvisor.py
+  - network/netvisor/pn_nvos.py
+  - network/nos/nos.py
+  - network/nso/nso.py
+  - network/onyx/onyx.py
+  - network/ordnance/ordnance.py
+  - network/panos/panos.py
+  - network/routeros/routeros.py
+  - network/slxos/slxos.py
+  - network/sros/sros.py
+  - network/voss/voss.py
+  - oneandone.py
+  - oneview.py
+  - online.py
+  - opennebula.py
+  - oracle/oci_utils.py
+  - ovirt.py
+  - postgres.py
+  - pure.py
+  - pycompat24.py
+  - rabbitmq.py
+  - rax.py
+  - redfish_utils.py
+  - redhat.py
+  - remote_management/dellemc/dellemc_idrac.py
+  - remote_management/dellemc/ome.py
+  - scaleway.py
+  - source_control/bitbucket.py
+  - storage/emc/emc_vnx.py
+  - storage/hpe3par/hpe3par.py
+  - univention_umc.py
+  - utm_utils.py
+  - vca.py
+  - vexata.py
+  - vmware.py
+  - vmware_httpapi/VmwareRestModule.py
+  - vmware_rest_client.py
+  - vmware_spbm.py
+  - vultr.py
+  - xenserver.py
   modules:
   - cloud/alicloud/_ali_instance_facts.py
   - cloud/alicloud/ali_instance.py
@@ -1116,6 +1267,7 @@ general:
   - database/postgresql/postgresql_table.py
   - database/postgresql/postgresql_tablespace.py
   - database/postgresql/postgresql_user.py
+  - database/postgresql/postgresql_user_obj_stat_info.py
   - database/proxysql/proxysql_backend_servers.py
   - database/proxysql/proxysql_global_variables.py
   - database/proxysql/proxysql_manage_config.py
@@ -1134,6 +1286,7 @@ general:
   - files/assemble.py
   - files/ini_file.py
   - files/iso_extract.py
+  - files/patch.py
   - files/read_csv.py
   - files/synchronize.py
   - files/xattr.py
@@ -1761,7 +1914,10 @@ general:
   - notification/flowdock.py
   - notification/grove.py
   - notification/hipchat.py
+  - notification/irc.py
+  - notification/jabber.py
   - notification/logentries_msg.py
+  - notification/mail.py
   - notification/matrix.py
   - notification/mattermost.py
   - notification/mqtt.py
@@ -1843,6 +1999,8 @@ general:
   - remote_management/hpilo/hponcfg.py
   - remote_management/imc/imc_rest.py
   - remote_management/intersight/intersight_info.py
+  - remote_management/ipmi/ipmi_boot.py
+  - remote_management/ipmi/ipmi_power.py
   - remote_management/lxca/lxca_cmms.py
   - remote_management/lxca/lxca_nodes.py
   - remote_management/manageiq/manageiq_alert_profiles.py
@@ -2042,6 +2200,7 @@ general:
   - system/svc.py
   - system/sysctl.py
   - system/syspatch.py
+  - system/timezone.py
   - system/ufw.py
   - system/vdo.py
   - system/xfconf.py
@@ -2303,217 +2462,50 @@ general:
   - windows/win_whoami.py
   - windows/win_xml.ps1
   - windows/win_xml.py
-  module_utils:
-  - acme.py
-  - alicloud_ecs.py
-  - aws/acm.py
-  - aws/batch.py
-  - aws/cloudfront_facts.py
-  - aws/direct_connect.py
-  - aws/elb_utils.py
-  - aws/elbv2.py
-  - aws/iam.py
-  - aws/rds.py
-  - aws/s3.py
-  - aws/waf.py
-  - aws/waiters.py
-  - cloud.py
-  - cloudscale.py
-  - cloudstack.py
-  - crypto.py
-  - database.py
-  - digital_ocean.py
-  - dimensiondata.py
-  - distro/_distro.py
-  - docker/swarm.py
-  - ec2.py
-  - exoscale.py
-  - f5_utils.py
-  - firewalld.py
-  - gcdns.py
-  - gce.py
-  - gcp.py
-  - gitlab.py
-  - hcloud.py
-  - heroku.py
-  - hetzner.py
-  - hwc_utils.py
-  - ibm_sa_utils.py
-  - identity/keycloak/keycloak.py
-  - infinibox.py
-  - influxdb.py
-  - ipa.py
-  - ismount.py
-  - k8s/scale.py
-  - known_hosts.py
-  - kubevirt.py
-  - ldap.py
-  - linode.py
-  - lxd.py
-  - manageiq.py
-  - memset.py
-  - mysql.py
-  - network/a10/a10.py
-  - network/aireos/aireos.py
-  - network/aos/aos.py
-  - network/apconos/apconos.py
-  - network/aruba/aruba.py
-  - network/asa/asa.py
-  - network/avi/ansible_utils.py
-  - network/avi/avi.py
-  - network/avi/avi_api.py
-  - network/bigswitch/bigswitch.py
-  - network/cloudengine/ce.py
-  - network/cnos/cnos.py
-  - network/cnos/cnos_devicerules.py
-  - network/cnos/cnos_errorcodes.py
-  - network/common/cfg/base.py
-  - network/common/facts/facts.py
-  - network/common/network.py
-  - network/common/parsing.py
-  - network/dellos10/dellos10.py
-  - network/dellos6/dellos6.py
-  - network/dellos9/dellos9.py
-  - network/edgeos/edgeos.py
-  - network/edgeswitch/edgeswitch.py
-  - network/edgeswitch/edgeswitch_interface.py
-  - network/enos/enos.py
-  - network/eric_eccli/eric_eccli.py
-  - network/exos/argspec/facts/facts.py
-  - network/exos/argspec/l2_interfaces/l2_interfaces.py
-  - network/exos/argspec/lldp_global/lldp_global.py
-  - network/exos/argspec/lldp_interfaces/lldp_interfaces.py
-  - network/exos/argspec/vlans/vlans.py
-  - network/exos/config/l2_interfaces/l2_interfaces.py
-  - network/exos/config/lldp_global/lldp_global.py
-  - network/exos/config/lldp_interfaces/lldp_interfaces.py
-  - network/exos/config/vlans/vlans.py
-  - network/exos/exos.py
-  - network/exos/facts/facts.py
-  - network/exos/facts/l2_interfaces/l2_interfaces.py
-  - network/exos/facts/legacy/base.py
-  - network/exos/facts/lldp_global/lldp_global.py
-  - network/exos/facts/lldp_interfaces/lldp_interfaces.py
-  - network/exos/facts/vlans/vlans.py
-  - network/f5/iworkflow.py
-  - network/f5/legacy.py
-  - network/fortianalyzer/fortianalyzer.py
-  - network/fortimanager/fortimanager.py
-  - network/fortios/argspec/facts/facts.py
-  - network/fortios/argspec/system/system.py
-  - network/fortios/facts/facts.py
-  - network/fortios/facts/system/system.py
-  - network/fortios/fortios.py
-  - network/frr/frr.py
-  - network/frr/providers/cli/config/base.py
-  - network/frr/providers/cli/config/bgp/address_family.py
-  - network/frr/providers/cli/config/bgp/neighbors.py
-  - network/frr/providers/cli/config/bgp/process.py
-  - network/frr/providers/module.py
-  - network/frr/providers/providers.py
-  - network/ftd/configuration.py
-  - network/ftd/device.py
-  - network/ftd/fdm_swagger_client.py
-  - network/ftd/operation.py
-  - network/icx/icx.py
-  - network/ironware/ironware.py
-  - network/meraki/meraki.py
-  - network/netscaler/netscaler.py
-  - network/netvisor/netvisor.py
-  - network/netvisor/pn_nvos.py
-  - network/nos/nos.py
-  - network/nso/nso.py
-  - network/onyx/onyx.py
-  - network/ordnance/ordnance.py
-  - network/panos/panos.py
-  - network/restconf/restconf.py
-  - network/routeros/routeros.py
-  - network/slxos/slxos.py
-  - network/sros/sros.py
-  - network/voss/voss.py
-  - oneandone.py
-  - oneview.py
-  - online.py
-  - opennebula.py
-  - oracle/oci_utils.py
-  - ovirt.py
-  - postgres.py
-  - pure.py
-  - pycompat24.py
-  - rabbitmq.py
-  - rax.py
-  - redfish_utils.py
-  - redhat.py
-  - remote_management/dellemc/dellemc_idrac.py
-  - remote_management/dellemc/ome.py
-  - scaleway.py
-  - source_control/bitbucket.py
-  - storage/emc/emc_vnx.py
-  - storage/hpe3par/hpe3par.py
-  - univention_umc.py
-  - utm_utils.py
-  - vca.py
-  - vexata.py
-  - vmware.py
-  - vmware_httpapi/VmwareRestModule.py
-  - vmware_rest_client.py
-  - vmware_spbm.py
-  - vultr.py
-  - xenserver.py
-  connection:
-  - aws_ssm.py
-  - buildah.py
-  - chroot.py
-  - docker.py
-  - funcd.py
-  - iocage.py
-  - jail.py
-  - kubectl.py
-  - libvirt_lxc.py
-  - lxc.py
-  - lxd.py
-  - oc.py
-  - podman.py
-  - qubes.py
-  - saltstack.py
-  - vmware_tools.py
-  - zone.py
-  terminal:
+  action:
   - aireos.py
-  - apconos.py
   - aruba.py
   - asa.py
+  - assemble.py
+  - aws_s3.py
   - ce.py
+  - ce_template.py
   - cnos.py
   - dellos10.py
   - dellos6.py
   - dellos9.py
-  - edgeos.py
-  - edgeswitch.py
+  - edgeos_config.py
   - enos.py
-  - eric_eccli.py
   - exos.py
-  - frr.py
-  - icx.py
+  - fortios_config.py
   - ironware.py
-  - netvisor.py
-  - nos.py
-  - onyx.py
-  - routeros.py
+  - nos_config.py
+  - onyx_config.py
+  - patch.py
   - slxos.py
   - sros.py
+  - synchronize.py
+  - telnet.py
   - voss.py
-  filter:
-  - gcp_kms_filters.py
-  - ipaddr.py
-  - json_query.py
-  - k8s.py
-  httpapi:
-  - exos.py
-  - fortianalyzer.py
-  - fortimanager.py
-  - ftd.py
-  - vmware.py
+  - win_copy.py
+  - win_reboot.py
+  - win_template.py
+  - win_updates.py
+  become:
+  - doas.py
+  - dzdo.py
+  - ksu.py
+  - machinectl.py
+  - pbrun.py
+  - pfexec.py
+  - pmrun.py
+  - runas.py
+  - sesu.py
+  cache:
+  - base.py
+  - memcached.py
+  - mongodb.py
+  - redis.py
   callback:
   - actionable.py
   - aws_resource_actions.py
@@ -2521,6 +2513,7 @@ general:
   - cgroup_perf_recap.py
   - context_demo.py
   - counter_enabled.py
+  - debug.py
   - dense.py
   - foreman.py
   - full_skip.py
@@ -2547,34 +2540,7 @@ general:
   - syslog_json.py
   - timer.py
   - unixy.py
-  action:
-  - aireos.py
-  - aruba.py
-  - asa.py
-  - assemble.py
-  - aws_s3.py
-  - ce.py
-  - ce_template.py
-  - cnos.py
-  - dellos10.py
-  - dellos6.py
-  - dellos9.py
-  - edgeos_config.py
-  - enos.py
-  - exos.py
-  - fortios_config.py
-  - ironware.py
-  - nos_config.py
-  - onyx_config.py
-  - slxos.py
-  - sros.py
-  - synchronize.py
-  - telnet.py
-  - voss.py
-  - win_copy.py
-  - win_reboot.py
-  - win_template.py
-  - win_updates.py
+  - yaml.py
   cliconf:
   - aireos.py
   - apconos.py
@@ -2599,6 +2565,24 @@ general:
   - routeros.py
   - slxos.py
   - voss.py
+  connection:
+  - aws_ssm.py
+  - buildah.py
+  - chroot.py
+  - docker.py
+  - funcd.py
+  - iocage.py
+  - jail.py
+  - kubectl.py
+  - libvirt_lxc.py
+  - lxc.py
+  - lxd.py
+  - oc.py
+  - podman.py
+  - qubes.py
+  - saltstack.py
+  - vmware_tools.py
+  - zone.py
   doc_fragments:
   - VmwareRestModule.py
   - VmwareRestModule_filters.py
@@ -2698,16 +2682,38 @@ general:
   - vultr.py
   - xenserver.py
   - zabbix.py
-  become:
-  - doas.py
-  - dzdo.py
-  - ksu.py
-  - machinectl.py
-  - pbrun.py
-  - pfexec.py
-  - pmrun.py
-  - runas.py
-  - sesu.py
+  filter:
+  - gcp_kms_filters.py
+  - ipaddr.py
+  - json_query.py
+  - k8s.py
+  - random_mac.py
+  httpapi:
+  - exos.py
+  - fortianalyzer.py
+  - fortimanager.py
+  - ftd.py
+  - vmware.py
+  inventory:
+  - aws_ec2.py
+  - aws_rds.py
+  - cloudscale.py
+  - docker_machine.py
+  - docker_swarm.py
+  - foreman.py
+  - gitlab_runners.py
+  - hcloud.py
+  - k8s.py
+  - kubevirt.py
+  - linode.py
+  - netbox.py
+  - nmap.py
+  - online.py
+  - openshift.py
+  - scaleway.py
+  - virtualbox.py
+  - vmware_vm_inventory.py
+  - vultr.py
   lookup:
   - _openshift.py
   - avi.py
@@ -2751,118 +2757,37 @@ general:
   netconf:
   - ce.py
   - sros.py
-  inventory:
-  - aws_ec2.py
-  - aws_rds.py
-  - cloudscale.py
-  - docker_machine.py
-  - docker_swarm.py
-  - foreman.py
-  - gitlab_runners.py
-  - hcloud.py
-  - k8s.py
-  - kubevirt.py
-  - linode.py
-  - netbox.py
-  - nmap.py
-  - online.py
-  - openshift.py
-  - scaleway.py
-  - virtualbox.py
-  - vmware_vm_inventory.py
-  - vultr.py
-  cache:
-  - base.py
-  - mongodb.py
-  - redis.py
   shell:
   - csh.py
   - fish.py
-  #scripts:
-  #- contrib/inventory/abiquo.ini
-  #- contrib/inventory/abiquo.py
-  #- contrib/inventory/apache-libcloud.py
-  #- contrib/inventory/apstra_aos.ini
-  #- contrib/inventory/apstra_aos.py
-  #- contrib/inventory/azure_rm.ini
-  #- contrib/inventory/azure_rm.py
-  #- contrib/inventory/brook.ini
-  #- contrib/inventory/brook.py
-  #- contrib/inventory/cloudforms.ini
-  #- contrib/inventory/cloudforms.py
-  #- contrib/inventory/cloudstack.ini
-  #- contrib/inventory/cloudstack.py
-  #- contrib/inventory/cobbler.ini
-  #- contrib/inventory/cobbler.py
-  #- contrib/inventory/collins.ini
-  #- contrib/inventory/collins.py
-  #- contrib/inventory/consul_io.ini
-  #- contrib/inventory/consul_io.py
-  #- contrib/inventory/digital_ocean.ini
-  #- contrib/inventory/digital_ocean.py
-  #- contrib/inventory/docker.py
-  #- contrib/inventory/docker.yml
-  #- contrib/inventory/ec2.ini
-  #- contrib/inventory/ec2.py
-  #- contrib/inventory/fleet.py
-  #- contrib/inventory/foreman.ini
-  #- contrib/inventory/foreman.py
-  #- contrib/inventory/freeipa.py
-  #- contrib/inventory/gce.ini
-  #- contrib/inventory/gce.py
-  #- contrib/inventory/infoblox.py
-  #- contrib/inventory/infoblox.yaml
-  #- contrib/inventory/jail.py
-  #- contrib/inventory/landscape.py
-  #- contrib/inventory/libcloud.ini
-  #- contrib/inventory/libvirt_lxc.py
-  #- contrib/inventory/linode.ini
-  #- contrib/inventory/linode.py
-  #- contrib/inventory/lxc_inventory.py
-  #- contrib/inventory/lxd.ini
-  #- contrib/inventory/lxd.py
-  #- contrib/inventory/mdt.ini
-  #- contrib/inventory/mdt_dynamic_inventory.py
-  #- contrib/inventory/nagios_livestatus.ini
-  #- contrib/inventory/nagios_livestatus.py
-  #- contrib/inventory/nagios_ndo.ini
-  #- contrib/inventory/nagios_ndo.py
-  #- contrib/inventory/nsot.py
-  #- contrib/inventory/nsot.yaml
-  #- contrib/inventory/openshift.py
-  #- contrib/inventory/openstack.yml
-  #- contrib/inventory/openstack_inventory.py
-  #- contrib/inventory/openvz.py
-  #- contrib/inventory/ovirt.ini
-  #- contrib/inventory/ovirt.py
-  #- contrib/inventory/ovirt4.py
-  #- contrib/inventory/packet_net.ini
-  #- contrib/inventory/packet_net.py
-  #- contrib/inventory/proxmox.py
-  #- contrib/inventory/rackhd.py
-  #- contrib/inventory/rax.ini
-  #- contrib/inventory/rax.py
-  #- contrib/inventory/rhv.py
-  #- contrib/inventory/rudder.ini
-  #- contrib/inventory/rudder.py
-  #- contrib/inventory/scaleway.ini
-  #- contrib/inventory/scaleway.py
-  #- contrib/inventory/serf.py
-  #- contrib/inventory/softlayer.py
-  #- contrib/inventory/spacewalk.ini
-  #- contrib/inventory/spacewalk.py
-  #- contrib/inventory/ssh_config.py
-  #- contrib/inventory/stacki.py
-  #- contrib/inventory/stacki.yml
-  #- contrib/inventory/vagrant.py
-  #- contrib/inventory/vbox.py
-  #- contrib/inventory/vmware.ini
-  #- contrib/inventory/vmware.py
-  #- contrib/inventory/vmware_inventory.ini
-  #- contrib/inventory/vmware_inventory.py
-  #- contrib/inventory/zabbix.ini
-  #- contrib/inventory/zabbix.py
-  #- contrib/inventory/zone.py
+  strategy:
+  - debug.py
+  - host_pinned.py
+  terminal:
+  - aireos.py
+  - apconos.py
+  - aruba.py
+  - asa.py
+  - ce.py
+  - cnos.py
+  - dellos10.py
+  - dellos6.py
+  - dellos9.py
+  - edgeos.py
+  - edgeswitch.py
+  - enos.py
+  - eric_eccli.py
+  - exos.py
+  - frr.py
+  - icx.py
+  - ironware.py
+  - netvisor.py
+  - nos.py
+  - onyx.py
+  - routeros.py
+  - slxos.py
+  - sros.py
+  - voss.py
 grafana:
   modules:
   - monitoring/grafana/grafana_dashboard.py
