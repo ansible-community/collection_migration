@@ -104,6 +104,7 @@ _core:
   - csharp/Ansible.Become.cs
   - csharp/Ansible.Privilege.cs
   - csharp/Ansible.Process.cs
+  - distro/*
   - ecs/api.py
   - facts/ansible_collector.py
   - facts/collector.py
@@ -187,6 +188,7 @@ _core:
   - powershell/Ansible.ModuleUtils.SID.psm1
   - powershell/Ansible.ModuleUtils.WebRequest.psm1
   - service.py
+  - six/*
   - splitter.py
   - urls.py
   - yumdnf.py
