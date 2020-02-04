@@ -164,12 +164,21 @@ class UpdateNWO:
 
             # globs are FUN ...
             if '*' in rule['matcher']:
+
                 mpaths = rule['matcher'].split('/')
                 zipped = list(itertools.zip_longest(mpaths, ppaths))
                 bad = [False for x in zipped if x[0] != x[1] and x[0] != '*']
+
                 if not bad:
                     matched_rules.append(rule)
                     continue
+
+            # globs are MORE FUN ...
+            if '*' in rule['matcher']:
+                if re.match(rule['matcher'], plugin_relpath):
+                    matched_rules.append(rule)
+                    continue
+
 
         if len(matched_rules) == 1:
             return (matched_rules[0]['namespace'], matched_rules[0]['name'], matched_rules[0])        
