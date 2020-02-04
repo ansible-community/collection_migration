@@ -192,6 +192,7 @@ _core:
   - yumdnf.py
   connection:
   - local.py
+  - paramiko_ssh.py
   - psrp.py
   - ssh.py
   - winrm.py

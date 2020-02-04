@@ -2515,7 +2515,6 @@ general:
   - lxc.py
   - lxd.py
   - oc.py
-  - paramiko_ssh.py
   - podman.py
   - qubes.py
   - saltstack.py
