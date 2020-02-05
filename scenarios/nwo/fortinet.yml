@@ -3,6 +3,10 @@ fortios:
   - fortios.py
   httpapi:
   - fortios.py
+  module_utils:
+  - network/fortimanager/__init__.py
+  - network/fortimanager/common.py
+  - network/fortimanager/fortimanager.py
   modules:
   - network/fortios/fortios_address.py
   - network/fortios/fortios_alertemail_setting.py

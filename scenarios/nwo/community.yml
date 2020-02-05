@@ -310,11 +310,13 @@ general:
   - cloudscale.py
   - cloudstack.py
   - compat/__init__.py
+  - compat/ipaddresses.py
   - crypto.py
   - database.py
   - digital_ocean.py
   - dimensiondata.py
   - docker/__init__.py
+  - docker/common.py
   - docker/swarm.py
   - ec2.py
   - ecs/__init__.py
@@ -338,6 +340,8 @@ general:
   - ipa.py
   - ismount.py
   - k8s/__init__.py
+  - k8s/common.py
+  - k8s/raw.py
   - k8s/scale.py
   - known_hosts.py
   - kubevirt.py
@@ -350,6 +354,7 @@ general:
   - net_tools/__init__.py
   - net_tools/netbox/__init__.py
   - net_tools/nios/__init__.py
+  - net_tools/nios/api.py
   - network/__init__.py
   - network/a10/__init__.py
   - network/a10/a10.py
@@ -430,10 +435,10 @@ general:
   - network/f5/__init__.py
   - network/f5/iworkflow.py
   - network/f5/legacy.py
+  - network/f5/urls.py
   - network/fortianalyzer/__init__.py
+  - network/fortianalyzer/common.py
   - network/fortianalyzer/fortianalyzer.py
-  - network/fortimanager/__init__.py
-  - network/fortimanager/fortimanager.py
   - network/fortios/__init__.py
   - network/fortios/argspec/__init__.py
   - network/fortios/argspec/facts/__init__.py
@@ -487,6 +492,7 @@ general:
   - network/routeros/__init__.py
   - network/routeros/routeros.py
   - network/skydive/__init__.py
+  - network/skydive/api.py
   - network/slxos/__init__.py
   - network/slxos/slxos.py
   - network/sros/__init__.py
@@ -502,6 +508,7 @@ general:
   - ovirt.py
   - parsing/__init__.py
   - podman/__init__.py
+  - podman/common.py
   - postgres.py
   - pure.py
   - pycompat24.py
@@ -514,6 +521,7 @@ general:
   - remote_management/dellemc/dellemc_idrac.py
   - remote_management/dellemc/ome.py
   - remote_management/lxca/__init__.py
+  - remote_management/lxca/common.py
   - scaleway.py
   - source_control/__init__.py
   - source_control/bitbucket.py
