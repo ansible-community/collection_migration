@@ -19,6 +19,8 @@ jobs:
         runner-python-version:
         - 3.8
     steps:
+    - name: Check out ${{ github.repository }} on disk
+      uses: actions/checkout@master
     - name: Set up Python ${{ matrix.runner-python-version }}
       uses: actions/setup-python@v1
       with:
