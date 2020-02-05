@@ -243,15 +243,15 @@ def actually_remove(checkout_path, namespace, collection):
     init_files = set()
     for path in REMOVE:
         actual_devel_path = os.path.relpath(path, checkout_path)
-        if actual_devel_path.startswith('lib/ansible/modules') and actual_devel_path.endswith('__init__.py'):
+        if actual_devel_path.endswith('__init__.py'):
             init_files.add(path)
             continue
 
         subprocess.check_call(('git', 'rm', '-f', actual_devel_path), cwd=checkout_path)
         new_sanity_ignore.pop(actual_devel_path, None)
 
-    # process the __init__.py files from module dirs now that all files are removed,
-    # that way we can check if there are no modules left in the dirs they are in
+    # process the __init__.py files from dirs now that all files are removed,
+    # that way we can check if there are no files left in the dirs they are in
     # so we can remove __init__.py as well
     for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
         if os.listdir(os.path.dirname(init)) != ['__init__.py']:
