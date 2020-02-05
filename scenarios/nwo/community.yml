@@ -310,7 +310,7 @@ general:
   - cloudscale.py
   - cloudstack.py
   - compat/__init__.py
-  - compat/ipaddresses.py
+  - compat/ipaddress.py
   - crypto.py
   - database.py
   - digital_ocean.py
