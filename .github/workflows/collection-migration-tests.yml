@@ -8,8 +8,36 @@ on:
   - cron: 53 */4 * * *  # At minute 53 past every 4th hour.
 
 jobs:
+  prepare-migration:
+    name: pre:lock-core-hash
+    runs-on: ubuntu-latest
+    env:
+      CORE_REPO_SLUG: ansible/ansible
+
+    steps:
+    - name: Figure out the last commit hash @ HEAD of ${{ env.CORE_REPO_SLUG }}
+      run: >-
+        git ls-remote git://github.com/${{ env.CORE_REPO_SLUG }}.git HEAD
+        |
+        awk '{print$1}'
+        >
+        ansible-core-ref.lock
+    - name: Set CORE_REPO_REF env var
+      run: >-
+        echo "::set-env name=CORE_REPO_REF::$(cat ansible-core-ref.lock)"
+    - name: >-
+        Persist the lock file with
+        ${{ env.CORE_REPO_SLUG }}@${{ env.CORE_REPO_REF }}
+        hash
+      uses: actions/upload-artifact@v1
+      with:
+        name: ansible-core-ref
+        path: ansible-core-ref.lock
+
   migrate-collections:
-    name: ${{ matrix.migration-scenario }}:migrate+build
+    name: ${{ matrix.migration-scenario }}:build-migrated
+    needs:
+    - prepare-migration
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -21,8 +49,19 @@ jobs:
         migration-scenario:
         - base
         - mintest
+    env:
+      CORE_REPO_SLUG: ansible/ansible
+
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/download-artifact@v1
+      with:
+        name: ansible-core-ref
+        path: .
+    - name: Set CORE_REPO_REF env var
+      run: >-
+        echo "::set-env name=CORE_REPO_REF::$(cat ansible-core-ref.lock)"
+    - name: Check out the src
+      uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
@@ -43,8 +82,8 @@ jobs:
       run: sudo apt install parallel
     - name: Install migration script deps
       run: python -m pip install -r requirements.in -c requirements.txt
-    - name: Install Ansible==devel
-      run: python -m pip install git+https://github.com/ansible/ansible.git@devel
+    - name: Install Ansible==${{ env.CORE_REPO_REF }}
+      run: python -m pip install git+https://github.com/ansible/ansible.git@${{ env.CORE_REPO_REF }}
     - name: Configure user settings in Git
       run: |
         git config --global user.email "ansible_migration@example.com"
