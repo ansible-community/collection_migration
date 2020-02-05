@@ -432,6 +432,7 @@ general:
   - network/exos/facts/vlans/__init__.py
   - network/exos/facts/vlans/vlans.py
   - network/exos/utils/__init__.py
+  - network/exos/utils/utils.py
   - network/f5/__init__.py
   - network/f5/iworkflow.py
   - network/f5/legacy.py

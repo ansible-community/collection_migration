@@ -1,4 +1,0 @@
-sensu_go:
-  module_utils:
-  - network/exos/utils/utils.py
-  - network/nxos/utils/utils.py
