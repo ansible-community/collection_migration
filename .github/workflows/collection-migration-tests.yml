@@ -21,7 +21,6 @@ jobs:
         migration-scenario:
         - base
         - mintest
-        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
@@ -145,7 +144,6 @@ jobs:
         migration-scenario:
         - base
         - mintest
-        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
@@ -210,7 +208,6 @@ jobs:
         migration-scenario:
         - base
         - mintest
-        - stdlib
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
