@@ -83,7 +83,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ github.ref }}-sanity-VMs
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
@@ -149,7 +149,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ github.ref }}-sanity-containers
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
@@ -214,7 +214,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ github.ref }}-units-VMs
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
@@ -277,7 +277,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ github.ref }}-units-containers
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
