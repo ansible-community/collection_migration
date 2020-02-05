@@ -182,7 +182,6 @@ _core:
     - system/sysvinit.py
     - system/timezone.py
     - system/user.py
-    - utilities/helper/_accelerate.py
     - utilities/helper/meta.py
     - utilities/logic/assert.py
     - utilities/logic/async_status.py

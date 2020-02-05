@@ -512,13 +512,7 @@ moveitallout:
     - cloud/alicloud/ali_instance.py
     - cloud/alicloud/ali_instance_info.py
     - cloud/amazon/__init__.py
-    - cloud/amazon/_ec2_ami_find.py
-    - cloud/amazon/_ec2_ami_search.py
-    - cloud/amazon/_ec2_facts.py
-    - cloud/amazon/_ec2_remote_facts.py
-    - cloud/amazon/_ec2_vpc.py
     - cloud/amazon/_lambda_facts.py
-    - cloud/amazon/_s3.py
     - cloud/amazon/aws_acm.py
     - cloud/amazon/aws_acm_info.py
     - cloud/amazon/aws_api_gateway.py
@@ -725,7 +719,6 @@ moveitallout:
     - cloud/atomic/atomic_host.py
     - cloud/atomic/atomic_image.py
     - cloud/azure/__init__.py
-    - cloud/azure/_azure.py
     - cloud/azure/azure_rm_acs.py
     - cloud/azure/azure_rm_aks.py
     - cloud/azure/azure_rm_aks_info.py
@@ -913,7 +906,6 @@ moveitallout:
     - cloud/cloudscale/cloudscale_volume.py
     - cloud/cloudstack/__init__.py
     - cloud/cloudstack/_cs_instance_facts.py
-    - cloud/cloudstack/_cs_nic.py
     - cloud/cloudstack/_cs_zone_facts.py
     - cloud/cloudstack/cs_account.py
     - cloud/cloudstack/cs_affinitygroup.py
@@ -995,7 +987,6 @@ moveitallout:
     - cloud/dimensiondata/dimensiondata_network.py
     - cloud/dimensiondata/dimensiondata_vlan.py
     - cloud/docker/__init__.py
-    - cloud/docker/_docker.py
     - cloud/docker/docker_compose.py
     - cloud/docker/docker_config.py
     - cloud/docker/docker_container.py
@@ -1279,7 +1270,6 @@ moveitallout:
     - cloud/opennebula/one_service.py
     - cloud/opennebula/one_vm.py
     - cloud/openstack/__init__.py
-    - cloud/openstack/_os_server_actions.py
     - cloud/openstack/os_auth.py
     - cloud/openstack/os_client_config.py
     - cloud/openstack/os_coe_cluster.py
@@ -1509,7 +1499,6 @@ moveitallout:
     - cloud/vmware/_vmware_target_canonical_facts.py
     - cloud/vmware/_vmware_vmkernel_facts.py
     - cloud/vmware/_vmware_vswitch_facts.py
-    - cloud/vmware/_vsphere_guest.py
     - cloud/vmware/vca_fw.py
     - cloud/vmware/vca_nat.py
     - cloud/vmware/vca_vapp.py
@@ -1698,14 +1687,12 @@ moveitallout:
     - clustering/consul/consul_session.py
     - clustering/etcd3.py
     - clustering/k8s/__init__.py
-    - clustering/k8s/_kubernetes.py
     - clustering/k8s/k8s.py
     - clustering/k8s/k8s_auth.py
     - clustering/k8s/k8s_info.py
     - clustering/k8s/k8s_scale.py
     - clustering/k8s/k8s_service.py
     - clustering/openshift/__init__.py
-    - clustering/openshift/_oc.py
     - clustering/pacemaker_cluster.py
     - clustering/znode.py
     - commands/__init__.py
@@ -1718,7 +1705,6 @@ moveitallout:
     - commands/telnet.py
     - crypto/__init__.py
     - crypto/acme/__init__.py
-    - crypto/acme/_letsencrypt.py
     - crypto/acme/acme_account.py
     - crypto/acme/acme_account_info.py
     - crypto/acme/acme_certificate.py
@@ -1792,6 +1778,7 @@ moveitallout:
     - database/postgresql/postgresql_table.py
     - database/postgresql/postgresql_tablespace.py
     - database/postgresql/postgresql_user.py
+    - database/postgresql/postgresql_user_obj_stat_info.py
     - database/proxysql/__init__.py
     - database/proxysql/proxysql_backend_servers.py
     - database/proxysql/proxysql_global_variables.py
@@ -2092,18 +2079,6 @@ moveitallout:
     - network/aireos/aireos_command.py
     - network/aireos/aireos_config.py
     - network/aos/__init__.py
-    - network/aos/_aos_asn_pool.py
-    - network/aos/_aos_blueprint.py
-    - network/aos/_aos_blueprint_param.py
-    - network/aos/_aos_blueprint_virtnet.py
-    - network/aos/_aos_device.py
-    - network/aos/_aos_external_router.py
-    - network/aos/_aos_ip_pool.py
-    - network/aos/_aos_logical_device.py
-    - network/aos/_aos_logical_device_map.py
-    - network/aos/_aos_login.py
-    - network/aos/_aos_rack_type.py
-    - network/aos/_aos_template.py
     - network/apconos/__init__.py
     - network/apconos/apconos_command.py
     - network/aruba/__init__.py
@@ -2285,7 +2260,6 @@ moveitallout:
     - network/check_point/cp_mgmt_wildcard_facts.py
     - network/check_point/cp_publish.py
     - network/citrix/__init__.py
-    - network/citrix/_netscaler.py
     - network/cli/__init__.py
     - network/cli/cli_command.py
     - network/cli/cli_config.py
@@ -2397,13 +2371,6 @@ moveitallout:
     - network/cnos/cnos_vlan.py
     - network/cnos/cnos_vrf.py
     - network/cumulus/__init__.py
-    - network/cumulus/_cl_bond.py
-    - network/cumulus/_cl_bridge.py
-    - network/cumulus/_cl_img_install.py
-    - network/cumulus/_cl_interface.py
-    - network/cumulus/_cl_interface_policy.py
-    - network/cumulus/_cl_license.py
-    - network/cumulus/_cl_ports.py
     - network/cumulus/nclu.py
     - network/dellos10/__init__.py
     - network/dellos10/dellos10_command.py
@@ -3333,13 +3300,9 @@ moveitallout:
     - network/nuage/nuage_vspk.py
     - network/nxos/__init__.py
     - network/nxos/_nxos_interface.py
-    - network/nxos/_nxos_ip_interface.py
     - network/nxos/_nxos_l2_interface.py
     - network/nxos/_nxos_l3_interface.py
     - network/nxos/_nxos_linkagg.py
-    - network/nxos/_nxos_mtu.py
-    - network/nxos/_nxos_portchannel.py
-    - network/nxos/_nxos_switchport.py
     - network/nxos/_nxos_vlan.py
     - network/nxos/nxos_aaa_server.py
     - network/nxos/nxos_aaa_server_host.py
@@ -3482,7 +3445,6 @@ moveitallout:
     - network/panos/_panos_loadcfg.py
     - network/panos/_panos_match_rule.py
     - network/panos/_panos_mgtconfig.py
-    - network/panos/_panos_nat_policy.py
     - network/panos/_panos_nat_rule.py
     - network/panos/_panos_object.py
     - network/panos/_panos_op.py
@@ -3490,7 +3452,6 @@ moveitallout:
     - network/panos/_panos_query_rules.py
     - network/panos/_panos_restart.py
     - network/panos/_panos_sag.py
-    - network/panos/_panos_security_policy.py
     - network/panos/_panos_security_rule.py
     - network/panos/_panos_set.py
     - network/protocol/__init__.py
@@ -4048,7 +4009,6 @@ moveitallout:
     - system/xfs_quota.py
     - utilities/__init__.py
     - utilities/helper/__init__.py
-    - utilities/helper/_accelerate.py
     - utilities/helper/meta.py
     - utilities/logic/__init__.py
     - utilities/logic/assert.py
@@ -4127,7 +4087,6 @@ moveitallout:
     - web_infrastructure/supervisorctl.py
     - web_infrastructure/taiga_issue.py
     - windows/__init__.py
-    - windows/_win_msi.py
     - windows/async_status.ps1
     - windows/setup.ps1
     - windows/slurp.ps1
