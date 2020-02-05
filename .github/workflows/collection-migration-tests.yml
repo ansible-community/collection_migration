@@ -1,4 +1,4 @@
-name: Collection migration smoke test suite
+name: Smoke test suite
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   migrate-collections:
-    name: Smoke-test migration
+    name: ${{ matrix.migration-scenario }}:migrate+build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -131,7 +131,7 @@ jobs:
         path: .cache/collection-tarballs
 
   sanity-test-collections:
-    name: Run sanity tests in collections
+    name: ${{ matrix.migration-scenario }}:migrated:sanity
     needs:
     - migrate-collections
     runs-on: ${{ matrix.os }}
@@ -196,7 +196,7 @@ jobs:
           done
 
   unit-test-collections:
-    name: Run unit tests in collections
+    name: ${{ matrix.migration-scenario }}:migrated:units
     needs:
     - migrate-collections
     runs-on: ${{ matrix.os }}
