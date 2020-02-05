@@ -574,87 +574,32 @@ not_a_real_collection:
     - net_tools/ipinfoio_facts.py
     - net_tools/ldap/*
     - net_tools/lldp.py
-    - net_tools/netbox/__init__.py
-    - net_tools/netbox/netbox_device.py
-    - net_tools/netbox/netbox_interface.py
-    - net_tools/netbox/netbox_ip_address.py
-    - net_tools/netbox/netbox_prefix.py
-    - net_tools/netbox/netbox_site.py
+    - net_tools/netbox/*
     - net_tools/netcup_dns.py
-    - net_tools/nios/__init__.py
-    - net_tools/nios/nios_a_record.py
-    - net_tools/nios/nios_aaaa_record.py
-    - net_tools/nios/nios_cname_record.py
-    - net_tools/nios/nios_dns_view.py
-    - net_tools/nios/nios_fixed_address.py
-    - net_tools/nios/nios_host_record.py
-    - net_tools/nios/nios_member.py
-    - net_tools/nios/nios_mx_record.py
-    - net_tools/nios/nios_naptr_record.py
-    - net_tools/nios/nios_network.py
-    - net_tools/nios/nios_network_view.py
-    - net_tools/nios/nios_nsgroup.py
-    - net_tools/nios/nios_ptr_record.py
-    - net_tools/nios/nios_srv_record.py
-    - net_tools/nios/nios_txt_record.py
-    - net_tools/nios/nios_zone.py
+    - net_tools/nios/*
     - net_tools/nmcli.py
     - net_tools/nsupdate.py
     - net_tools/omapi_host.py
     - net_tools/snmp_facts.py
     - network/__init__.py
-    - network/a10/__init__.py
-    - network/a10/a10_server.py
-    - network/a10/a10_server_axapi3.py
-    - network/a10/a10_service_group.py
-    - network/a10/a10_virtual_server.py
+    - network/a10/*
     - network/aci/*
-    - network/aireos/__init__.py
-    - network/aireos/aireos_command.py
-    - network/aireos/aireos_config.py
-    - network/aos/__init__.py
-    - network/aos/_aos_asn_pool.py
-    - network/aos/_aos_blueprint.py
-    - network/aos/_aos_blueprint_param.py
-    - network/aos/_aos_blueprint_virtnet.py
-    - network/aos/_aos_device.py
-    - network/aos/_aos_external_router.py
-    - network/aos/_aos_ip_pool.py
-    - network/aos/_aos_logical_device.py
-    - network/aos/_aos_logical_device_map.py
-    - network/aos/_aos_login.py
-    - network/aos/_aos_rack_type.py
-    - network/aos/_aos_template.py
+    - network/aireos/*
+    - network/aos/*
     - network/apconos/*
-    - network/aruba/__init__.py
-    - network/aruba/aruba_command.py
-    - network/aruba/aruba_config.py
-    - network/asa/__init__.py
-    - network/asa/asa_acl.py
-    - network/asa/asa_command.py
-    - network/asa/asa_config.py
-    - network/asa/asa_og.py
+    - network/aruba/*
+    - network/asa/*
     - network/avi/*
     - network/bigswitch/*
     - network/check_point/*
-    - network/citrix/__init__.py
-    - network/citrix/_netscaler.py
+    - network/citrix/*
     - network/cli/__init__.py
     - network/cli/cli_command.py
     - network/cli/cli_config.py
     - network/cloudengine/*
-    - network/cloudvision/__init__.py
-    - network/cloudvision/cv_server_provision.py
+    - network/cloudvision/*
     - network/cnos/*
-    - network/cumulus/__init__.py
-    - network/cumulus/_cl_bond.py
-    - network/cumulus/_cl_bridge.py
-    - network/cumulus/_cl_img_install.py
-    - network/cumulus/_cl_interface.py
-    - network/cumulus/_cl_interface_policy.py
-    - network/cumulus/_cl_license.py
-    - network/cumulus/_cl_ports.py
-    - network/cumulus/nclu.py
+    - network/cumulus/*
     - network/dellos10/__init__.py
     - network/dellos10/dellos10_command.py
     - network/dellos10/dellos10_config.py
@@ -1492,15 +1437,10 @@ not_a_real_collection:
     - network/meraki/*
     - network/netconf/__init__.py
     - network/netconf/netconf.py
-    - network/netscaler/__init__.py
-    - network/netscaler/netscaler.py
-    - network/netvisor/__init__.py
-    - network/netvisor/netvisor.py
-    - network/netvisor/pn_nvos.py
-    - network/nos/__init__.py
-    - network/nos/nos.py
-    - network/nso/__init__.py
-    - network/nso/nso.py
+    - network/netscaler/*
+    - network/netvisor/*
+    - network/nos/*
+    - network/nso/*
     - network/nxos/*
     - network/nxos/*/*
     - network/nxos/*/*/*
@@ -1574,17 +1514,7 @@ not_a_real_collection:
     - podman/__init__.py
     - podman/common.py
     - postgres.py
-    - powershell/Ansible.ModuleUtils.AddType.psm1
-    - powershell/Ansible.ModuleUtils.ArgvParser.psm1
-    - powershell/Ansible.ModuleUtils.Backup.psm1
-    - powershell/Ansible.ModuleUtils.CamelConversion.psm1
-    - powershell/Ansible.ModuleUtils.CommandUtil.psm1
-    - powershell/Ansible.ModuleUtils.FileUtil.psm1
-    - powershell/Ansible.ModuleUtils.Legacy.psm1
-    - powershell/Ansible.ModuleUtils.LinkUtil.psm1
-    - powershell/Ansible.ModuleUtils.PrivilegeUtil.psm1
-    - powershell/Ansible.ModuleUtils.SID.psm1
-    - powershell/Ansible.ModuleUtils.WebRequest.psm1
+    - powershell/Ansible.ModuleUtils.*.psm1
     - powershell/__init__.py
     - pure.py
     - rabbitmq.py
@@ -1592,12 +1522,9 @@ not_a_real_collection:
     - redfish_utils.py
     - redhat.py
     - remote_management/__init__.py
-    - remote_management/dellemc/__init__.py
-    - remote_management/dellemc/dellemc_idrac.py
-    - remote_management/dellemc/ome.py
+    - remote_management/dellemc/*
     - remote_management/intersight.py
-    - remote_management/lxca/__init__.py
-    - remote_management/lxca/common.py
+    - remote_management/lxca/*
     - remote_management/ucs.py
     - scaleway.py
     - service_now.py
@@ -1618,4 +1545,3 @@ not_a_real_collection:
     - vmware_spbm.py
     - vultr.py
     - xenserver.py
-    
