@@ -25,6 +25,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.runner-python-version }}
+    - name: Set up pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
@@ -71,6 +79,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set up pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
@@ -129,6 +145,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.runner-python-version }}
+    - name: Set up pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
@@ -186,6 +210,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set up pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
@@ -241,6 +273,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.runner-python-version }}
+    - name: Set up pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('tests/sanity/requirements.txt') }}-${{ hashFiles('tests/unit/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
     - name: Install Ansible ${{ matrix.ansible-version }}
       run: >-
         python -m
