@@ -177,7 +177,6 @@ general:
   - ldap.py
   - lxca_common.py
   - manageiq.py
-  - meraki.py
   - mso.py
   - mysql.py
   - netscaler.py
@@ -473,8 +472,6 @@ general:
   - network/ingate/__init__.py
   - network/ironware/__init__.py
   - network/ironware/ironware.py
-  - network/meraki/__init__.py
-  - network/meraki/meraki.py
   - network/netscaler/__init__.py
   - network/netscaler/netscaler.py
   - network/netvisor/__init__.py
@@ -1747,7 +1744,6 @@ general:
   - files/xml.py
   - identity/__init__.py
   - identity/_onepassword_facts.py
-  - identity/cyberark/__init__.py
   - identity/ipa/__init__.py
   - identity/ipa/ipa_config.py
   - identity/ipa/ipa_dnsrecord.py
@@ -2249,7 +2245,6 @@ general:
   - network/itential/__init__.py
   - network/itential/iap_start_workflow.py
   - network/itential/iap_token.py
-  - network/meraki/__init__.py
   - network/netact/__init__.py
   - network/netact/netact_cm_command.py
   - network/netscaler/__init__.py
@@ -2771,7 +2766,6 @@ general:
   - web_infrastructure/__init__.py
   - web_infrastructure/_jenkins_job_facts.py
   - web_infrastructure/_nginx_status_facts.py
-  - web_infrastructure/ansible_tower/__init__.py
   - web_infrastructure/apache2_mod_proxy.py
   - web_infrastructure/apache2_module.py
   - web_infrastructure/deploy_helper.py

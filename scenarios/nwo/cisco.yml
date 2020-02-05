@@ -114,6 +114,10 @@ iosxr:
   terminal:
   - iosxr.py
 meraki:
+  doc_fragments:
+  - meraki.py
+  module_utils:
+  - network/meraki/meraki.py
   modules:
   - network/meraki/meraki_admin.py
   - network/meraki/meraki_config_template.py
