@@ -316,7 +316,6 @@ _general:
     - system/syspatch.py
     - system/vdo.py
     - system/xfconf.py
-    - utilities/helper/_accelerate.py
     - utilities/logic/set_stats.py
     - web_infrastructure/_jenkins_job_facts.py
     - web_infrastructure/apache2_mod_proxy.py
