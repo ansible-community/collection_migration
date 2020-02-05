@@ -338,6 +338,7 @@ moveitallout:
     - k8s.py
     - mathstuff.py
     - network.py
+    - random_mac.py
     - urls.py
     - urlsplit.py
   httpapi:
@@ -650,6 +651,7 @@ moveitallout:
     - cloud/amazon/ecs_ecr.py
     - cloud/amazon/ecs_service.py
     - cloud/amazon/ecs_service_info.py
+    - cloud/amazon/ecs_tag.py
     - cloud/amazon/ecs_task.py
     - cloud/amazon/ecs_taskdefinition.py
     - cloud/amazon/ecs_taskdefinition_info.py
@@ -1337,6 +1339,7 @@ moveitallout:
     - cloud/ovh/__init__.py
     - cloud/ovh/ovh_ip_failover.py
     - cloud/ovh/ovh_ip_loadbalancing_backend.py
+    - cloud/ovh/ovh_monthly_billing.py
     - cloud/ovirt/__init__.py
     - cloud/ovirt/ovirt_affinity_group.py
     - cloud/ovirt/ovirt_affinity_label.py
@@ -4392,6 +4395,7 @@ moveitallout:
     - common/text/converters.py
     - common/text/formatters.py
     - common/validation.py
+    - common/warnings.py
     - compat/__init__.py
     - compat/ipaddress.py
     - compat/paramiko.py

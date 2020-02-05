@@ -108,6 +108,7 @@ _general:
     - virtualbox.py
     filter:
     - json_query.py
+    - random_mac.py
     modules:
     - cloud/atomic/*
     - cloud/centurylink/*

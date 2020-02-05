@@ -102,6 +102,7 @@ _core:
     - compat/__init__.py
     - compat/paramiko.py
     - distro/__init__.py
+    - distro/_distro.py
     - facts/__init__.py
     - facts/ansible_collector.py
     - facts/collector.py

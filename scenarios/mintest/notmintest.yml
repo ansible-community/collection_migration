@@ -280,6 +280,7 @@ not_a_real_collection:
     - json_query.py
     - k8s.py
     - network.py
+    - random_mac.py
   httpapi:
     - checkpoint.py
     - eos.py
