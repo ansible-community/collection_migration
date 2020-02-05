@@ -1,4 +1,12 @@
 eos:
+  action:
+  - eos.py
+  cliconf:
+  - eos.py
+  doc_fragments:
+  - eos.py
+  httpapi:
+  - eos.py
   module_utils:
   - network/eos/*
   - network/eos/*/*
@@ -8,12 +16,4 @@ eos:
   modules:
   - network/eos/*
   terminal:
-  - eos.py
-  httpapi:
-  - eos.py
-  action:
-  - eos.py
-  cliconf:
-  - eos.py
-  doc_fragments:
   - eos.py

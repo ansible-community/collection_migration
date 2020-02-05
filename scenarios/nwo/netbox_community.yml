@@ -1,8 +1,8 @@
 ansible_modules:
+  module_utils:
+  - net_tools/netbox/netbox_utils.py
   modules:
   - net_tools/netbox/netbox_device.py
   - net_tools/netbox/netbox_ip_address.py
   - net_tools/netbox/netbox_prefix.py
   - net_tools/netbox/netbox_site.py
-  module_utils:
-  - net_tools/netbox/netbox_utils.py

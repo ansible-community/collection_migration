@@ -1,17 +1,17 @@
 junos:
-  module_utils:
-  - network/junos/*
-  - network/junos/*/*
-  - network/junos/*/*/*
-  modules:
-  - network/junos/*
-  terminal:
-  - junos.py
   action:
   - junos.py
   cliconf:
   - junos.py
   doc_fragments:
   - junos.py
+  module_utils:
+  - network/junos/*
+  - network/junos/*/*
+  - network/junos/*/*/*
+  modules:
+  - network/junos/*
   netconf:
+  - junos.py
+  terminal:
   - junos.py

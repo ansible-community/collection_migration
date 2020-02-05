@@ -1,4 +1,12 @@
 mgmt:
+  doc_fragments:
+  - checkpoint_commands.py
+  - checkpoint_facts.py
+  - checkpoint_objects.py
+  httpapi:
+  - checkpoint.py
+  module_utils:
+  - network/checkpoint/checkpoint.py
   modules:
   - network/check_point/cp_mgmt_access_layer.py
   - network/check_point/cp_mgmt_access_layer_facts.py
@@ -89,11 +97,3 @@ mgmt:
   - network/check_point/cp_mgmt_vpn_community_star_facts.py
   - network/check_point/cp_mgmt_wildcard.py
   - network/check_point/cp_mgmt_wildcard_facts.py
-  module_utils:
-  - network/checkpoint/checkpoint.py
-  httpapi:
-  - checkpoint.py
-  doc_fragments:
-  - checkpoint_commands.py
-  - checkpoint_facts.py
-  - checkpoint_objects.py

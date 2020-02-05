@@ -1,4 +1,8 @@
 awx:
+  inventory:
+  - tower.py
+  module_utils:
+  - ansible_tower.py
   modules:
   - web_infrastructure/ansible_tower/tower_credential.py
   - web_infrastructure/ansible_tower/tower_credential_type.py
@@ -23,7 +27,3 @@ awx:
   - web_infrastructure/ansible_tower/tower_user.py
   - web_infrastructure/ansible_tower/tower_workflow_launch.py
   - web_infrastructure/ansible_tower/tower_workflow_template.py
-  module_utils:
-  - ansible_tower.py
-  inventory:
-  - tower.py

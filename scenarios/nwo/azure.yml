@@ -1,4 +1,10 @@
 azcollection:
+  inventory:
+  - azure_rm.py
+  module_utils:
+  - azure_rm_common.py
+  - azure_rm_common_ext.py
+  - azure_rm_common_rest.py
   modules:
   - cloud/azure/_azure_rm_dnsrecordset_facts.py
   - cloud/azure/_azure_rm_dnszone_facts.py
@@ -18,9 +24,3 @@ azcollection:
   - cloud/azure/azure_rm_subnet.py
   - cloud/azure/azure_rm_virtualmachine.py
   - cloud/azure/azure_rm_virtualnetwork.py
-  module_utils:
-  - azure_rm_common.py
-  - azure_rm_common_ext.py
-  - azure_rm_common_rest.py
-  inventory:
-  - azure_rm.py

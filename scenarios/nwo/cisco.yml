@@ -1,4 +1,6 @@
 aci:
+  module_utils:
+  - network/aci/aci.py
   modules:
   - network/aci/aci_aaa_user.py
   - network/aci/aci_aaa_user_certificate.py
@@ -67,17 +69,21 @@ aci:
   - network/aci/aci_vlan_pool_encap_block.py
   - network/aci/aci_vmm_credential.py
   - network/aci/aci_vrf.py
-  module_utils:
-  - network/aci/aci.py
 intersight:
+  doc_fragments:
+  - intersight.py
+  module_utils:
+  - remote_management/intersight.py
   modules:
   - remote_management/intersight/_intersight_facts.py
   - remote_management/intersight/intersight_rest_api.py
-  module_utils:
-  - remote_management/intersight.py
-  doc_fragments:
-  - intersight.py
 ios:
+  action:
+  - ios.py
+  cliconf:
+  - ios.py
+  doc_fragments:
+  - ios.py
   module_utils:
   - network/ios/*
   - network/ios/*/*
@@ -88,13 +94,13 @@ ios:
   - network/ios/*
   terminal:
   - ios.py
-  action:
-  - ios.py
-  cliconf:
-  - ios.py
-  doc_fragments:
-  - ios.py
 iosxr:
+  action:
+  - iosxr.py
+  cliconf:
+  - iosxr.py
+  doc_fragments:
+  - iosxr.py
   module_utils:
   - network/iosxr/*
   - network/iosxr/*/*
@@ -103,15 +109,9 @@ iosxr:
   - network/iosxr/*/*/*/*/*
   modules:
   - network/iosxr/*
-  terminal:
-  - iosxr.py
-  action:
-  - iosxr.py
-  cliconf:
-  - iosxr.py
-  doc_fragments:
-  - iosxr.py
   netconf:
+  - iosxr.py
+  terminal:
   - iosxr.py
 meraki:
   modules:
@@ -135,6 +135,8 @@ meraki:
   - network/meraki/meraki_vlan.py
   - network/meraki/meraki_webhook.py
 mso:
+  module_utils:
+  - network/aci/mso.py
   modules:
   - network/aci/mso_label.py
   - network/aci/mso_role.py
@@ -169,16 +171,7 @@ mso:
   - network/aci/mso_site.py
   - network/aci/mso_tenant.py
   - network/aci/mso_user.py
-  module_utils:
-  - network/aci/mso.py
 nxos:
-  module_utils:
-  - network/nxos/*
-  - network/nxos/*/*
-  - network/nxos/*/*/*
-  modules:
-  - network/nxos/*
-  - network/nxos/*/*
   action:
   - nxos.py
   - nxos_file_copy.py
@@ -188,9 +181,20 @@ nxos:
   - nxos.py
   httpapi:
   - nxos.py
+  module_utils:
+  - network/nxos/*
+  - network/nxos/*/*
+  - network/nxos/*/*/*
+  modules:
+  - network/nxos/*
+  - network/nxos/*/*
   terminal:
   - nxos.py
 ucs:
+  doc_fragments:
+  - ucs.py
+  module_utils:
+  - remote_management/ucs.py
   modules:
   - remote_management/ucs/ucs_ip_pool.py
   - remote_management/ucs/ucs_mac_pool.py
@@ -199,7 +203,3 @@ ucs:
   - remote_management/ucs/ucs_service_profile_template.py
   - remote_management/ucs/ucs_uuid_pool.py
   - remote_management/ucs/ucs_vlans.py
-  module_utils:
-  - remote_management/ucs.py
-  doc_fragments:
-  - ucs.py

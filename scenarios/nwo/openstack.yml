@@ -1,4 +1,10 @@
 cloud:
+  doc_fragments:
+  - openstack.py
+  inventory:
+  - openstack.py
+  module_utils:
+  - openstack.py
   modules:
   - cloud/openstack/os_auth.py
   - cloud/openstack/os_client_config.py
@@ -54,9 +60,3 @@ cloud:
   - cloud/openstack/os_volume.py
   - cloud/openstack/os_volume_snapshot.py
   - cloud/openstack/os_zone.py
-  module_utils:
-  - openstack.py
-  doc_fragments:
-  - openstack.py
-  inventory:
-  - openstack.py

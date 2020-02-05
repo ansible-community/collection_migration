@@ -1,4 +1,8 @@
 fortios:
+  doc_fragments:
+  - fortios.py
+  httpapi:
+  - fortios.py
   modules:
   - network/fortios/fortios_address.py
   - network/fortios/fortios_alertemail_setting.py
@@ -423,7 +427,3 @@ fortios:
   - network/fortios/fortios_wireless_controller_wtp.py
   - network/fortios/fortios_wireless_controller_wtp_group.py
   - network/fortios/fortios_wireless_controller_wtp_profile.py
-  httpapi:
-  - fortios.py
-  doc_fragments:
-  - fortios.py

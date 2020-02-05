@@ -1,4 +1,8 @@
 cloud:
+  inventory:
+  - gcp_compute.py
+  module_utils:
+  - gcp_utils.py
   modules:
   - cloud/google/gcp_appengine_firewall_rule.py
   - cloud/google/gcp_appengine_firewall_rule_info.py
@@ -150,7 +154,3 @@ cloud:
   - cloud/google/gcp_storage_object.py
   - cloud/google/gcp_tpu_node.py
   - cloud/google/gcp_tpu_node_info.py
-  module_utils:
-  - gcp_utils.py
-  inventory:
-  - gcp_compute.py

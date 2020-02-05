@@ -1,4 +1,10 @@
 vyos:
+  action:
+  - vyos.py
+  cliconf:
+  - vyos.py
+  doc_fragments:
+  - vyos.py
   module_utils:
   - network/vyos/*
   - network/vyos/*/*
@@ -6,10 +12,4 @@ vyos:
   modules:
   - network/vyos/*
   terminal:
-  - vyos.py
-  action:
-  - vyos.py
-  cliconf:
-  - vyos.py
-  doc_fragments:
   - vyos.py

@@ -1,9 +1,31 @@
 f5_modules:
+  action:
+  - bigip.py
+  - bigiq.py
+  doc_fragments:
+  - f5.py
+  module_utils:
+  - compat/ipaddress.py
+  - docker/common.py
+  - k8s/common.py
+  - network/f5/bigip.py
+  - network/f5/bigiq.py
+  - network/f5/common.py
+  - network/f5/compare.py
+  - network/f5/icontrol.py
+  - network/f5/ipaddress.py
+  - network/fortianalyzer/common.py
+  - network/fortimanager/common.py
+  - network/ftd/common.py
+  - network/ingate/common.py
+  - podman/common.py
+  - remote_management/lxca/common.py
   modules:
   - network/f5/bigip_apm_acl.py
   - network/f5/bigip_apm_network_access.py
   - network/f5/bigip_apm_policy_fetch.py
   - network/f5/bigip_apm_policy_import.py
+  - network/f5/bigip_appsvcs_extension.py
   - network/f5/bigip_asm_dos_application.py
   - network/f5/bigip_asm_policy_fetch.py
   - network/f5/bigip_asm_policy_import.py
@@ -160,26 +182,5 @@ f5_modules:
   - network/f5/bigiq_regkey_pool.py
   - network/f5/bigiq_utility_license.py
   - network/f5/bigiq_utility_license_assignment.py
-  module_utils:
-  - compat/ipaddress.py
-  - docker/common.py
-  - k8s/common.py
-  - network/f5/bigip.py
-  - network/f5/bigiq.py
-  - network/f5/common.py
-  - network/f5/compare.py
-  - network/f5/icontrol.py
-  - network/f5/ipaddress.py
-  - network/fortianalyzer/common.py
-  - network/fortimanager/common.py
-  - network/ftd/common.py
-  - network/ingate/common.py
-  - podman/common.py
-  - remote_management/lxca/common.py
   terminal:
   - bigip.py
-  action:
-  - bigip.py
-  - bigiq.py
-  doc_fragments:
-  - f5.py
