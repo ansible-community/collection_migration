@@ -1810,12 +1810,9 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
 
 
 def rewrite_yaml(src, dest, namespace, collection, spec, args, checkout_dir):
-    try:
-        contents = read_ansible_yaml_file(src)
-        _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir)
-        write_ansible_yaml_into_file_as_is(dest, contents)
-    except Exception as e:
-        logger.error('Skipping bad YAML in %s: %s', src, str(e))
+    contents = read_ansible_yaml_file(src)
+    _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir)
+    write_ansible_yaml_into_file_as_is(dest, contents)
 
 
 def _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir):
