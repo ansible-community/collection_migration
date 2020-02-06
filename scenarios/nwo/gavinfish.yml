@@ -1,6 +1,5 @@
 azuretest:
   modules:
-  - cloud/azure/_azure.py
   - cloud/azure/_azure_rm_aks_facts.py
   - cloud/azure/_azure_rm_aksversion_facts.py
   - cloud/azure/_azure_rm_applicationsecuritygroup_facts.py
