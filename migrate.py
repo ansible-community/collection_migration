@@ -1286,9 +1286,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     if do_preserve_subdirs:
                         os.makedirs(os.path.dirname(dest), exist_ok=True)
 
-                    if not os.path.exists(src):
-                        raise Exception('Spec specifies "%s" but file "%s" is not found in checkout' % (plugin, src))
-
                     if os.path.islink(src):
                         process_symlink(plugin_type, plugins, dest, src)
                         # don't rewrite symlinks, original file should already be handled
