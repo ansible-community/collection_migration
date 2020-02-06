@@ -7,6 +7,7 @@ import configparser
 import contextlib
 import functools
 import glob
+import importlib.util
 import itertools
 import logging
 import os
@@ -19,7 +20,6 @@ import yaml
 
 from collections import defaultdict
 from collections.abc import Mapping
-from importlib import import_module
 from string import Template
 from typing import Any, Dict, Iterable, Set, Union
 
@@ -1702,7 +1702,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                     # FIXME
                     shutil.copy2(src, dest)
                 elif ext in ('.yml', '.yaml'):
-                    rewrite_yaml(src, dest, namespace, collection, spec, args)
+                    rewrite_yaml(src, dest, namespace, collection, spec, args, checkout_dir)
                 elif ext in ('.sh',):
                     rewrite_sh(src, dest, namespace, collection, spec, args)
                 elif filename == 'ansible.cfg':
@@ -1811,29 +1811,29 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
         config.set(section, keyword, ','.join(new_plugin_names))
 
 
-def rewrite_yaml(src, dest, namespace, collection, spec, args):
+def rewrite_yaml(src, dest, namespace, collection, spec, args, checkout_dir):
     try:
         contents = read_ansible_yaml_file(src)
-        _rewrite_yaml(contents, namespace, collection, spec, args, dest)
+        _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir)
         write_ansible_yaml_into_file_as_is(dest, contents)
     except Exception as e:
         logger.error('Skipping bad YAML in %s: %s', src, str(e))
 
 
-def _rewrite_yaml(contents, namespace, collection, spec, args, dest):
+def _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir):
     if isinstance(contents, list):
         for el in contents:
-            _rewrite_yaml(el, namespace, collection, spec, args, dest)
+            _rewrite_yaml(el, namespace, collection, spec, args, dest, checkout_dir)
     elif isinstance(contents, Mapping):
-        _rewrite_yaml_mapping(contents, namespace, collection, spec, args, dest)
+        _rewrite_yaml_mapping(contents, namespace, collection, spec, args, dest, checkout_dir)
 
 
-def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest):
+def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest, checkout_dir):
     assert isinstance(el, Mapping)
 
     _rewrite_yaml_mapping_keys_vars(el, namespace, collection, spec, args, dest)
     _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest)
-    _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest)
+    _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest, checkout_dir)
 
 
 def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest):
@@ -1925,7 +1925,7 @@ def _rewrite_yaml_mapping_keys_vars(el, namespace, collection, spec, args, dest)
             _rewrite_yaml_mapping_value(namespace, collection, el, key, VARNAMES_TO_PLUGIN_MAP[key], spec, args, dest)
 
 
-def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
+def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest, checkout_dir):
     for key, value in el.items():
         if isinstance(value, Mapping):
             if key == 'vars':
@@ -1935,7 +1935,7 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
         elif isinstance(value, list):
             for idx, item in enumerate(value):
                 if isinstance(item, Mapping):
-                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec, args, dest)
+                    _rewrite_yaml_mapping(el[key][idx], namespace, collection, spec, args, dest, checkout_dir)
                 else:
                     if key == 'module_blacklist':
                         for ns in spec.keys():
@@ -1950,12 +1950,12 @@ def _rewrite_yaml_mapping_values(el, namespace, collection, spec, args, dest):
                                     integration_tests_add_to_deps((namespace, collection), (ns, coll))
                     if isinstance(el[key][idx], str):
                         el[key][idx] = _rewrite_yaml_lookup(el[key][idx], namespace, collection, spec, args)
-                        el[key][idx] = _rewrite_yaml_filter(el[key][idx], namespace, collection, spec, args)
-                        el[key][idx] = _rewrite_yaml_test(el[key][idx], namespace, collection, spec, args)
+                        el[key][idx] = _rewrite_yaml_filter(el[key][idx], namespace, collection, spec, args, checkout_dir)
+                        el[key][idx] = _rewrite_yaml_test(el[key][idx], namespace, collection, spec, args, checkout_dir)
         elif isinstance(value, str):
             el[key] = _rewrite_yaml_lookup(el[key], namespace, collection, spec, args)
-            el[key] = _rewrite_yaml_filter(el[key], namespace, collection, spec, args)
-            el[key] = _rewrite_yaml_test(el[key], namespace, collection, spec, args)
+            el[key] = _rewrite_yaml_filter(el[key], namespace, collection, spec, args, checkout_dir)
+            el[key] = _rewrite_yaml_test(el[key], namespace, collection, spec, args, checkout_dir)
 
 
 def _rewrite_yaml_lookup(value, namespace, collection, spec, args):
@@ -1979,13 +1979,17 @@ def _rewrite_yaml_lookup(value, namespace, collection, spec, args):
     return value
 
 
-def _rewrite_yaml_filter(value, namespace, collection, spec, args):
+def _rewrite_yaml_filter(value, namespace, collection, spec, args, checkout_dir):
     if '|' not in value:
         return value
     for ns in spec.keys():
         for coll in get_rewritable_collections(ns, spec):
             for filter_plugin_name in get_plugins_from_collection(ns, coll, 'filter', spec):
-                imported_module = import_module('ansible.plugins.filter.' + filter_plugin_name)
+                module_name = f'ansible.plugins.filter.{filter_plugin_name}'
+                module_location = os.path.join(checkout_dir, 'lib/ansible/plugins/filter/', f'{filter_plugin_name}.py')
+                spec = importlib.util.spec_from_file_location(module_name, module_location)
+                imported_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(imported_module)
                 fm = getattr(imported_module, 'FilterModule', None)
                 if fm is None:
                     continue
@@ -2005,13 +2009,17 @@ def _rewrite_yaml_filter(value, namespace, collection, spec, args):
     return value
 
 
-def _rewrite_yaml_test(value, namespace, collection, spec, args):
+def _rewrite_yaml_test(value, namespace, collection, spec, args, checkout_dir):
     if ' is ' not in value:
         return value
     for ns in spec.keys():
         for coll in get_rewritable_collections(ns, spec):
             for test_plugin_name in get_plugins_from_collection(ns, coll, 'test', spec):
-                imported_module = import_module('ansible.plugins.test.' + test_plugin_name)
+                module_name = f'ansible.plugins.test.{test_plugin_name}'
+                module_location = os.path.join(checkout_dir, 'lib/ansible/plugins/test/', f'{test_plugin_name}.py')
+                spec = importlib.util.spec_from_file_location(module_name, module_location)
+                imported_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(imported_module)
                 tm = getattr(imported_module, 'TestModule', None)
                 if tm is None:
                     continue
