@@ -1985,9 +1985,9 @@ def _rewrite_yaml_filter(value, namespace, collection, spec, args, checkout_dir)
             for filter_plugin_name in get_plugins_from_collection(ns, coll, 'filter', spec):
                 module_name = f'ansible.plugins.filter.{filter_plugin_name}'
                 module_location = os.path.join(checkout_dir, 'lib/ansible/plugins/filter/', f'{filter_plugin_name}.py')
-                spec = importlib.util.spec_from_file_location(module_name, module_location)
-                imported_module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(imported_module)
+                module_spec = importlib.util.spec_from_file_location(module_name, module_location)
+                imported_module = importlib.util.module_from_spec(module_spec)
+                module_spec.loader.exec_module(imported_module)
                 fm = getattr(imported_module, 'FilterModule', None)
                 if fm is None:
                     continue
@@ -2015,9 +2015,9 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args, checkout_dir):
             for test_plugin_name in get_plugins_from_collection(ns, coll, 'test', spec):
                 module_name = f'ansible.plugins.test.{test_plugin_name}'
                 module_location = os.path.join(checkout_dir, 'lib/ansible/plugins/test/', f'{test_plugin_name}.py')
-                spec = importlib.util.spec_from_file_location(module_name, module_location)
-                imported_module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(imported_module)
+                module_spec = importlib.util.spec_from_file_location(module_name, module_location)
+                imported_module = importlib.util.module_from_spec(module_spec)
+                module_spec.loader.exec_module(imported_module)
                 tm = getattr(imported_module, 'TestModule', None)
                 if tm is None:
                     continue
