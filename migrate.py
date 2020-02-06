@@ -209,13 +209,30 @@ def add_manual_check(key, value, filename):
     manual_check[filename].append((key, value))
 
 
-def checkout_repo( git_url: str, checkout_path: str, *, refresh: bool = False,) -> Set[str]:
+def checkout_repo(
+        git_url: str, checkout_path: str,
+        *,
+        refresh: bool = False,
+) -> Set[str]:
     """Fetch and optionally refresh the repo."""
     if not os.path.exists(checkout_path):
-        subprocess.check_call(('git', 'clone', git_url, checkout_path))
-    elif refresh:
+        git_clone_cmd = 'git', 'clone', git_url, checkout_path
+        logger.info('Running "%s"', git_clone_cmd)
+        subprocess.check_call(git_clone_cmd)
+
+    target_ref = DEVEL_BRANCH if refresh is True else refresh
+    if refresh:
+        subprocess.check_call(('git', 'fetch', 'origin'), cwd=checkout_path)
         subprocess.check_call(('git', 'checkout', DEVEL_BRANCH), cwd=checkout_path)
         subprocess.check_call(('git', 'pull', '--rebase'), cwd=checkout_path)
+
+        if target_ref:
+            logger.info('Ensuring that "%s" is checked out', target_ref)
+            git_checkout_cmd = 'git', 'checkout', target_ref
+            logger.info('Running "%s"', git_checkout_cmd)
+            subprocess.check_call(git_checkout_cmd, cwd=checkout_path)
+    else:
+        logger.info('Skipping refreshing the cached Core')
 
     return set(
         f.strip()
@@ -2059,7 +2076,7 @@ def _rewrite_yaml_test(value, namespace, collection, spec, args, checkout_dir):
 
 def setup_options(parser):
     parser.add_argument('-s', '--spec', required=True, dest='spec_dir', help='A directory spec with YAML files that describe how to organize collections')
-    parser.add_argument('-r', '--refresh', action='store_true', dest='refresh', default=False, help='force refreshing local Ansible checkout')
+    parser.add_argument('-r', '--refresh', action='store', nargs='?', const=True, dest='refresh', default=False, help='force refreshing local Ansible checkout, optionally check out specific commitish')
     parser.add_argument('-t', '--target-dir', dest='vardir', default=VARDIR, help='target directory for resulting collections and rpm')
     parser.add_argument('-p', '--preserve-module-subdirs', action='store_true', dest='preserve_module_subdirs', default=False, help='preserve module subdirs per spec')
     parser.add_argument('--github-app-id', action='store', type=int, dest='github_app_id', default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,

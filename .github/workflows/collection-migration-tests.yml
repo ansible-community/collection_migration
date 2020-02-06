@@ -94,6 +94,7 @@ jobs:
         migrate
         -m
         -s "scenarios/${{ matrix.migration-scenario }}"
+        --refresh "${{ env.CORE_REPO_REF }}"
         --skip-publish
         --convert-symlinks
     - name: Prepare user's SSH config dir
