@@ -1512,9 +1512,7 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
             )
 
 
-def push_migrated_core(releases_dir, github_api, rsa_key, spec_dir):
-    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
-
+def push_migrated_core(devel_path, github_api, rsa_key, spec_dir):
     scenario_name = os.path.basename(spec_dir.rstrip('/'))
     migrated_devel_repo_name = f'ansible-{scenario_name}'
     migrated_devel_remote = (
@@ -2077,8 +2075,7 @@ def main():
             # warn we skipped spec_file for reasons: e
             raise
 
-    releases_dir = os.path.join(args.vardir, 'releases')
-    devel_path = os.path.join(releases_dir, f'{DEVEL_BRANCH}.git')
+    devel_path = os.path.join(args.vardir, 'releases', f'{DEVEL_BRANCH}.git')
 
     global ALL_THE_FILES
     ALL_THE_FILES = checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
@@ -2135,7 +2132,7 @@ def main():
 
     if args.push_migrated_core:
         logger.info('Publishing the migrated "Core" to GitHub...')
-        push_migrated_core(releases_dir, gh_api, tmp_rsa_key, args.spec_dir)
+        push_migrated_core(devel_path, gh_api, tmp_rsa_key, args.spec_dir)
 
 ### main execution
 
