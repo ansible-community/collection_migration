@@ -509,7 +509,6 @@ general:
   - podman/common.py
   - postgres.py
   - pure.py
-  - pycompat24.py
   - rabbitmq.py
   - rax.py
   - redfish_utils.py

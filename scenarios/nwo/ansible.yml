@@ -231,6 +231,7 @@ _core:
   - powershell/Ansible.ModuleUtils.SID.psm1
   - powershell/Ansible.ModuleUtils.WebRequest.psm1
   - powershell/__init__.py
+  - pycompat24.py
   - service.py
   - six/*
   - splitter.py
