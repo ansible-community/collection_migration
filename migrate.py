@@ -124,6 +124,11 @@ REMOVE = set()
 core = {}
 manual_check = defaultdict(list)
 
+### CLASSES
+
+
+class UnmovablePathStr(str): ...
+
 
 ### FUNCTION DEFS
 
@@ -188,7 +193,6 @@ def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
     print(cmd_out)
 
 
-class UnmovablePathStr(str): ...
 
 
 def add_core(ptype, name):
