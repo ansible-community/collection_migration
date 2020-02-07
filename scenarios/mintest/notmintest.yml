@@ -805,7 +805,6 @@ not_a_real_collection:
     - notification/flowdock.py
     - notification/grove.py
     - notification/hipchat.py
-    - notification/irc.py
     - notification/logentries_msg.py
     - notification/matrix.py
     - notification/mattermost.py
