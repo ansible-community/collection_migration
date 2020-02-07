@@ -351,6 +351,7 @@ netcommon:
   httpapi:
   - restconf.py
   module_utils:
+  - compat/ipaddress.py
   - network/common/*
   - network/common/*/*
   - network/netconf/*

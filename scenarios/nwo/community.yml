@@ -308,8 +308,6 @@ general:
   - cloud.py
   - cloudscale.py
   - cloudstack.py
-  - compat/__init__.py
-  - compat/ipaddress.py
   - crypto.py
   - database.py
   - digital_ocean.py
