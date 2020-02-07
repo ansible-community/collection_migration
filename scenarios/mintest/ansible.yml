@@ -167,7 +167,6 @@ _core:
     - source_control/subversion.py
     - system/cron.py
     - system/debconf.py
-    - system/firewalld.py
     - system/gather_facts.py
     - system/getent.py
     - system/group.py

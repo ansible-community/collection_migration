@@ -806,9 +806,7 @@ not_a_real_collection:
     - notification/grove.py
     - notification/hipchat.py
     - notification/irc.py
-    - notification/jabber.py
     - notification/logentries_msg.py
-    - notification/mail.py
     - notification/matrix.py
     - notification/mattermost.py
     - notification/mqtt.py
@@ -889,8 +887,6 @@ not_a_real_collection:
     - remote_management/imc/__init__.py
     - remote_management/imc/imc_rest.py
     - remote_management/intersight/*
-    - remote_management/ipmi/ipmi_boot.py
-    - remote_management/ipmi/ipmi_power.py
     - remote_management/lxca/__init__.py
     - remote_management/lxca/lxca_cmms.py
     - remote_management/lxca/lxca_nodes.py
