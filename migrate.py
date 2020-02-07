@@ -344,6 +344,7 @@ def load_spec_file(spec_file):
 
 def resolve_spec(spec, checkoutdir):
     # TODO: add negation? entry: x/* \n entry: !x/base.py
+    files_to_collections = defaultdict(list)
     for ns in spec.keys():
         for coll in spec[ns].keys():
             for ptype in spec[ns][coll].keys():
@@ -365,6 +366,10 @@ def resolve_spec(spec, checkoutdir):
 
                         # clean out glob entry
                         spec[ns][coll][ptype].remove(entry)
+
+                # NOTE now that spec for plugins of ptype has been finalized, we can iterate again and add files for the dupe check
+                for entry in spec[ns][coll][ptype]:
+                    files_to_collections[os.path.join(plugin_base, entry)].append(coll)
 
                 def dir_to_path(path):
                     if not (os.path.isdir(path) and os.path.exists(path)):
@@ -393,6 +398,12 @@ def resolve_spec(spec, checkoutdir):
                     'are valid',
                     ptype, ns, coll,
                 )
+
+    dupes = {k: v for k, v in files_to_collections.items() if len(v) > 1}
+    if dupes:
+        err_msg = 'Each plugin needs to be assigned to one collection only. The following files are assigned to multiple collections:\n' + yaml.dump(dupes)
+        logger.error(err_msg)
+        raise RuntimeError(err_msg)
 
 
 ### GET_PLUGINS UTILS
@@ -1192,7 +1203,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
     # make initial YAML transformation to minimize the diff
     mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
-    seen = {}
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
             import_deps = []
@@ -1244,15 +1254,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 for plugin in plugins:
                     if os.path.splitext(plugin)[1] in BAD_EXT:
                         raise Exception("We should not be migrating compiled files: %s" % plugin)
-
-                    plugin_sig = '%s/%s' % (plugin_type, plugin)
-                    if plugin_sig in seen:
-                        raise ValueError(
-                            'Each plugin needs to be assigned to one collection '
-                            f'only. {plugin_sig} has already been processed as a '
-                            f'part of `{seen[plugin_sig]}` collection.'
-                        )
-                    seen[plugin_sig] = collection
 
                     # TODO: currently requires 'full name of file', but should work w/o extension?
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
