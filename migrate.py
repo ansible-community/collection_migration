@@ -1222,6 +1222,21 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
+
+            if args.limits:
+                matched = False
+                for limit in args.limits:
+                    if '.' in limit:
+                        if limit == '%s.%s' % (namespace, collection):
+                            matched = True
+                            break
+                    elif limit in namespace or limit in collection:
+                        matched = True
+                        break
+                if not matched:
+                    logger.info('%s.%s did not match filters, skipping' % (namespace, collection))
+                    continue
+
             import_deps = []
             docs_deps = []
             unit_deps = []
@@ -1861,7 +1876,7 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, d
             continue
 
         prefix = 'with_'
-        if prefix in key:
+        if isinstance(key, str) and prefix in key:
             prefix_len = len(prefix)
 
             if not key.startswith(prefix):
@@ -2096,6 +2111,7 @@ def setup_options(parser):
     parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
     parser.add_argument('--convert-symlinks', action='store_true', dest='convert_symlinks', default=False,
                         help='Convert symlinks to data copies to allow aliases to exist in different collections from original.',)
+    parser.add_argument('--limit', dest='limits', action='append', help="process only matching fqns [namespace.name] or fqcns which contain this substring")
 
 
 def main():
