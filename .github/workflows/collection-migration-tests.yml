@@ -221,7 +221,7 @@ jobs:
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
-          tar xzvf
+          tar xzvfh
           ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
     - name: >-
@@ -315,7 +315,7 @@ jobs:
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
-          tar xzvf
+          tar xzvfh
           ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
     - name: >-
