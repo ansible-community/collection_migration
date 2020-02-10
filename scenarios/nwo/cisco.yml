@@ -117,6 +117,7 @@ meraki:
   doc_fragments:
   - meraki.py
   module_utils:
+  - network/meraki/__init__.py
   - network/meraki/meraki.py
   modules:
   - network/meraki/meraki_admin.py

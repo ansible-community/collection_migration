@@ -659,6 +659,7 @@ general:
   - network/frr/providers/module.py
   - network/frr/providers/providers.py
   - network/ftd/__init__.py
+  - network/ftd/common.py
   - network/ftd/configuration.py
   - network/ftd/device.py
   - network/ftd/fdm_swagger_client.py
@@ -666,6 +667,7 @@ general:
   - network/icx/__init__.py
   - network/icx/icx.py
   - network/ingate/__init__.py
+  - network/ingate/common.py
   - network/ironware/__init__.py
   - network/ironware/ironware.py
   - network/netscaler/__init__.py
