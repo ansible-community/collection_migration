@@ -33,6 +33,7 @@ _core:
   - sudo.py
   cache:
   - __init__.py
+  - base.py
   - jsonfile.py
   - memory.py
   - pickle.py

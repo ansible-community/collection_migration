@@ -39,7 +39,6 @@ general:
   - runas.py
   - sesu.py
   cache:
-  - base.py
   - memcached.py
   - mongodb.py
   - redis.py
