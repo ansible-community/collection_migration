@@ -97,6 +97,24 @@ jobs:
         --refresh "${{ env.CORE_REPO_REF }}"
         --skip-publish
         --convert-symlinks
+    - name: >-
+        Create the tarballs dir for migrated Ansible Core
+      run: mkdir -pv .cache/migrated-core-tarballs
+    - name: >-
+        Generate tarballs out of the migrated Ansible Core
+        as per ${{ matrix.migration-scenario }}
+      run: >-
+          tar czvf
+          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/releases/devel.git
+    - name: >-
+        Store the migrated Ansible Core
+        as per ${{ matrix.migration-scenario }}
+      uses: actions/upload-artifact@v1
+      with:
+        name: >-
+          migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/migrated-core-tarballs
     - name: Prepare user's SSH config dir
       run: |
         mkdir -p ~/.ssh
