@@ -387,11 +387,6 @@ general:
   - ingate.py
   - ipa.py
   - ironware.py
-  - k8s_auth_options.py
-  - k8s_name_options.py
-  - k8s_resource_options.py
-  - k8s_scale_options.py
-  - k8s_state_options.py
   - keycloak.py
   - kubevirt_common_options.py
   - kubevirt_vm_options.py
@@ -439,7 +434,6 @@ general:
   - gcp_kms_filters.py
   - ipaddr.py
   - json_query.py
-  - k8s.py
   - random_mac.py
   httpapi:
   - exos.py
@@ -453,18 +447,15 @@ general:
   - foreman.py
   - gitlab_runners.py
   - hcloud.py
-  - k8s.py
   - kubevirt.py
   - linode.py
   - netbox.py
   - nmap.py
   - online.py
-  - openshift.py
   - scaleway.py
   - virtualbox.py
   - vultr.py
   lookup:
-  - _openshift.py
   - avi.py
   - cartesian.py
   - chef_databag.py
@@ -482,7 +473,6 @@ general:
   - gcp_storage_file.py
   - hashi_vault.py
   - hiera.py
-  - k8s.py
   - keyring.py
   - laps_password.py
   - lastpass.py
@@ -532,10 +522,6 @@ general:
   - influxdb.py
   - ipa.py
   - ismount.py
-  - k8s/__init__.py
-  - k8s/common.py
-  - k8s/raw.py
-  - k8s/scale.py
   - known_hosts.py
   - kubevirt.py
   - ldap.py
@@ -1379,17 +1365,6 @@ general:
   - clustering/consul/consul_kv.py
   - clustering/consul/consul_session.py
   - clustering/etcd3.py
-  - clustering/k8s/__init__.py
-  - clustering/k8s/_k8s_facts.py
-  - clustering/k8s/_k8s_raw.py
-  - clustering/k8s/k8s.py
-  - clustering/k8s/k8s_auth.py
-  - clustering/k8s/k8s_info.py
-  - clustering/k8s/k8s_scale.py
-  - clustering/k8s/k8s_service.py
-  - clustering/openshift/__init__.py
-  - clustering/openshift/_openshift_raw.py
-  - clustering/openshift/_openshift_scale.py
   - clustering/pacemaker_cluster.py
   - clustering/znode.py
   - commands/__init__.py
@@ -2799,3 +2774,35 @@ grafana:
   - monitoring/grafana/grafana_dashboard.py
   - monitoring/grafana/grafana_datasource.py
   - monitoring/grafana/grafana_plugin.py
+kubernetes:
+  doc_fragments:
+  - k8s_auth_options.py
+  - k8s_name_options.py
+  - k8s_resource_options.py
+  - k8s_scale_options.py
+  - k8s_state_options.py
+  filter:
+  - k8s.py
+  inventory:
+  - k8s.py
+  - openshift.py
+  lookup:
+  - _openshift.py
+  - k8s.py
+  module_utils:
+  - k8s/__init__.py
+  - k8s/common.py
+  - k8s/raw.py
+  - k8s/scale.py
+  modules:
+  - clustering/k8s/__init__.py
+  - clustering/k8s/_k8s_facts.py
+  - clustering/k8s/_k8s_raw.py
+  - clustering/k8s/k8s.py
+  - clustering/k8s/k8s_auth.py
+  - clustering/k8s/k8s_info.py
+  - clustering/k8s/k8s_scale.py
+  - clustering/k8s/k8s_service.py
+  - clustering/openshift/__init__.py
+  - clustering/openshift/_openshift_raw.py
+  - clustering/openshift/_openshift_scale.py

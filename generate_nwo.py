@@ -51,6 +51,7 @@ ghrepos = [
     # community
     'https://github.com/ansible-collections/ansible_collections_netapp',
     'https://github.com/ansible-collections/grafana',
+    'https://github.com/ansible-collections/kubernetes',
     'https://github.com/ansible-collections/ansible_collections_google',
     'https://github.com/ansible-collections/ansible_collections_azure',
     'https://github.com/ansible-collections/ibm_zos_ims',
