@@ -1558,7 +1558,8 @@ def push_migrated_core(devel_path, github_api, rsa_key, spec_dir):
         f'{migrated_devel_repo_name}.git'
     )
     git_force_push_cmd = (
-        'git', 'push', '--force', migrated_devel_remote, DEVEL_BRANCH,
+        'git', 'push', '--force',
+        migrated_devel_remote, f'HEAD:{DEVEL_BRANCH}',
     )
 
     logger.debug('Using SSH key %s...', rsa_key.public_openssh)
