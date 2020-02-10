@@ -64,6 +64,7 @@ _core:
   - inventory_cache.py
   - return_common.py
   - shell_common.py
+  - template_common.py
   - url.py
   - validate.py
   - vars_plugin_staging.py
