@@ -174,18 +174,6 @@ jobs:
         --target-github-org ansible-collection-migration
         --skip-migration
         --push-migrated-core
-    - name: Smoke test ansible repos
-      if: >-
-        github.event_name != 'pull_request'
-        && github.repository == 'ansible-community/collection_migration'
-      run: |
-        python -m venv /tmp/ansible-${{matrix.migration-scenario}}-venv
-        source /tmp/ansible-${{matrix.migration-scenario}}-venv/bin/activate
-        pip install git+https://github.com/ansible-collection-migration/ansible-${{matrix.migration-scenario}}
-        ansible --help
-        ansible --version
-        deactivate
-        rm -rf /tmp/ansible-${{matrix.migration-scenario}}-venv
 
   sanity-test-collections:
     name: ${{ matrix.migration-scenario }}:migrated:sanity
@@ -220,9 +208,39 @@ jobs:
       run: sudo apt remove --yes ansible
     - name: Uninstall previously installed Ansible via Pip
       run: python -m pip uninstall ansible
-    - name: Install Ansible==devel
+    - name: >-
+        Download migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      uses: actions/download-artifact@v1
+      with:
+        name: >-
+          migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/migrated-core-tarballs
+    - name: >-
+        Retrieve the migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+        out of the tarball artifacts
       run: >-
-        python -m pip install git+https://github.com/ansible/ansible.git@devel
+          tar xzvf
+          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/releases/devel.git
+    - name: >-
+        Install Ansible from the migrated Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        python -m
+        pip install
+        .cache/releases/devel.git
+    - name: >-
+        Help output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --help
+    - name: >-
+        Version output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --version
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
       with:
@@ -284,9 +302,39 @@ jobs:
       run: sudo apt remove --yes ansible
     - name: Uninstall previously installed Ansible via Pip
       run: python -m pip uninstall ansible
-    - name: Install Ansible==devel
+    - name: >-
+        Download migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      uses: actions/download-artifact@v1
+      with:
+        name: >-
+          migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/migrated-core-tarballs
+    - name: >-
+        Retrieve the migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+        out of the tarball artifacts
       run: >-
-        python -m pip install git+https://github.com/ansible/ansible.git@devel
+          tar xzvf
+          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/releases/devel.git
+    - name: >-
+        Install Ansible from the migrated Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        python -m
+        pip install
+        .cache/releases/devel.git
+    - name: >-
+        Help output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --help
+    - name: >-
+        Version output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --version
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
       with:
