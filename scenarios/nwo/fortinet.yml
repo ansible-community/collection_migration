@@ -7,6 +7,17 @@ fortios:
   - network/fortimanager/__init__.py
   - network/fortimanager/common.py
   - network/fortimanager/fortimanager.py
+  - network/fortios/argspec/facts/facts.py
+  - network/fortios/argspec/facts/__init__.py
+  - network/fortios/argspec/__init__.py
+  - network/fortios/argspec/system/__init__.py
+  - network/fortios/argspec/system/system.py
+  - network/fortios/facts/facts.py
+  - network/fortios/facts/__init__.py
+  - network/fortios/facts/system/__init__.py
+  - network/fortios/facts/system/system.py
+  - network/fortios/fortios.py
+  - network/fortios/__init__.py
   modules:
   - network/fortios/fortios_address.py
   - network/fortios/fortios_alertemail_setting.py
