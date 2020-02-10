@@ -117,8 +117,6 @@ _core:
   - _text.py
   - ansible_release.py
   - api.py
-  - aws/core.py
-  - aws/urls.py
   - basic.py
   - common/__init__.py
   - common/_collections_compat.py
