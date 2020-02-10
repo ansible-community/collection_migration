@@ -1,5 +1,5 @@
 epdb==0.15.1
-GitPython==3.0.5
+GitPython==3.0.7
 logzero==1.5.0
 PyYAML==5.3
 requests==2.22.0
