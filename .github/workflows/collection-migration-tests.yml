@@ -115,6 +115,28 @@ jobs:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
         path: .cache/migrated-core-tarballs
+    - name: >-
+        List the migrated collections
+      run: |
+          ls -Ral .cache/collections/
+    - name: >-
+        Generate tarballs out of migrated collections, one by one
+      run: |
+          for coll_dir in `ls .cache/collections/*/*/* -d`
+          do
+              (
+                  echo "Generating an artifact for ${coll_dir}..."
+                  cd "${coll_dir}"
+                  pwd
+                  ansible-galaxy collection build --output-path "${GITHUB_WORKSPACE}/.cache/collection-tarballs"
+              )
+          done
+    - name: Store migrated collection artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: >-
+          migrated-collections-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/collection-tarballs
     - name: Prepare user's SSH config dir
       run: |
         mkdir -p ~/.ssh
@@ -164,28 +186,6 @@ jobs:
         ansible --version
         deactivate
         rm -rf /tmp/ansible-${{matrix.migration-scenario}}-venv
-    - name: >-
-        List the migrated collections
-      run: |
-          ls -Ral .cache/collections/
-    - name: >-
-        Generate tarballs out of migrated collections, one by one
-      run: |
-          for coll_dir in `ls .cache/collections/*/*/* -d`
-          do
-              (
-                  echo "Generating an artifact for ${coll_dir}..."
-                  cd "${coll_dir}"
-                  pwd
-                  ansible-galaxy collection build --output-path "${GITHUB_WORKSPACE}/.cache/collection-tarballs"
-              )
-          done
-    - name: Store migrated collection artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: >-
-          migrated-collections-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/collection-tarballs
 
   sanity-test-collections:
     name: ${{ matrix.migration-scenario }}:migrated:sanity
