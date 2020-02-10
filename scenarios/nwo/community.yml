@@ -425,7 +425,6 @@ general:
   - rabbitmq.py
   - rackspace.py
   - scaleway.py
-  - shell_windows.py
   - skydive.py
   - sros.py
   - tower.py
