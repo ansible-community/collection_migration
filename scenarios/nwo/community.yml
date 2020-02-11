@@ -1558,7 +1558,6 @@ general:
   - monitoring/datadog/__init__.py
   - monitoring/datadog/datadog_event.py
   - monitoring/datadog/datadog_monitor.py
-  - monitoring/grafana/__init__.py
   - monitoring/honeybadger_deployment.py
   - monitoring/icinga2_feature.py
   - monitoring/icinga2_host.py
@@ -2811,6 +2810,7 @@ grafana:
   lookup:
   - grafana_dashboard.py
   modules:
+  - monitoring/grafana/__init__.py
   - monitoring/grafana/grafana_dashboard.py
   - monitoring/grafana/grafana_datasource.py
   - monitoring/grafana/grafana_plugin.py
