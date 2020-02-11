@@ -1284,6 +1284,7 @@ general:
   - cloud/softlayer/__init__.py
   - cloud/softlayer/sl_vm.py
   - cloud/spotinst/__init__.py
+  - cloud/spotinst/spotinst_aws_elastigroup.py
   - cloud/univention/__init__.py
   - cloud/univention/udm_dns_record.py
   - cloud/univention/udm_dns_zone.py

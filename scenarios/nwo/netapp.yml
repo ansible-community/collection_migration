@@ -5,6 +5,7 @@ aws:
   - netapp.py
   - netapp_module.py
   modules:
+  - cloud/amazon/aws_netapp_cvs_FileSystems.py
   - cloud/amazon/aws_netapp_cvs_active_directory.py
   - cloud/amazon/aws_netapp_cvs_pool.py
   - cloud/amazon/aws_netapp_cvs_snapshots.py
