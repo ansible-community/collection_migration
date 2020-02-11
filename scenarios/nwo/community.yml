@@ -20,6 +20,7 @@ amazon:
   - aws_ssm.py
   module_utils:
   - ec2.py
+  - aws/__init__.py
   - aws/acm.py
   - aws/batch.py
   - aws/cloudfront_facts.py
@@ -34,6 +35,7 @@ amazon:
   - aws/waf.py
   - aws/waiters.py
   modules:
+  - cloud/amazon/__init__.py
   - cloud/amazon/_aws_acm_facts.py
   - cloud/amazon/_cloudwatchlogs_log_group_facts.py
   - cloud/amazon/_ec2_snapshot_facts.py

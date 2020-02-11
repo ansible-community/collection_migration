@@ -4,6 +4,7 @@ awx:
   module_utils:
   - ansible_tower.py
   modules:
+  - web_infrastructure/ansible_tower/__init__.py
   - web_infrastructure/ansible_tower/tower_credential.py
   - web_infrastructure/ansible_tower/tower_credential_type.py
   - web_infrastructure/ansible_tower/tower_group.py

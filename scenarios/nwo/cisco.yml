@@ -122,6 +122,7 @@ meraki:
   - network/meraki/__init__.py
   - network/meraki/meraki.py
   modules:
+  - network/meraki/__init__.py
   - network/meraki/meraki_admin.py
   - network/meraki/meraki_config_template.py
   - network/meraki/meraki_content_filtering.py

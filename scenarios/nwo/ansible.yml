@@ -138,6 +138,7 @@ _core:
   - common/text/formatters.py
   - common/validation.py
   - common/warnings.py
+  - compat/__init__.py
   - compat/paramiko.py
   - connection.py
   - csharp/Ansible.AccessToken.cs

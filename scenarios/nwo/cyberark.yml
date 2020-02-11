@@ -1,4 +1,5 @@
 bizdev:
   modules:
+  - identity/cyberark/__init__.py
   - identity/cyberark/cyberark_authentication.py
   - identity/cyberark/cyberark_user.py
