@@ -34,6 +34,56 @@ amazon:
   - aws/waf.py
   - aws/waiters.py
   modules:
+  - cloud/amazon/_aws_acm_facts.py
+  - cloud/amazon/_cloudwatchlogs_log_group_facts.py
+  - cloud/amazon/_ec2_snapshot_facts.py
+  - cloud/amazon/_ec2_vpc_vgw_facts.py
+  - cloud/amazon/_iam_mfa_device_facts.py
+  - cloud/amazon/_aws_az_facts.py
+  - cloud/amazon/_ec2_ami_facts.py
+  - cloud/amazon/_ec2_vol_facts.py
+  - cloud/amazon/_ec2_vpc_vpn_facts.py
+  - cloud/amazon/_iam_role_facts.py
+  - cloud/amazon/_aws_caller_facts.py
+  - cloud/amazon/_ec2_asg_facts.py
+  - cloud/amazon/_ec2_vpc_dhcp_option_facts.py
+  - cloud/amazon/_ecs_service_facts.py
+  - cloud/amazon/_iam_server_certificate_facts.py
+  - cloud/amazon/_aws_kms_facts.py
+  - cloud/amazon/_ec2_customer_gateway_facts.py
+  - cloud/amazon/_ec2_vpc_endpoint_facts.py
+  - cloud/amazon/_ecs_taskdefinition_facts.py
+  - cloud/amazon/_ec2_eip_facts.py
+  - cloud/amazon/_ec2_vpc_igw_facts.py
+  - cloud/amazon/_efs_facts.py
+  - cloud/amazon/_rds_instance_facts.py
+  - cloud/amazon/_aws_region_facts.py
+  - cloud/amazon/_ec2_elb_facts.py
+  - cloud/amazon/_ec2_vpc_nacl_facts.py
+  - cloud/amazon/_elasticache_facts.py
+  - cloud/amazon/_rds_snapshot_facts.py
+  - cloud/amazon/_aws_s3_bucket_facts.py
+  - cloud/amazon/_ec2_eni_facts.py
+  - cloud/amazon/_ec2_vpc_nat_gateway_facts.py
+  - cloud/amazon/_elb_application_lb_facts.py
+  - cloud/amazon/_redshift_facts.py
+  - cloud/amazon/_aws_sgw_facts.py
+  - cloud/amazon/_ec2_group_facts.py
+  - cloud/amazon/_ec2_vpc_net_facts.py
+  - cloud/amazon/_elb_classic_lb_facts.py
+  - cloud/amazon/_route53_facts.py
+  - cloud/amazon/_aws_waf_facts.py
+  - cloud/amazon/_ec2_instance_facts.py
+  - cloud/amazon/_ec2_vpc_peering_facts.py
+  - cloud/amazon/_elb_target_facts.py
+  - cloud/amazon/_cloudformation_facts.py
+  - cloud/amazon/_ec2_lc_facts.py
+  - cloud/amazon/_ec2_vpc_route_table_facts.py
+  - cloud/amazon/_elb_target_group_facts.py
+  - cloud/amazon/_cloudfront_facts.py
+  - cloud/amazon/_ec2_placement_group_facts.py
+  - cloud/amazon/_ec2_vpc_subnet_facts.py
+  - cloud/amazon/_iam_cert_facts.py
   - cloud/amazon/_lambda_facts.py
   - cloud/amazon/aws_acm_info.py
   - cloud/amazon/aws_acm.py
