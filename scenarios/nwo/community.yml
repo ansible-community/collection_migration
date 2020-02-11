@@ -351,7 +351,6 @@ general:
   - zone.py
   doc_fragments:
   - a10.py
-  - aci.py
   - acme.py
   - aireos.py
   - alicloud.py
@@ -393,7 +392,6 @@ general:
   - ldap.py
   - lxca_common.py
   - manageiq.py
-  - mso.py
   - mysql.py
   - netscaler.py
   - network_agnostic.py
