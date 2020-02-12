@@ -5,7 +5,7 @@ _grafana:
     - grafana_dashboard.py
     modules:
     - monitoring/grafana/*
-_general:
+general:
     action:
     - slxos.py
     become:
@@ -35,7 +35,6 @@ _general:
     - rabbitmq.py
     - rackspace.py
     - scaleway.py
-    - service_now.py
     - utm.py
     - vca.py
     - vexata.py
@@ -81,7 +80,6 @@ _general:
     - cpm_status.py
     - credstash.py
     - csvfile.py
-    - dict.py
     - etcd.py
     - filetree.py
     - hashi_vault.py
@@ -94,10 +92,8 @@ _general:
     - mongodb.py
     - onepassword.py
     - onepassword_raw.py
-    - password.py
     - passwordstore.py
     - rabbitmq.py
-    - random_choice.py
     - redis.py
     inventory:
     - foreman.py
@@ -227,7 +223,6 @@ _general:
     - notification/flowdock.py
     - notification/grove.py
     - notification/hipchat.py
-    - notification/irc.py
     - notification/jabber.py
     - notification/logentries_msg.py
     - notification/matrix.py
@@ -241,8 +236,6 @@ _general:
     - notification/rocketchat.py
     - notification/sendgrid.py
     - notification/slack.py
-    - notification/snow_record.py
-    - notification/snow_record_find.py
     - notification/syslogger.py
     - notification/telegram.py
     - notification/twilio.py
@@ -268,8 +261,6 @@ _general:
     - remote_management/foreman/_foreman.py
     - remote_management/foreman/_katello.py
     - remote_management/imc/imc_rest.py
-    - remote_management/ipmi/ipmi_boot.py
-    - remote_management/ipmi/ipmi_power.py
     - remote_management/lxca/lxca_cmms.py
     - remote_management/lxca/lxca_nodes.py
     - remote_management/manageiq/*
@@ -316,7 +307,6 @@ _general:
     - system/syspatch.py
     - system/vdo.py
     - system/xfconf.py
-    - utilities/logic/set_stats.py
     - web_infrastructure/_jenkins_job_facts.py
     - web_infrastructure/apache2_mod_proxy.py
     - web_infrastructure/apache2_module.py
@@ -375,6 +365,8 @@ _general:
     - vca.py
     - vexata.py
     - xenserver.py
+    vault:
+    - '*'
 vmware:
     connection:
     - vmware_tools.py

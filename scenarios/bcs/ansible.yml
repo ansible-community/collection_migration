@@ -76,7 +76,6 @@ _core:
     - yaml.py
     lookup:
     - config.py
-    - csvfile.py
     - dict.py
     - env.py
     - file.py
@@ -153,7 +152,6 @@ _core:
     - net_tools/basics/slurp.py
     - net_tools/basics/uri.py
     - notification/irc.py
-    - notification/jabber.py
     - notification/mail.py
     - packaging/language/pip.py
     - packaging/os/apt.py
@@ -171,7 +169,6 @@ _core:
     - remote_management/ipmi/ipmi_power.py
     - source_control/git.py
     - source_control/subversion.py
-    - system/cron.py
     - system/debconf.py
     - system/gather_facts.py
     - system/getent.py
@@ -553,7 +550,6 @@ tower:
     - ansible_tower.py
 unix:
     action:
-    - assemble.py
     - synchronize.py
     - unarchive.py
     become:

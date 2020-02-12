@@ -1,4 +1,4 @@
-_vyos:
+vyos:
     action:
     - vyos.py
     cliconf:
@@ -13,3 +13,6 @@ _vyos:
     - network/vyos/*/*/*
     terminal:
     - vyos.py
+    integration:
+    - vyos_smoke/*/*
+    - vyos_smoke/*/*/*
