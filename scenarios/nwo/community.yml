@@ -299,7 +299,6 @@ general:
   - edgeos_config.py
   - enos.py
   - exos.py
-  - fortios_config.py
   - ironware.py
   - nos_config.py
   - onyx_config.py

@@ -1,4 +1,6 @@
 fortios:
+  action:
+  - fortios_config.py
   doc_fragments:
   - fortios.py
   httpapi:
