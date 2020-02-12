@@ -503,6 +503,75 @@ general:
   - scaleway.py
   - virtualbox.py
   - vultr.py
+  inventory_scripts:
+  - abiquo.ini
+  - abiquo.py
+  - apache-libcloud.py
+  - apstra_aos.ini
+  - apstra_aos.py
+  - brook.ini
+  - brook.py
+  - cloudforms.ini
+  - cloudforms.py
+  - cloudstack.ini
+  - cloudstack.py
+  - cobbler.ini
+  - cobbler.py
+  - collins.ini
+  - collins.py
+  - consul_io.ini
+  - consul_io.py
+  - digital_ocean.ini
+  - digital_ocean.py
+  - docker.py
+  - docker.yml
+  - fleet.py
+  - freeipa.py
+  - jail.py
+  - landscape.py
+  - libcloud.ini
+  - libvirt_lxc.py
+  - linode.ini
+  - linode.py
+  - lxc_inventory.py
+  - lxd.ini
+  - lxd.py
+  - mdt_dynamic_inventory.py
+  - mdt.ini
+  - nagios_livestatus.ini
+  - nagios_livestatus.py
+  - nagios_ndo.ini
+  - nagios_ndo.py
+  - nsot.py
+  - nsot.yaml
+  - openshift.py
+  - openvz.py
+  - ovirt4.py
+  - ovirt.ini
+  - ovirt.py
+  - packet_net.ini
+  - packet_net.py
+  - proxmox.py
+  - rackhd.py
+  - rax.ini
+  - rax.py
+  - rhv.py
+  - rudder.ini
+  - rudder.py
+  - scaleway.ini
+  - scaleway.py
+  - serf.py
+  - softlayer.py
+  - spacewalk.ini
+  - spacewalk.py
+  - ssh_config.py
+  - stacki.py
+  - stacki.yml
+  - vagrant.py
+  - vbox.py
+  - zabbix.ini
+  - zabbix.py
+  - zone.py
   lookup:
   - avi.py
   - cartesian.py
