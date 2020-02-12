@@ -319,7 +319,9 @@ _core:
   - sh.py
   strategy:
   - __init__.py
+  - debug.py
   - free.py
+  - host_pinned.py
   - linear.py
   terminal:
   - __init__.py
