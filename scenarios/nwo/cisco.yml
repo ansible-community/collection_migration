@@ -1,8 +1,8 @@
 aci:
-  module_utils:
-  - network/aci/aci.py
   doc_fragments:
   - aci.py
+  module_utils:
+  - network/aci/aci.py
   modules:
   - network/aci/aci_aaa_user.py
   - network/aci/aci_aaa_user_certificate.py
@@ -143,10 +143,10 @@ meraki:
   - network/meraki/meraki_vlan.py
   - network/meraki/meraki_webhook.py
 mso:
-  module_utils:
-  - network/aci/mso.py
   doc_fragments:
   - mso.py
+  module_utils:
+  - network/aci/mso.py
   modules:
   - network/aci/mso_label.py
   - network/aci/mso_role.py
