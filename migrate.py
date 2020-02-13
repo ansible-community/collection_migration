@@ -289,8 +289,6 @@ def actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path):
             paths_to_delete.add(actual_devel_path)
         new_sanity_ignore.pop(actual_devel_path, None)
 
-    subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
-
     # process the __init__.py files from dirs now that all files are removed,
     # that way we can check if there are no files left in the dirs they are in
     # so we can remove __init__.py as well
@@ -299,11 +297,10 @@ def actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path):
             continue
 
         actual_devel_path = os.path.relpath(init, checkout_path)
-        subprocess.check_call(
-            ('git', 'rm', actual_devel_path),
-            cwd=checkout_path,
-        )
+        paths_to_delete.add(actual_devel_path)
         new_sanity_ignore.pop(actual_devel_path, None)
+
+    subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
 
     # save modified sanity/ignore.txt
     res = ''
