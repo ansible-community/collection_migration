@@ -544,6 +544,7 @@ general:
   - cloudscale.py
   - cloudstack.py
   - crypto.py
+  - csharp/Ansible.Service.cs
   - database.py
   - digital_ocean.py
   - dimensiondata.py
@@ -2726,6 +2727,8 @@ general:
   - windows/win_security_policy.py
   - windows/win_service.ps1
   - windows/win_service.py
+  - windows/win_service_info.ps1
+  - windows/win_service_info.py
   - windows/win_share.ps1
   - windows/win_share.py
   - windows/win_shell.ps1
@@ -2848,9 +2851,9 @@ vmware:
   - VmwareRestModule_filters.py
   - VmwareRestModule_full.py
   - VmwareRestModule_state.py
+  - vca.py
   - vmware.py
   - vmware_rest_client.py
-  - vca.py
   httpapi:
   - vmware.py
   inventory:
