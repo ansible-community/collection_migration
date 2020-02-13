@@ -257,60 +257,62 @@ def remove(path, namespace, collection):
 def actually_remove(checkout_path):
     global REMOVE
 
-    paths = [path for namespace in REMOVE for collection in REMOVE[namespace] for path in REMOVE[namespace][collection]]
-    paths_counter = {path: count for path, count in Counter(paths).items()}
+    coll_paths = {
+        f'{namespace}.{collection}': paths
+        for namespace, coll_map in REMOVE.items()
+        for collection, paths in coll_map.items()
+    }
+    paths_counter = Counter(itertools.chain.from_iterable(coll_paths.values()))
+    for coll_fqdn, paths in coll_paths.items():
+        # load sanity/ignore.txt, the files being removed below need to be removed from ignore.txt too
+        sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
+        new_sanity_ignore = defaultdict(list)
+        for ignore in sanity_ignore:
+            values = ignore.split(' ', 1)
+            new_sanity_ignore[values[0]].append(values[1])
 
-    for namespace in REMOVE:
-        for collection in REMOVE[namespace]:
-            # load sanity/ignore.txt, the files being removed below need to be removed from ignore.txt too
-            sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
-            new_sanity_ignore = defaultdict(list)
-            for ignore in sanity_ignore:
-                values = ignore.split(' ', 1)
-                new_sanity_ignore[values[0]].append(values[1])
+        init_files = set()
+        paths_to_delete = set()
+        # actually remove files we marked for removal
+        for path in paths:
+            actual_devel_path = os.path.relpath(path, checkout_path)
+            if actual_devel_path.endswith('__init__.py'):
+                init_files.add(path)
+                continue
 
-            init_files = set()
-            paths_to_delete = set()
-            # actually remove files we marked for removal
-            for path in REMOVE[namespace][collection]:
-                actual_devel_path = os.path.relpath(path, checkout_path)
-                if actual_devel_path.endswith('__init__.py'):
-                    init_files.add(path)
-                    continue
+            paths_counter[path] -= 1
+            if paths_counter[path] == 0:
+                paths_to_delete.add(actual_devel_path)
+            new_sanity_ignore.pop(actual_devel_path, None)
 
-                paths_counter[path] -= 1
-                if paths_counter[path] == 0:
-                    paths_to_delete.add(actual_devel_path)
-                new_sanity_ignore.pop(actual_devel_path, None)
+        subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
 
-            subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
+        # process the __init__.py files from dirs now that all files are removed,
+        # that way we can check if there are no files left in the dirs they are in
+        # so we can remove __init__.py as well
+        for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
+            if os.listdir(os.path.dirname(init)) != ['__init__.py']:
+                continue
 
-            # process the __init__.py files from dirs now that all files are removed,
-            # that way we can check if there are no files left in the dirs they are in
-            # so we can remove __init__.py as well
-            for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
-                if os.listdir(os.path.dirname(init)) != ['__init__.py']:
-                    continue
+            actual_devel_path = os.path.relpath(init, checkout_path)
+            subprocess.check_call(
+                ('git', 'rm', actual_devel_path),
+                cwd=checkout_path,
+            )
+            new_sanity_ignore.pop(actual_devel_path, None)
 
-                actual_devel_path = os.path.relpath(init, checkout_path)
-                subprocess.check_call(
-                    ('git', 'rm', actual_devel_path),
-                    cwd=checkout_path,
-                )
-                new_sanity_ignore.pop(actual_devel_path, None)
+        # save modified sanity/ignore.txt
+        res = ''
+        for filename, values in new_sanity_ignore.items():
+            for value in values:
+                # value contains '\n' which is preserved from the original file
+                res += '%s %s' % (filename, value)
 
-            # save modified sanity/ignore.txt
-            res = ''
-            for filename, values in new_sanity_ignore.items():
-                for value in values:
-                    # value contains '\n' which is preserved from the original file
-                    res += '%s %s' % (filename, value)
+        write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
+        subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
 
-            write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
-            subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
-
-            # commit the changes
-            subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection), '--allow-empty'), cwd=checkout_path)
+        # commit the changes
+        subprocess.check_call(('git', 'commit', '-m', f'Migrated to {coll_fqdn}', '--allow-empty'), cwd=checkout_path)
 
 
 def read_yaml_file(path):
