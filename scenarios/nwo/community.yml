@@ -474,7 +474,6 @@ general:
   - tower.py
   - url_windows.py
   - utm.py
-  - vca.py
   - vexata.py
   - vultr.py
   - xenserver.py
@@ -749,7 +748,6 @@ general:
   - storage/hpe3par/hpe3par.py
   - univention_umc.py
   - utm_utils.py
-  - vca.py
   - vexata.py
   - vultr.py
   - xenserver.py
@@ -2842,3 +2840,196 @@ kubernetes:
   - clustering/openshift/__init__.py
   - clustering/openshift/_openshift_raw.py
   - clustering/openshift/_openshift_scale.py
+vmware:
+  connection:
+  - vmware_tools.py
+  doc_fragments:
+  - VmwareRestModule.py
+  - VmwareRestModule_filters.py
+  - VmwareRestModule_full.py
+  - VmwareRestModule_state.py
+  - vmware.py
+  - vmware_rest_client.py
+  - vca.py
+  httpapi:
+  - vmware.py
+  inventory:
+  - vmware_vm_inventory.py
+  module_utils:
+  - vca.py
+  - vmware.py
+  - vmware_httpapi/VmwareRestModule.py
+  - vmware_httpapi/__init__.py
+  - vmware_rest_client.py
+  - vmware_spbm.py
+  modules:
+  - cloud/vmware/__init__.py
+  - cloud/vmware/_vcenter_extension_facts.py
+  - cloud/vmware/_vmware_about_facts.py
+  - cloud/vmware/_vmware_category_facts.py
+  - cloud/vmware/_vmware_cluster_facts.py
+  - cloud/vmware/_vmware_datastore_facts.py
+  - cloud/vmware/_vmware_dns_config.py
+  - cloud/vmware/_vmware_drs_group_facts.py
+  - cloud/vmware/_vmware_drs_rule_facts.py
+  - cloud/vmware/_vmware_dvs_portgroup_facts.py
+  - cloud/vmware/_vmware_guest_boot_facts.py
+  - cloud/vmware/_vmware_guest_customization_facts.py
+  - cloud/vmware/_vmware_guest_disk_facts.py
+  - cloud/vmware/_vmware_guest_facts.py
+  - cloud/vmware/_vmware_guest_snapshot_facts.py
+  - cloud/vmware/_vmware_host_capability_facts.py
+  - cloud/vmware/_vmware_host_config_facts.py
+  - cloud/vmware/_vmware_host_dns_facts.py
+  - cloud/vmware/_vmware_host_feature_facts.py
+  - cloud/vmware/_vmware_host_firewall_facts.py
+  - cloud/vmware/_vmware_host_ntp_facts.py
+  - cloud/vmware/_vmware_host_package_facts.py
+  - cloud/vmware/_vmware_host_service_facts.py
+  - cloud/vmware/_vmware_host_ssl_facts.py
+  - cloud/vmware/_vmware_host_vmhba_facts.py
+  - cloud/vmware/_vmware_host_vmnic_facts.py
+  - cloud/vmware/_vmware_local_role_facts.py
+  - cloud/vmware/_vmware_local_user_facts.py
+  - cloud/vmware/_vmware_portgroup_facts.py
+  - cloud/vmware/_vmware_resource_pool_facts.py
+  - cloud/vmware/_vmware_tag_facts.py
+  - cloud/vmware/_vmware_target_canonical_facts.py
+  - cloud/vmware/_vmware_vm_facts.py
+  - cloud/vmware/_vmware_vmkernel_facts.py
+  - cloud/vmware/_vmware_vswitch_facts.py
+  - cloud/vmware/vca_fw.py
+  - cloud/vmware/vca_nat.py
+  - cloud/vmware/vca_vapp.py
+  - cloud/vmware/vcenter_extension.py
+  - cloud/vmware/vcenter_extension_info.py
+  - cloud/vmware/vcenter_folder.py
+  - cloud/vmware/vcenter_license.py
+  - cloud/vmware/vmware_about_info.py
+  - cloud/vmware/vmware_category.py
+  - cloud/vmware/vmware_category_info.py
+  - cloud/vmware/vmware_cfg_backup.py
+  - cloud/vmware/vmware_cluster.py
+  - cloud/vmware/vmware_cluster_drs.py
+  - cloud/vmware/vmware_cluster_ha.py
+  - cloud/vmware/vmware_cluster_info.py
+  - cloud/vmware/vmware_cluster_vsan.py
+  - cloud/vmware/vmware_content_deploy_template.py
+  - cloud/vmware/vmware_content_library_info.py
+  - cloud/vmware/vmware_content_library_manager.py
+  - cloud/vmware/vmware_datacenter.py
+  - cloud/vmware/vmware_datastore_cluster.py
+  - cloud/vmware/vmware_datastore_info.py
+  - cloud/vmware/vmware_datastore_maintenancemode.py
+  - cloud/vmware/vmware_deploy_ovf.py
+  - cloud/vmware/vmware_drs_group.py
+  - cloud/vmware/vmware_drs_group_info.py
+  - cloud/vmware/vmware_drs_rule_info.py
+  - cloud/vmware/vmware_dvs_host.py
+  - cloud/vmware/vmware_dvs_portgroup.py
+  - cloud/vmware/vmware_dvs_portgroup_find.py
+  - cloud/vmware/vmware_dvs_portgroup_info.py
+  - cloud/vmware/vmware_dvswitch.py
+  - cloud/vmware/vmware_dvswitch_lacp.py
+  - cloud/vmware/vmware_dvswitch_nioc.py
+  - cloud/vmware/vmware_dvswitch_pvlans.py
+  - cloud/vmware/vmware_dvswitch_uplink_pg.py
+  - cloud/vmware/vmware_evc_mode.py
+  - cloud/vmware/vmware_export_ovf.py
+  - cloud/vmware/vmware_folder_info.py
+  - cloud/vmware/vmware_guest.py
+  - cloud/vmware/vmware_guest_boot_info.py
+  - cloud/vmware/vmware_guest_boot_manager.py
+  - cloud/vmware/vmware_guest_controller.py
+  - cloud/vmware/vmware_guest_cross_vc_clone.py
+  - cloud/vmware/vmware_guest_custom_attribute_defs.py
+  - cloud/vmware/vmware_guest_custom_attributes.py
+  - cloud/vmware/vmware_guest_customization_info.py
+  - cloud/vmware/vmware_guest_disk.py
+  - cloud/vmware/vmware_guest_disk_info.py
+  - cloud/vmware/vmware_guest_file_operation.py
+  - cloud/vmware/vmware_guest_find.py
+  - cloud/vmware/vmware_guest_info.py
+  - cloud/vmware/vmware_guest_move.py
+  - cloud/vmware/vmware_guest_network.py
+  - cloud/vmware/vmware_guest_powerstate.py
+  - cloud/vmware/vmware_guest_register_operation.py
+  - cloud/vmware/vmware_guest_screenshot.py
+  - cloud/vmware/vmware_guest_sendkey.py
+  - cloud/vmware/vmware_guest_serial_port.py
+  - cloud/vmware/vmware_guest_snapshot.py
+  - cloud/vmware/vmware_guest_snapshot_info.py
+  - cloud/vmware/vmware_guest_tools_info.py
+  - cloud/vmware/vmware_guest_tools_upgrade.py
+  - cloud/vmware/vmware_guest_tools_wait.py
+  - cloud/vmware/vmware_guest_video.py
+  - cloud/vmware/vmware_guest_vnc.py
+  - cloud/vmware/vmware_host.py
+  - cloud/vmware/vmware_host_acceptance.py
+  - cloud/vmware/vmware_host_active_directory.py
+  - cloud/vmware/vmware_host_auto_start.py
+  - cloud/vmware/vmware_host_capability_info.py
+  - cloud/vmware/vmware_host_config_info.py
+  - cloud/vmware/vmware_host_config_manager.py
+  - cloud/vmware/vmware_host_datastore.py
+  - cloud/vmware/vmware_host_dns.py
+  - cloud/vmware/vmware_host_dns_info.py
+  - cloud/vmware/vmware_host_facts.py
+  - cloud/vmware/vmware_host_feature_info.py
+  - cloud/vmware/vmware_host_firewall_info.py
+  - cloud/vmware/vmware_host_firewall_manager.py
+  - cloud/vmware/vmware_host_hyperthreading.py
+  - cloud/vmware/vmware_host_ipv6.py
+  - cloud/vmware/vmware_host_kernel_manager.py
+  - cloud/vmware/vmware_host_lockdown.py
+  - cloud/vmware/vmware_host_ntp.py
+  - cloud/vmware/vmware_host_ntp_info.py
+  - cloud/vmware/vmware_host_package_info.py
+  - cloud/vmware/vmware_host_powermgmt_policy.py
+  - cloud/vmware/vmware_host_powerstate.py
+  - cloud/vmware/vmware_host_scanhba.py
+  - cloud/vmware/vmware_host_service_info.py
+  - cloud/vmware/vmware_host_service_manager.py
+  - cloud/vmware/vmware_host_snmp.py
+  - cloud/vmware/vmware_host_ssl_info.py
+  - cloud/vmware/vmware_host_vmhba_info.py
+  - cloud/vmware/vmware_host_vmnic_info.py
+  - cloud/vmware/vmware_local_role_info.py
+  - cloud/vmware/vmware_local_role_manager.py
+  - cloud/vmware/vmware_local_user_info.py
+  - cloud/vmware/vmware_local_user_manager.py
+  - cloud/vmware/vmware_maintenancemode.py
+  - cloud/vmware/vmware_migrate_vmk.py
+  - cloud/vmware/vmware_object_role_permission.py
+  - cloud/vmware/vmware_portgroup.py
+  - cloud/vmware/vmware_portgroup_info.py
+  - cloud/vmware/vmware_resource_pool.py
+  - cloud/vmware/vmware_resource_pool_info.py
+  - cloud/vmware/vmware_tag.py
+  - cloud/vmware/vmware_tag_info.py
+  - cloud/vmware/vmware_tag_manager.py
+  - cloud/vmware/vmware_target_canonical_info.py
+  - cloud/vmware/vmware_vcenter_settings.py
+  - cloud/vmware/vmware_vcenter_statistics.py
+  - cloud/vmware/vmware_vm_host_drs_rule.py
+  - cloud/vmware/vmware_vm_info.py
+  - cloud/vmware/vmware_vm_shell.py
+  - cloud/vmware/vmware_vm_storage_policy_info.py
+  - cloud/vmware/vmware_vm_vm_drs_rule.py
+  - cloud/vmware/vmware_vm_vss_dvs_migrate.py
+  - cloud/vmware/vmware_vmkernel.py
+  - cloud/vmware/vmware_vmkernel_info.py
+  - cloud/vmware/vmware_vmkernel_ip_config.py
+  - cloud/vmware/vmware_vmotion.py
+  - cloud/vmware/vmware_vsan_cluster.py
+  - cloud/vmware/vmware_vsan_health_info.py
+  - cloud/vmware/vmware_vspan_session.py
+  - cloud/vmware/vmware_vswitch.py
+  - cloud/vmware/vmware_vswitch_info.py
+  - cloud/vmware/vsphere_copy.py
+  - cloud/vmware/vsphere_file.py
+  - cloud/vmware_httpapi/__init__.py
+  - cloud/vmware_httpapi/vmware_appliance_access_info.py
+  - cloud/vmware_httpapi/vmware_appliance_health_info.py
+  - cloud/vmware_httpapi/vmware_cis_category_info.py
+  - cloud/vmware_httpapi/vmware_core_info.py
