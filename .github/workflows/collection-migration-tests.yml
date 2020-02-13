@@ -228,7 +228,7 @@ jobs:
         --push-migrated-core
 
   publish-migrated-collections:
-    name: ${{ matrix.migration-scenario }}:publish:core
+    name: ${{ matrix.migration-scenario }}:publish:collections
     needs:
     - migrate-collections
     if: >-
