@@ -53,8 +53,8 @@ DEVEL_BRANCH = 'devel'
 ALL_THE_FILES = set()
 
 COLLECTION_NAMESPACE = 'test_migrate_ns'
-PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory'}
-PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory'}
+PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/unit', 'integration': 'test/integration/targets'}
+PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory', 'vault': 'scripts/vault', 'unit': 'tests/unit', 'integration': 'tests/integration/targets'}
 
 COLLECTION_SKIP_REWRITE = ('_core',)
 
@@ -73,6 +73,7 @@ VALID_SPEC_ENTRIES = frozenset({
     'doc_fragments',
     'filter',
     'httpapi',
+    'integration',
     'inventory',
     'lookup',
     'module_utils',
@@ -82,11 +83,15 @@ VALID_SPEC_ENTRIES = frozenset({
     'strategy',
     'terminal',
     'test',
+    'unit',
     'vars',
+    'vault',
     'inventory_scripts',
 })
 
-NOT_PLUGINS = frozenset(set(['inventory_scripts']))
+NOT_PLUGINS = frozenset(set(['inventory_scripts', 'unit', 'integration']))
+
+ALWAYS_PRESERVE_SUBDIRS = frozenset(['module_utils', 'unit', 'integration'])
 
 VARNAMES_TO_PLUGIN_MAP = {
     'ansible_become_method': 'become',
@@ -1318,10 +1323,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         if os.path.exists(init_py_path):
                             remove(init_py_path, namespace, collection)
 
-                    do_preserve_subdirs = (
-                        (args.preserve_module_subdirs and plugin_type == 'modules')
-                        or plugin_type == 'module_utils'
-                    )
+                    do_preserve_subdirs = ((args.preserve_module_subdirs and plugin_type == 'modules') or plugin_type in ALWAYS_PRESERVE_SUBDIRS)
                     plugin_path_chunk = plugin if do_preserve_subdirs else os.path.basename(plugin)
                     relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
 
