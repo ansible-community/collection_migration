@@ -1,4 +1,4 @@
-name: Smoke test suite
+name: CI/CD
 
 on:
   push:
@@ -116,10 +116,6 @@ jobs:
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
         path: .cache/migrated-core-tarballs
     - name: >-
-        List the migrated collections
-      run: |
-          ls -Ral .cache/collections/
-    - name: >-
         Generate tarballs out of migrated collections, one by one
       run: |
           for coll_dir in `ls .cache/collections/*/*/* -d`
@@ -137,6 +133,77 @@ jobs:
         name: >-
           migrated-collections-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
         path: .cache/collection-tarballs
+
+  publish-migrated-core:
+    name: ${{ matrix.migration-scenario }}:publish:core
+    needs:
+    - migrate-collections
+    if: >-
+      github.event_name != 'pull_request'
+      && github.repository == 'ansible-community/collection_migration'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        python-version:
+        - 3.7
+        migration-scenario:
+        - base
+        - mintest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Restore pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.in') }}-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    - name: Uninstall previously installed Ansible via Apt
+      run: sudo apt remove --yes ansible
+    - name: Uninstall previously installed Ansible via Pip
+      run: python -m pip uninstall ansible
+    - name: >-
+        Download migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      uses: actions/download-artifact@v1
+      with:
+        name: >-
+          migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/migrated-core-tarballs
+    - name: >-
+        Retrieve the migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+        out of the tarball artifacts
+      run: >-
+          tar xzvfh
+          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/releases/devel.git
+    - name: >-
+        Install Ansible from the migrated Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        python -m
+        pip install
+        .cache/releases/devel.git
+    - name: >-
+        Help output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --help
+    - name: >-
+        Version output of the migrate Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        ansible --version
     - name: Prepare user's SSH config dir
       run: |
         mkdir -p ~/.ssh
@@ -146,24 +213,9 @@ jobs:
         cat resources/github_known_hosts.tmpl
         >>
         ~/.ssh/known_hosts
-    - name: Auto-publish the migrated collection repos to GitHub repos
-      if: >-
-        github.event_name != 'pull_request'
-        && github.repository == 'ansible-community/collection_migration'
-      env:
-        GITHUB_APP_IDENTIFIER: 41435
-        GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
-      run: >-
-        python -m
-        migrate
-        -s "scenarios/${{ matrix.migration-scenario }}"
-        --target-github-org ansible-collection-migration
-        --skip-migration
-        --publish-to-github
-    - name: Auto-publish remainig ansible to GitHub repo
-      if: >-
-        github.event_name != 'pull_request'
-        && github.repository == 'ansible-community/collection_migration'
+    - name: >-
+        Auto-publish post-migration Ansible Core version
+        to GitHub repo as per ${{ matrix.migration-scenario }}
       env:
         GITHUB_APP_IDENTIFIER: 41435
         GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
@@ -175,8 +227,105 @@ jobs:
         --skip-migration
         --push-migrated-core
 
+  publish-migrated-collections:
+    name: ${{ matrix.migration-scenario }}:publish:core
+    needs:
+    - migrate-collections
+    if: >-
+      github.event_name != 'pull_request'
+      && github.repository == 'ansible-community/collection_migration'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        python-version:
+        - 3.7
+        migration-scenario:
+        - base
+        - mintest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Restore pip cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.in') }}-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    - name: Uninstall previously installed Ansible via Apt
+      run: sudo apt remove --yes ansible
+    - name: Uninstall previously installed Ansible via Pip
+      run: python -m pip uninstall ansible
+    - name: >-
+        Download migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+      uses: actions/download-artifact@v1
+      with:
+        name: >-
+          migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/migrated-core-tarballs
+    - name: >-
+        Retrieve the migrated Ansible Core for
+        ${{ matrix.migration-scenario }} scenario
+        out of the tarball artifacts
+      run: >-
+          tar xzvfh
+          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/releases/devel.git
+    - name: >-
+        Install Ansible from the migrated Core for
+        ${{ matrix.migration-scenario }} scenario
+      run: >-
+        python -m
+        pip install
+        .cache/releases/devel.git
+    - name: Download migrated collection artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: >-
+          migrated-collections-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
+        path: .cache/collection-tarballs
+    - name: >-
+        Install the migrated collections
+      run: |
+          ansible-galaxy collection install .cache/collection-tarballs/*.tar.gz
+    - name: >-
+        List the migrated collections
+      run: |
+          ls -Ral ~/.ansible/collections/
+    - name: Prepare user's SSH config dir
+      run: |
+        mkdir -p ~/.ssh
+        chmod u=rwx,g=,o= ~/.ssh
+    - name: Ensure GitHub's public SSH keys are in known hosts
+      run: >-
+        cat resources/github_known_hosts.tmpl
+        >>
+        ~/.ssh/known_hosts
+    - name: >-
+        Auto-publish the migrated collection repos
+        to GitHub repos as per ${{ matrix.migration-scenario }}
+      env:
+        GITHUB_APP_IDENTIFIER: 41435
+        GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
+      run: >-
+        python -m
+        migrate
+        -s "scenarios/${{ matrix.migration-scenario }}"
+        --target-github-org ansible-collection-migration
+        --skip-migration
+        --publish-to-github
+
   sanity-test-collections:
-    name: ${{ matrix.migration-scenario }}:migrated:sanity
+    name: ${{ matrix.migration-scenario }}:tests:sanity
     needs:
     - migrate-collections
     runs-on: ${{ matrix.os }}
@@ -231,16 +380,6 @@ jobs:
         python -m
         pip install
         .cache/releases/devel.git
-    - name: >-
-        Help output of the migrate Ansible Core for
-        ${{ matrix.migration-scenario }} scenario
-      run: >-
-        ansible --help
-    - name: >-
-        Version output of the migrate Ansible Core for
-        ${{ matrix.migration-scenario }} scenario
-      run: >-
-        ansible --version
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
       with:
@@ -251,10 +390,6 @@ jobs:
         Install the migrated collections
       run: |
           ansible-galaxy collection install .cache/collection-tarballs/*.tar.gz
-    - name: >-
-        List the migrated collections
-      run: |
-          ls -Ral ~/.ansible/collections/
     - name: >-
         [NON-FAILING]
         Run sanity tests against all migrated collections, one by one
@@ -270,7 +405,7 @@ jobs:
           done
 
   unit-test-collections:
-    name: ${{ matrix.migration-scenario }}:migrated:units
+    name: ${{ matrix.migration-scenario }}:tests:units
     needs:
     - migrate-collections
     runs-on: ${{ matrix.os }}
@@ -325,16 +460,6 @@ jobs:
         python -m
         pip install
         .cache/releases/devel.git
-    - name: >-
-        Help output of the migrate Ansible Core for
-        ${{ matrix.migration-scenario }} scenario
-      run: >-
-        ansible --help
-    - name: >-
-        Version output of the migrate Ansible Core for
-        ${{ matrix.migration-scenario }} scenario
-      run: >-
-        ansible --version
     - name: Download migrated collection artifacts
       uses: actions/download-artifact@v1
       with:
@@ -345,10 +470,6 @@ jobs:
         Install the migrated collections
       run: |
           ansible-galaxy collection install .cache/collection-tarballs/*.tar.gz
-    - name: >-
-        List the migrated collections
-      run: |
-          ls -Ral ~/.ansible/collections/
     - name: >-
         [NON-FAILING]
         Run unit tests against all migrated collections, one by one
