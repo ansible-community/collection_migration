@@ -18,7 +18,7 @@ import sys
 import textwrap
 import yaml
 
-from collections import defaultdict
+from collections import defaultdict, Counter
 from collections.abc import Mapping
 from string import Template
 from typing import Any, Dict, Iterable, Set, Union
@@ -119,7 +119,7 @@ REWRITE_CLASS_PROPERTY_PLUGINS= {
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 LOGFILE = os.path.join(VARDIR, 'errors.log')
 
-REMOVE = set()
+REMOVE = defaultdict(lambda: defaultdict(set))
 
 core = {}
 manual_check = defaultdict(list)
@@ -193,8 +193,6 @@ def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
     print(cmd_out)
 
 
-
-
 def add_core(ptype, name):
 
     global core
@@ -246,58 +244,68 @@ def checkout_repo(
 
 ### FILE utils
 
-def remove(path):
+def remove(path, namespace, collection):
     global REMOVE
-    REMOVE.add(path)
+    REMOVE[namespace][collection].add(path)
 
 
-def actually_remove(checkout_path, namespace, collection):
+def actually_remove(checkout_path):
     global REMOVE
 
-    # load sanity/ignore.txt, the files being removed below need to be removed from ignore.txt too
-    sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
-    new_sanity_ignore = defaultdict(list)
-    for ignore in sanity_ignore:
-        values = ignore.split(' ', 1)
-        new_sanity_ignore[values[0]].append(values[1])
+    paths = [path for namespace in REMOVE for collection in REMOVE[namespace] for path in REMOVE[namespace][collection]]
+    paths_counter = {path: count for path, count in Counter(paths).items()}
 
-    # actually remove files we marked for removal
-    init_files = set()
-    for path in REMOVE:
-        actual_devel_path = os.path.relpath(path, checkout_path)
-        if actual_devel_path.endswith('__init__.py'):
-            init_files.add(path)
-            continue
+    for namespace in REMOVE:
+        for collection in REMOVE[namespace]:
+            # load sanity/ignore.txt, the files being removed below need to be removed from ignore.txt too
+            sanity_ignore = read_lines_from_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'))
+            new_sanity_ignore = defaultdict(list)
+            for ignore in sanity_ignore:
+                values = ignore.split(' ', 1)
+                new_sanity_ignore[values[0]].append(values[1])
 
-        subprocess.check_call(('git', 'rm', '-f', actual_devel_path), cwd=checkout_path)
-        new_sanity_ignore.pop(actual_devel_path, None)
+            init_files = set()
+            paths_to_delete = set()
+            # actually remove files we marked for removal
+            for path in REMOVE[namespace][collection]:
+                actual_devel_path = os.path.relpath(path, checkout_path)
+                if actual_devel_path.endswith('__init__.py'):
+                    init_files.add(path)
+                    continue
 
-    # process the __init__.py files from dirs now that all files are removed,
-    # that way we can check if there are no files left in the dirs they are in
-    # so we can remove __init__.py as well
-    for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
-        if os.listdir(os.path.dirname(init)) != ['__init__.py']:
-            continue
+                paths_counter[path] -= 1
+                if paths_counter[path] == 0:
+                    paths_to_delete.add(actual_devel_path)
+                new_sanity_ignore.pop(actual_devel_path, None)
 
-        actual_devel_path = os.path.relpath(init, checkout_path)
-        subprocess.check_call(
-            ('git', 'rm', actual_devel_path),
-            cwd=checkout_path,
-        )
-        new_sanity_ignore.pop(actual_devel_path, None)
+            subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
 
-    # save modified sanity/ignore.txt
-    res = ''
-    for filename, values in new_sanity_ignore.items():
-        for value in values:
-            # value contains '\n' which is preserved from the original file
-            res += '%s %s' % (filename, value)
+            # process the __init__.py files from dirs now that all files are removed,
+            # that way we can check if there are no files left in the dirs they are in
+            # so we can remove __init__.py as well
+            for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
+                if os.listdir(os.path.dirname(init)) != ['__init__.py']:
+                    continue
 
-    write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
-    subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
+                actual_devel_path = os.path.relpath(init, checkout_path)
+                subprocess.check_call(
+                    ('git', 'rm', actual_devel_path),
+                    cwd=checkout_path,
+                )
+                new_sanity_ignore.pop(actual_devel_path, None)
 
-    # commit the changes
-    subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection), '--allow-empty'), cwd=checkout_path)
+            # save modified sanity/ignore.txt
+            res = ''
+            for filename, values in new_sanity_ignore.items():
+                for value in values:
+                    # value contains '\n' which is preserved from the original file
+                    res += '%s %s' % (filename, value)
+
+            write_text_into_file(os.path.join(checkout_path, 'test/sanity/ignore.txt'), res)
+            subprocess.check_call(('git', 'add', 'test/sanity/ignore.txt'), cwd=checkout_path)
+
+            # commit the changes
+            subprocess.check_call(('git', 'commit', '-m', 'Migrated to %s.%s' % (namespace, collection), '--allow-empty'), cwd=checkout_path)
 
 
 def read_yaml_file(path):
@@ -1175,7 +1183,7 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
     return copy_map
 
 
-def copy_unit_tests(copy_map, collection_dir, checkout_path):
+def copy_unit_tests(copy_map, collection_dir, checkout_path, namespace, collection):
     """Copy unit tests into a collection using a copy map."""
     if not copy_map:
         logger.info(
@@ -1199,8 +1207,7 @@ def copy_unit_tests(copy_map, collection_dir, checkout_path):
 
         if should_be_preserved:
             continue
-
-        remove(src)
+        remove(src, namespace, collection)
 
     inject_requirements_into_unit_tests(checkout_path, collection_dir)
 
@@ -1304,12 +1311,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     #                     plugin, plugin_type, namespace, collection)
                     #    continue
 
-                    remove(src)
+                    remove(src, namespace, collection)
 
                     if plugin_type in ('modules',) and '/' in plugin:
                         init_py_path = os.path.join(os.path.dirname(src), '__init__.py')
                         if os.path.exists(init_py_path):
-                            remove(init_py_path)
+                            remove(init_py_path, namespace, collection)
 
                     do_preserve_subdirs = (
                         (args.preserve_module_subdirs and plugin_type == 'modules')
@@ -1353,7 +1360,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
             if not args.skip_tests:
-                copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path)
+                copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path, namespace, collection)
                 migrated_to_collection.update(unit_tests_copy_map)
 
                 inject_init_into_tree(
@@ -1413,11 +1420,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 checkout_path, namespace, collection, migrated_to_collection,
             )
 
-            if args.move_plugins:
-                actually_remove(checkout_path, namespace, collection)
-
-            global REMOVE
-            REMOVE = set()
+    if args.move_plugins:
+        actually_remove(checkout_path)
 
 
 def init_galaxy_metadata(collection, namespace, target_github_org):
@@ -1788,7 +1792,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                     shutil.copy2(src, dest)
 
                 if to_remove:
-                    remove(src)
+                    remove(src, namespace, collection)
 
                 relative_src_path = os.path.relpath(src, checkout_dir)
                 relative_dest_path = os.path.relpath(dest, collection_dir)
