@@ -23,6 +23,7 @@ from collections.abc import Mapping
 from string import Template
 from typing import Any, Dict, Iterable, Set, Union
 
+from ansible import constants as C
 from ansible.parsing.yaml.dumper import AnsibleDumper
 from ansible.parsing.yaml.loader import AnsibleLoader
 from ansible.utils.collection_loader import AnsibleCollectionLoader
@@ -865,15 +866,19 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
     return deps
 
 
-def rewrite_py(src, dest, collection, spec, namespace, args):
+def rewrite_py(src, dest, collection, spec, namespace, args, plugin_type=None):
+
     with fst_rewrite_session(src, dest) as mod_fst:
         import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
 
-        try:
-            docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
-        except LookupError as err:
+        if not plugin_type or plugin_type in C.CONFIGURABLE_PLUGINS:
+            try:
+                docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
+            except LookupError as err:
+                docs_deps = []
+                logger.debug('%s in %s', err, src)
+        else:
             docs_deps = []
-            logger.debug('%s in %s', err, src)
 
         rewrite_class_property(mod_fst, collection, namespace, dest)
 
@@ -1355,7 +1360,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     logger.info('Processing %s -> %s', src, dest)
 
-                    deps = rewrite_py(src, dest, collection, spec, namespace, args)
+                    deps = rewrite_py(src, dest, collection, spec, namespace, args, plugin_type=plugin_type)
                     import_deps += deps[0]
                     docs_deps += deps[1]
 
