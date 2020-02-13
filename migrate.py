@@ -1344,7 +1344,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         # skip rest for 'not really plugins'
                         continue
 
-                    integration_test_dirs.extend(poor_mans_integration_tests_discovery(checkout_path, plugin_type, plugin))
+                    integration_test_dirs.extend(discover_integration_tests(checkout_path, plugin_type, plugin))
 
                     # process unit tests
                     plugin_unit_tests_copy_map = create_unit_tests_copy_map(
@@ -1660,20 +1660,60 @@ def integration_tests_add_to_deps(collection, dep_collection):
     integration_tests_deps.add(dep_collection)
 
 
-def poor_mans_integration_tests_discovery(checkout_dir, plugin_type, plugin_name):
-    # FIXME this might be actually enough for modules integration tests, at least for the most part
-    if plugin_type != 'modules':
-        return []
+def discover_integration_tests(checkout_dir, plugin_type, plugin_name):
+    targets_dir = os.path.join(checkout_dir, 'test/integration/targets')
+    # 'cloud/amazon/ec2_eip.py' -> 'ec2_eip'
+    plugin_name_base = os.path.basename(os.path.splitext(plugin_name)[0])
+    integration_tests_files = glob.glob(os.path.join(targets_dir, plugin_name_base))
+    # test/integration/targets/filter_random_mac
+    integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name_base}')))
+    # aliased integration tests
+    # https://github.com/ansible-community/collection_migration/issues/326
+    # FIXME? is it safe to assume that all modules for aliased integration test will end up
+    # in the same collection and so we can remove them now?
+    integration_tests_files.extend(get_processed_aliases(checkout_dir).get(plugin_name_base, []))
 
-    files = [
-        (file_, True) for file_ in glob.glob(os.path.join(checkout_dir, 'test/integration/targets', os.path.basename(os.path.splitext(plugin_name)[0])))
-    ]
+    # (filename, marked_for_removal)
+    # we do not mark integration tests dependencies (meta/main.yml) for removal,
+    # see process_needs_target function below
+    files = [(filename, True) for filename in integration_tests_files]
+
     deps = []
     for fname, dummy_to_remove in files:
         logger.info('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
         deps.extend(process_needs_target(checkout_dir, fname))
 
     return files + deps
+
+
+@functools.lru_cache()
+def get_processed_aliases(checkout_dir):
+    ignored_alias_patterns = frozenset({
+        ':',
+        '#',
+        '/',
+        'destructive',
+        'hidden',
+        'disabled',
+        'unstable',
+        'unsupported',
+    })
+    res = defaultdict(set)
+    targets_dir = os.path.join(checkout_dir, 'test/integration/targets/')
+    for target in os.listdir(targets_dir):
+        target_dir = os.path.join(targets_dir, target)
+        if not os.path.isdir(target_dir):
+            continue
+        aliases_file = os.path.join(target_dir, 'aliases')
+        if not os.path.exists(aliases_file):
+            continue
+        for line in read_text_from_file(aliases_file).splitlines():
+            line = line.strip()
+            if not line or any(ignored_alias in line for ignored_alias in ignored_alias_patterns):
+                continue
+            res[line].add(target_dir)
+
+    return res
 
 
 def process_needs_target(checkout_dir, fname):
