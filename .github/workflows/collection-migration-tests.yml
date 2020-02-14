@@ -99,14 +99,22 @@ jobs:
         --convert-symlinks
     - name: >-
         Create the tarballs dir for migrated Ansible Core
-      run: mkdir -pv .cache/migrated-core-tarballs
+        and collections
+      run: mkdir -pv .cache/migrated-tarballs
     - name: >-
         Generate tarballs out of the migrated Ansible Core
         as per ${{ matrix.migration-scenario }}
       run: >-
           tar czvf
-          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          ".cache/migrated-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
+    - name: >-
+        Generate tarballs out of the migrated Ansible Collections
+        Git repositories as per ${{ matrix.migration-scenario }}
+      run: >-
+          tar czvf
+          ".cache/migrated-tarballs/ansible-collections-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/collections/ansible_collections
     - name: >-
         Store the migrated Ansible Core
         as per ${{ matrix.migration-scenario }}
@@ -114,7 +122,7 @@ jobs:
       with:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/migrated-core-tarballs
+        path: .cache/migrated-tarballs
     - name: >-
         Generate tarballs out of migrated collections, one by one
       run: |
@@ -174,20 +182,20 @@ jobs:
     - name: Install migration script deps
       run: python -m pip install -r requirements.in -c requirements.txt
     - name: >-
-        Download migrated Ansible Core for
+        Download migrated Ansible Core and collections for
         ${{ matrix.migration-scenario }} scenario
       uses: actions/download-artifact@v1
       with:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/migrated-core-tarballs
+        path: .cache/migrated-tarballs
     - name: >-
         Retrieve the migrated Ansible Core for
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
           tar xzvfh
-          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          ".cache/migrated-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
     - name: >-
         Install Ansible from the migrated Core for
@@ -269,21 +277,29 @@ jobs:
     - name: Install migration script deps
       run: python -m pip install -r requirements.in -c requirements.txt
     - name: >-
-        Download migrated Ansible Core for
+        Download migrated Ansible Core and collections for
         ${{ matrix.migration-scenario }} scenario
       uses: actions/download-artifact@v1
       with:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/migrated-core-tarballs
+        path: .cache/migrated-tarballs
     - name: >-
         Retrieve the migrated Ansible Core for
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
           tar xzvfh
-          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          ".cache/migrated-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
+    - name: >-
+        Retrieve the migrated Ansible Collection Git dirs for
+        ${{ matrix.migration-scenario }} scenario
+        out of the tarball artifacts
+      run: >-
+          tar xzvfh
+          ".cache/migrated-tarballs/ansible-collections-${{ matrix.migration-scenario }}.tar.gz"
+          .cache/collections/ansible_collections
     - name: >-
         Install Ansible from the migrated Core for
         ${{ matrix.migration-scenario }} scenario
@@ -362,20 +378,20 @@ jobs:
     - name: Uninstall previously installed Ansible via Pip
       run: python -m pip uninstall ansible
     - name: >-
-        Download migrated Ansible Core for
+        Download migrated Ansible Core and collections for
         ${{ matrix.migration-scenario }} scenario
       uses: actions/download-artifact@v1
       with:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/migrated-core-tarballs
+        path: .cache/migrated-tarballs
     - name: >-
         Retrieve the migrated Ansible Core for
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
           tar xzvfh
-          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          ".cache/migrated-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
     - name: >-
         Install Ansible from the migrated Core for
@@ -442,20 +458,20 @@ jobs:
     - name: Uninstall previously installed Ansible via Pip
       run: python -m pip uninstall ansible
     - name: >-
-        Download migrated Ansible Core for
+        Download migrated Ansible Core and collections for
         ${{ matrix.migration-scenario }} scenario
       uses: actions/download-artifact@v1
       with:
         name: >-
           migrated-core-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.migration-scenario }}
-        path: .cache/migrated-core-tarballs
+        path: .cache/migrated-tarballs
     - name: >-
         Retrieve the migrated Ansible Core for
         ${{ matrix.migration-scenario }} scenario
         out of the tarball artifacts
       run: >-
           tar xzvfh
-          ".cache/migrated-core-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
+          ".cache/migrated-tarballs/ansible-${{ matrix.migration-scenario }}.tar.gz"
           .cache/releases/devel.git
     - name: >-
         Install Ansible from the migrated Core for
