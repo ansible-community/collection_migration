@@ -371,3 +371,92 @@ netcommon:
   - network/system/*
   netconf:
   - default.py
+windows:
+  action:
+  - win_copy.py
+  - win_reboot.py
+  - win_template.py
+  - win_updates.py
+  become:
+  - runas.py
+  doc_fragments:
+  - url_windows.py
+  module_utils:
+  - csharp/Ansible.Service.cs
+  modules:
+  - windows/__init__.py
+  - windows/async_status.ps1
+  - windows/setup.ps1
+  - windows/slurp.ps1
+  - windows/win_acl.ps1
+  - windows/win_acl.py
+  - windows/win_acl_inheritance.ps1
+  - windows/win_acl_inheritance.py
+  - windows/win_command.ps1
+  - windows/win_command.py
+  - windows/win_copy.ps1
+  - windows/win_copy.py
+  - windows/win_dns_client.ps1
+  - windows/win_dns_client.py
+  - windows/win_domain.ps1
+  - windows/win_domain.py
+  - windows/win_domain_controller.ps1
+  - windows/win_domain_controller.py
+  - windows/win_domain_membership.ps1
+  - windows/win_domain_membership.py
+  - windows/win_dsc.ps1
+  - windows/win_dsc.py
+  - windows/win_environment.ps1
+  - windows/win_environment.py
+  - windows/win_feature.ps1
+  - windows/win_feature.py
+  - windows/win_file.ps1
+  - windows/win_file.py
+  - windows/win_find.ps1
+  - windows/win_find.py
+  - windows/win_get_url.ps1
+  - windows/win_get_url.py
+  - windows/win_group.ps1
+  - windows/win_group.py
+  - windows/win_group_membership.ps1
+  - windows/win_group_membership.py
+  - windows/win_hostname.ps1
+  - windows/win_hostname.py
+  - windows/win_optional_feature.ps1
+  - windows/win_optional_feature.py
+  - windows/win_owner.ps1
+  - windows/win_owner.py
+  - windows/win_package.ps1
+  - windows/win_package.py
+  - windows/win_path.ps1
+  - windows/win_path.py
+  - windows/win_ping.ps1
+  - windows/win_ping.py
+  - windows/win_reboot.py
+  - windows/win_reg_stat.ps1
+  - windows/win_reg_stat.py
+  - windows/win_regedit.ps1
+  - windows/win_regedit.py
+  - windows/win_service.ps1
+  - windows/win_service.py
+  - windows/win_service_info.ps1
+  - windows/win_service_info.py
+  - windows/win_share.ps1
+  - windows/win_share.py
+  - windows/win_shell.ps1
+  - windows/win_shell.py
+  - windows/win_stat.ps1
+  - windows/win_stat.py
+  - windows/win_tempfile.ps1
+  - windows/win_tempfile.py
+  - windows/win_template.py
+  - windows/win_updates.ps1
+  - windows/win_updates.py
+  - windows/win_uri.ps1
+  - windows/win_uri.py
+  - windows/win_user.ps1
+  - windows/win_user.py
+  - windows/win_user_right.ps1
+  - windows/win_user_right.py
+  - windows/win_whoami.ps1
+  - windows/win_whoami.py

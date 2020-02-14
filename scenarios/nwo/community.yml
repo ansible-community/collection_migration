@@ -308,10 +308,6 @@ general:
   - synchronize.py
   - telnet.py
   - voss.py
-  - win_copy.py
-  - win_reboot.py
-  - win_template.py
-  - win_updates.py
   become:
   - doas.py
   - dzdo.py
@@ -320,7 +316,6 @@ general:
   - pbrun.py
   - pfexec.py
   - pmrun.py
-  - runas.py
   - sesu.py
   cache:
   - jsonfile.py
@@ -474,7 +469,6 @@ general:
   - skydive.py
   - sros.py
   - tower.py
-  - url_windows.py
   - utm.py
   - vexata.py
   - vultr.py
@@ -593,7 +587,6 @@ general:
   - hashi_vault.py
   - hiera.py
   - keyring.py
-  - laps_password.py
   - lastpass.py
   - lmdb_kv.py
   - manifold.py
@@ -615,7 +608,6 @@ general:
   - cloudscale.py
   - cloudstack.py
   - crypto.py
-  - csharp/Ansible.Service.cs
   - database.py
   - digital_ocean.py
   - dimensiondata.py
@@ -1477,7 +1469,6 @@ general:
   - clustering/pacemaker_cluster.py
   - clustering/znode.py
   - commands/__init__.py
-  - commands/psexec.py
   - commands/telnet.py
   - crypto/__init__.py
   - crypto/acme/__init__.py
@@ -2615,232 +2606,6 @@ general:
   - web_infrastructure/sophos_utm/utm_proxy_location_info.py
   - web_infrastructure/supervisorctl.py
   - web_infrastructure/taiga_issue.py
-  - windows/__init__.py
-  - windows/async_status.ps1
-  - windows/setup.ps1
-  - windows/slurp.ps1
-  - windows/win_acl.ps1
-  - windows/win_acl.py
-  - windows/win_acl_inheritance.ps1
-  - windows/win_acl_inheritance.py
-  - windows/win_audit_policy_system.ps1
-  - windows/win_audit_policy_system.py
-  - windows/win_audit_rule.ps1
-  - windows/win_audit_rule.py
-  - windows/win_auto_logon.ps1
-  - windows/win_auto_logon.py
-  - windows/win_certificate_info.ps1
-  - windows/win_certificate_info.py
-  - windows/win_certificate_store.ps1
-  - windows/win_certificate_store.py
-  - windows/win_chocolatey.ps1
-  - windows/win_chocolatey.py
-  - windows/win_chocolatey_config.ps1
-  - windows/win_chocolatey_config.py
-  - windows/win_chocolatey_facts.ps1
-  - windows/win_chocolatey_facts.py
-  - windows/win_chocolatey_feature.ps1
-  - windows/win_chocolatey_feature.py
-  - windows/win_chocolatey_source.ps1
-  - windows/win_chocolatey_source.py
-  - windows/win_command.ps1
-  - windows/win_command.py
-  - windows/win_computer_description.ps1
-  - windows/win_computer_description.py
-  - windows/win_copy.ps1
-  - windows/win_copy.py
-  - windows/win_credential.ps1
-  - windows/win_credential.py
-  - windows/win_data_deduplication.ps1
-  - windows/win_data_deduplication.py
-  - windows/win_defrag.ps1
-  - windows/win_defrag.py
-  - windows/win_disk_facts.ps1
-  - windows/win_disk_facts.py
-  - windows/win_disk_image.ps1
-  - windows/win_disk_image.py
-  - windows/win_dns_client.ps1
-  - windows/win_dns_client.py
-  - windows/win_dns_record.ps1
-  - windows/win_dns_record.py
-  - windows/win_domain.ps1
-  - windows/win_domain.py
-  - windows/win_domain_computer.ps1
-  - windows/win_domain_computer.py
-  - windows/win_domain_controller.ps1
-  - windows/win_domain_controller.py
-  - windows/win_domain_group.ps1
-  - windows/win_domain_group.py
-  - windows/win_domain_group_membership.ps1
-  - windows/win_domain_group_membership.py
-  - windows/win_domain_membership.ps1
-  - windows/win_domain_membership.py
-  - windows/win_domain_user.ps1
-  - windows/win_domain_user.py
-  - windows/win_dotnet_ngen.ps1
-  - windows/win_dotnet_ngen.py
-  - windows/win_dsc.ps1
-  - windows/win_dsc.py
-  - windows/win_environment.ps1
-  - windows/win_environment.py
-  - windows/win_eventlog.ps1
-  - windows/win_eventlog.py
-  - windows/win_eventlog_entry.ps1
-  - windows/win_eventlog_entry.py
-  - windows/win_feature.ps1
-  - windows/win_feature.py
-  - windows/win_file.ps1
-  - windows/win_file.py
-  - windows/win_file_compression.ps1
-  - windows/win_file_compression.py
-  - windows/win_file_version.ps1
-  - windows/win_file_version.py
-  - windows/win_find.ps1
-  - windows/win_find.py
-  - windows/win_firewall.ps1
-  - windows/win_firewall.py
-  - windows/win_firewall_rule.ps1
-  - windows/win_firewall_rule.py
-  - windows/win_format.ps1
-  - windows/win_format.py
-  - windows/win_get_url.ps1
-  - windows/win_get_url.py
-  - windows/win_group.ps1
-  - windows/win_group.py
-  - windows/win_group_membership.ps1
-  - windows/win_group_membership.py
-  - windows/win_hostname.ps1
-  - windows/win_hostname.py
-  - windows/win_hosts.ps1
-  - windows/win_hosts.py
-  - windows/win_hotfix.ps1
-  - windows/win_hotfix.py
-  - windows/win_http_proxy.ps1
-  - windows/win_http_proxy.py
-  - windows/win_iis_virtualdirectory.ps1
-  - windows/win_iis_virtualdirectory.py
-  - windows/win_iis_webapplication.ps1
-  - windows/win_iis_webapplication.py
-  - windows/win_iis_webapppool.ps1
-  - windows/win_iis_webapppool.py
-  - windows/win_iis_webbinding.ps1
-  - windows/win_iis_webbinding.py
-  - windows/win_iis_website.ps1
-  - windows/win_iis_website.py
-  - windows/win_inet_proxy.ps1
-  - windows/win_inet_proxy.py
-  - windows/win_initialize_disk.ps1
-  - windows/win_initialize_disk.py
-  - windows/win_lineinfile.ps1
-  - windows/win_lineinfile.py
-  - windows/win_mapped_drive.ps1
-  - windows/win_mapped_drive.py
-  - windows/win_msg.ps1
-  - windows/win_msg.py
-  - windows/win_netbios.ps1
-  - windows/win_netbios.py
-  - windows/win_nssm.ps1
-  - windows/win_nssm.py
-  - windows/win_optional_feature.ps1
-  - windows/win_optional_feature.py
-  - windows/win_owner.ps1
-  - windows/win_owner.py
-  - windows/win_package.ps1
-  - windows/win_package.py
-  - windows/win_pagefile.ps1
-  - windows/win_pagefile.py
-  - windows/win_partition.ps1
-  - windows/win_partition.py
-  - windows/win_path.ps1
-  - windows/win_path.py
-  - windows/win_pester.ps1
-  - windows/win_pester.py
-  - windows/win_ping.ps1
-  - windows/win_ping.py
-  - windows/win_power_plan.ps1
-  - windows/win_power_plan.py
-  - windows/win_product_facts.ps1
-  - windows/win_product_facts.py
-  - windows/win_psexec.ps1
-  - windows/win_psexec.py
-  - windows/win_psmodule.ps1
-  - windows/win_psmodule.py
-  - windows/win_psrepository.ps1
-  - windows/win_psrepository.py
-  - windows/win_rabbitmq_plugin.ps1
-  - windows/win_rabbitmq_plugin.py
-  - windows/win_rds_cap.ps1
-  - windows/win_rds_cap.py
-  - windows/win_rds_rap.ps1
-  - windows/win_rds_rap.py
-  - windows/win_rds_settings.ps1
-  - windows/win_rds_settings.py
-  - windows/win_reboot.py
-  - windows/win_reg_stat.ps1
-  - windows/win_reg_stat.py
-  - windows/win_regedit.ps1
-  - windows/win_regedit.py
-  - windows/win_region.ps1
-  - windows/win_region.py
-  - windows/win_regmerge.ps1
-  - windows/win_regmerge.py
-  - windows/win_robocopy.ps1
-  - windows/win_robocopy.py
-  - windows/win_route.ps1
-  - windows/win_route.py
-  - windows/win_say.ps1
-  - windows/win_say.py
-  - windows/win_scheduled_task.ps1
-  - windows/win_scheduled_task.py
-  - windows/win_scheduled_task_stat.ps1
-  - windows/win_scheduled_task_stat.py
-  - windows/win_security_policy.ps1
-  - windows/win_security_policy.py
-  - windows/win_service.ps1
-  - windows/win_service.py
-  - windows/win_service_info.ps1
-  - windows/win_service_info.py
-  - windows/win_share.ps1
-  - windows/win_share.py
-  - windows/win_shell.ps1
-  - windows/win_shell.py
-  - windows/win_shortcut.ps1
-  - windows/win_shortcut.py
-  - windows/win_snmp.ps1
-  - windows/win_snmp.py
-  - windows/win_stat.ps1
-  - windows/win_stat.py
-  - windows/win_tempfile.ps1
-  - windows/win_tempfile.py
-  - windows/win_template.py
-  - windows/win_timezone.ps1
-  - windows/win_timezone.py
-  - windows/win_toast.ps1
-  - windows/win_toast.py
-  - windows/win_unzip.ps1
-  - windows/win_unzip.py
-  - windows/win_updates.ps1
-  - windows/win_updates.py
-  - windows/win_uri.ps1
-  - windows/win_uri.py
-  - windows/win_user.ps1
-  - windows/win_user.py
-  - windows/win_user_profile.ps1
-  - windows/win_user_profile.py
-  - windows/win_user_right.ps1
-  - windows/win_user_right.py
-  - windows/win_wait_for.ps1
-  - windows/win_wait_for.py
-  - windows/win_wait_for_process.ps1
-  - windows/win_wait_for_process.py
-  - windows/win_wakeonlan.ps1
-  - windows/win_wakeonlan.py
-  - windows/win_webpicmd.ps1
-  - windows/win_webpicmd.py
-  - windows/win_whoami.ps1
-  - windows/win_whoami.py
-  - windows/win_xml.ps1
-  - windows/win_xml.py
   netconf:
   - ce.py
   - sros.py
@@ -3107,3 +2872,156 @@ vmware:
   - cloud/vmware_httpapi/vmware_appliance_health_info.py
   - cloud/vmware_httpapi/vmware_cis_category_info.py
   - cloud/vmware_httpapi/vmware_core_info.py
+windows:
+  lookup:
+  - laps_password.py
+  modules:
+  - commands/psexec.py
+  - windows/win_audit_policy_system.ps1
+  - windows/win_audit_policy_system.py
+  - windows/win_audit_rule.ps1
+  - windows/win_audit_rule.py
+  - windows/win_auto_logon.ps1
+  - windows/win_auto_logon.py
+  - windows/win_certificate_info.ps1
+  - windows/win_certificate_info.py
+  - windows/win_certificate_store.ps1
+  - windows/win_certificate_store.py
+  - windows/win_chocolatey.ps1
+  - windows/win_chocolatey.py
+  - windows/win_chocolatey_config.ps1
+  - windows/win_chocolatey_config.py
+  - windows/win_chocolatey_facts.ps1
+  - windows/win_chocolatey_facts.py
+  - windows/win_chocolatey_feature.ps1
+  - windows/win_chocolatey_feature.py
+  - windows/win_chocolatey_source.ps1
+  - windows/win_chocolatey_source.py
+  - windows/win_computer_description.ps1
+  - windows/win_computer_description.py
+  - windows/win_credential.ps1
+  - windows/win_credential.py
+  - windows/win_data_deduplication.ps1
+  - windows/win_data_deduplication.py
+  - windows/win_defrag.ps1
+  - windows/win_defrag.py
+  - windows/win_disk_facts.ps1
+  - windows/win_disk_facts.py
+  - windows/win_disk_image.ps1
+  - windows/win_disk_image.py
+  - windows/win_dns_record.ps1
+  - windows/win_dns_record.py
+  - windows/win_domain_computer.ps1
+  - windows/win_domain_computer.py
+  - windows/win_domain_group.ps1
+  - windows/win_domain_group.py
+  - windows/win_domain_group_membership.ps1
+  - windows/win_domain_group_membership.py
+  - windows/win_domain_user.ps1
+  - windows/win_domain_user.py
+  - windows/win_dotnet_ngen.ps1
+  - windows/win_dotnet_ngen.py
+  - windows/win_eventlog.ps1
+  - windows/win_eventlog.py
+  - windows/win_eventlog_entry.ps1
+  - windows/win_eventlog_entry.py
+  - windows/win_file_compression.ps1
+  - windows/win_file_compression.py
+  - windows/win_file_version.ps1
+  - windows/win_file_version.py
+  - windows/win_firewall.ps1
+  - windows/win_firewall.py
+  - windows/win_firewall_rule.ps1
+  - windows/win_firewall_rule.py
+  - windows/win_format.ps1
+  - windows/win_format.py
+  - windows/win_hosts.ps1
+  - windows/win_hosts.py
+  - windows/win_hotfix.ps1
+  - windows/win_hotfix.py
+  - windows/win_http_proxy.ps1
+  - windows/win_http_proxy.py
+  - windows/win_iis_virtualdirectory.ps1
+  - windows/win_iis_virtualdirectory.py
+  - windows/win_iis_webapplication.ps1
+  - windows/win_iis_webapplication.py
+  - windows/win_iis_webapppool.ps1
+  - windows/win_iis_webapppool.py
+  - windows/win_iis_webbinding.ps1
+  - windows/win_iis_webbinding.py
+  - windows/win_iis_website.ps1
+  - windows/win_iis_website.py
+  - windows/win_inet_proxy.ps1
+  - windows/win_inet_proxy.py
+  - windows/win_initialize_disk.ps1
+  - windows/win_initialize_disk.py
+  - windows/win_lineinfile.ps1
+  - windows/win_lineinfile.py
+  - windows/win_mapped_drive.ps1
+  - windows/win_mapped_drive.py
+  - windows/win_msg.ps1
+  - windows/win_msg.py
+  - windows/win_netbios.ps1
+  - windows/win_netbios.py
+  - windows/win_nssm.ps1
+  - windows/win_nssm.py
+  - windows/win_pagefile.ps1
+  - windows/win_pagefile.py
+  - windows/win_partition.ps1
+  - windows/win_partition.py
+  - windows/win_power_plan.ps1
+  - windows/win_power_plan.py
+  - windows/win_product_facts.ps1
+  - windows/win_product_facts.py
+  - windows/win_psexec.ps1
+  - windows/win_psexec.py
+  - windows/win_psmodule.ps1
+  - windows/win_psmodule.py
+  - windows/win_psrepository.ps1
+  - windows/win_psrepository.py
+  - windows/win_rabbitmq_plugin.ps1
+  - windows/win_rabbitmq_plugin.py
+  - windows/win_rds_cap.ps1
+  - windows/win_rds_cap.py
+  - windows/win_rds_rap.ps1
+  - windows/win_rds_rap.py
+  - windows/win_rds_settings.ps1
+  - windows/win_rds_settings.py
+  - windows/win_region.ps1
+  - windows/win_region.py
+  - windows/win_regmerge.ps1
+  - windows/win_regmerge.py
+  - windows/win_robocopy.ps1
+  - windows/win_robocopy.py
+  - windows/win_route.ps1
+  - windows/win_route.py
+  - windows/win_say.ps1
+  - windows/win_say.py
+  - windows/win_scheduled_task.ps1
+  - windows/win_scheduled_task.py
+  - windows/win_scheduled_task_stat.ps1
+  - windows/win_scheduled_task_stat.py
+  - windows/win_security_policy.ps1
+  - windows/win_security_policy.py
+  - windows/win_shortcut.ps1
+  - windows/win_shortcut.py
+  - windows/win_snmp.ps1
+  - windows/win_snmp.py
+  - windows/win_timezone.ps1
+  - windows/win_timezone.py
+  - windows/win_toast.ps1
+  - windows/win_toast.py
+  - windows/win_unzip.ps1
+  - windows/win_unzip.py
+  - windows/win_user_profile.ps1
+  - windows/win_user_profile.py
+  - windows/win_wait_for.ps1
+  - windows/win_wait_for.py
+  - windows/win_wait_for_process.ps1
+  - windows/win_wait_for_process.py
+  - windows/win_wakeonlan.ps1
+  - windows/win_wakeonlan.py
+  - windows/win_webpicmd.ps1
+  - windows/win_webpicmd.py
+  - windows/win_xml.ps1
+  - windows/win_xml.py
