@@ -448,7 +448,6 @@ general:
   - manageiq.py
   - mysql.py
   - netscaler.py
-  - network_agnostic.py
   - nios.py
   - nso.py
   - oneview.py

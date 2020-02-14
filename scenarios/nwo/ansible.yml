@@ -347,6 +347,7 @@ netcommon:
   - persistent.py
   doc_fragments:
   - netconf.py
+  - network_agnostic.py
   filter:
   - network.py
   httpapi:
