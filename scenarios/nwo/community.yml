@@ -323,9 +323,12 @@ general:
   - runas.py
   - sesu.py
   cache:
+  - jsonfile.py
   - memcached.py
   - mongodb.py
+  - pickle.py
   - redis.py
+  - yaml.py
   callback:
   - actionable.py
   - cgroup_memory_recap.py

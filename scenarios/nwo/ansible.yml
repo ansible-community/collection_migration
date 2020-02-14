@@ -34,10 +34,7 @@ _core:
   cache:
   - __init__.py
   - base.py
-  - jsonfile.py
   - memory.py
-  - pickle.py
-  - yaml.py
   callback:
   - __init__.py
   - default.py
