@@ -2630,7 +2630,7 @@ general:
   - slxos.py
   - sros.py
   - voss.py
-_grafana:
+grafana:
   callback:
   - grafana_annotations.py
   lookup:
@@ -2672,7 +2672,7 @@ kubernetes:
   - clustering/openshift/__init__.py
   - clustering/openshift/_openshift_raw.py
   - clustering/openshift/_openshift_scale.py
-_mongo:
+mongo:
   modules:
     - database/mongodb/*
   cache:
