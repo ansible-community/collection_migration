@@ -2969,6 +2969,8 @@ windows:
   - windows/win_pagefile.py
   - windows/win_partition.ps1
   - windows/win_partition.py
+  - windows/win_pester.ps1
+  - windows/win_pester.py
   - windows/win_power_plan.ps1
   - windows/win_power_plan.py
   - windows/win_product_facts.ps1
