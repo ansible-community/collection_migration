@@ -381,6 +381,11 @@ windows:
   - runas.py
   doc_fragments:
   - url_windows.py
+  integration:
+  - win_setup/*
+  - win_setup/*/*
+  - win_slurp/*
+  - win_slurp/*/*
   module_utils:
   - csharp/Ansible.Service.cs
   modules:
