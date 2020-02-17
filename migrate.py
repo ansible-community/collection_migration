@@ -1410,7 +1410,23 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     logger.error(e)
 
                 global integration_tests_deps
-                add_deps_to_metadata(integration_tests_deps.union(import_deps + docs_deps + unit_deps), galaxy_metadata)
+                add_deps_to_metadata(set(import_deps).union(docs_deps), galaxy_metadata)
+
+                # FIXME the format of test dependencies metadata is still TBD,
+                # for now doing the below and separating integration and unit tests dependencies for debugging purposes
+                if integration_tests_deps or unit_deps:
+                    test_metadata = {
+                        'integration_tests_dependencies': [],
+                        'unit_tests_dependencies': [],
+                    }
+                    for dep_ns, dep_coll in integration_tests_deps:
+                        dep = '%s.%s' % (dep_ns, dep_coll)
+                        test_metadata['integration_tests_dependencies'].append(dep)
+                    for dep_ns, dep_coll in unit_deps:
+                        dep = '%s.%s' % (dep_ns, dep_coll)
+                        test_metadata['unit_tests_dependencies'].append(dep)
+                    write_yaml_into_file_as_is(os.path.join(collection_dir, 'tests', 'requirements.yml'), test_metadata)
+
                 integration_tests_deps = set()
 
             inject_gitignore_into_collection(collection_dir)
