@@ -2679,7 +2679,7 @@ mongo:
     - mongodb.py
   lookup:
     - mongodb.py
-_vmware:
+vmware:
   connection:
   - vmware_tools.py
   doc_fragments:
