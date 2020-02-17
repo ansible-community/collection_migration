@@ -53,6 +53,8 @@ DEVEL_BRANCH = 'devel'
 
 ALL_THE_FILES = set()
 
+CLEANUP_FILES = set(['lib/ansible/config/module_defaults.yml'])
+
 COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/unit', 'integration': 'test/integration/targets'}
 PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory', 'vault': 'scripts/vault', 'unit': 'tests/unit', 'integration': 'tests/integration/targets'}
@@ -115,7 +117,7 @@ REWRITE_CLASS_PROPERTY_MAP = {
     'InventoryModule': 'NAME',
 }
 
-REWRITE_CLASS_PROPERTY_PLUGINS= {
+REWRITE_CLASS_PROPERTY_PLUGINS = {
     'become',
     'callback',
     'connection',
@@ -124,6 +126,9 @@ REWRITE_CLASS_PROPERTY_PLUGINS= {
 
 VARDIR = os.environ.get('GRAVITY_VAR_DIR', '.cache')
 LOGFILE = os.path.join(VARDIR, 'errors.log')
+
+ALIAS = {}
+DEPRECATE = {}
 
 REMOVE = defaultdict(lambda: defaultdict(set))
 
@@ -250,10 +255,52 @@ def checkout_repo(
 
 ### FILE utils
 
+def alias(namespace, collection, plugin, source):
+    global ALIAS
+    if not namespace in ALIAS:
+        ALIAS[namespace] = {}
+    if not collection in ALIAS[namespace]:
+        ALIAS[namespace][collection] = {}
+    ALIAS[namespace][collection][plugin] = source
+
+def deprecate(namespace, collection, ptype, plugin):
+    global DEPRECATE
+    if not namespace in DEPRECATE:
+        DEPRECATE[namespace] = {}
+    if not collection in DEPRECATE[namespace]:
+        DEPRECATE[namespace][collection] = {}
+    if not ptype in DEPRECATE[namespace][collection]:
+        DEPRECATE[namespace][collection][ptype] = []
+
+    DEPRECATE[namespace][collection][ptype].append(plugin)
+
 def remove(path, namespace, collection):
     global REMOVE
     REMOVE[namespace][collection].add(path)
 
+
+def actually_alias(checkout_path):
+    global ALIAS
+    for namespace in ALIAS.keys():
+        for collection in ALIAS[namespace].keys():
+
+            meta = os.path.join(checkout_path, namespace, collection, 'meta')
+            if not os.path.exists(meta):
+                os.mkdir(meta)
+
+            write_yaml_into_file_as_is(os.path.join(meta, 'aliases.yml'), ALIAS[namespace][collection])
+
+
+def actually_deprecate(checkout_path):
+    global DEPRECATE
+    for namespace in DEPRECATE.keys():
+        for collection in DEPRECATE[namespace].keys():
+
+            meta = os.path.join(checkout_path, namespace, collection, 'meta')
+            if not os.path.exists(meta):
+                os.mkdir(meta)
+
+            write_yaml_into_file_as_is(os.path.join(meta, 'deprecated.yml'), DEPRECATE[namespace][collection])
 
 def actually_remove(checkout_path):
     global REMOVE
@@ -266,6 +313,10 @@ def actually_remove(checkout_path):
     paths_counter = Counter(itertools.chain.from_iterable(coll_paths.values()))
     for coll_fqdn, paths in coll_paths.items():
         actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path)
+
+    # other cleanup
+    subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
+    subprocess.check_call(('git', 'commit', '-m', f'migration final cleanup', '--allow-empty'), cwd=checkout_path)
 
 
 def actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path):
@@ -1029,9 +1080,7 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
     collection_unit_tests_relative_root = os.path.join('tests', 'unit')
 
     # Narrow down the search area
-    type_base_subdir = os.path.join(
-        checkout_path, unit_tests_relative_root, type_subdir,
-    )
+    type_base_subdir = os.path.join(checkout_path, unit_tests_relative_root, type_subdir)
 
     # Figure out what to copy and where
     copy_map = {}
@@ -1045,6 +1094,8 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
     )))
     # plugin_mod might also be a directory, scan subdirs
     plugin_mod = os.path.splitext(plugin_mod)[0]
+    if plugin_mod.startswith('_'):
+        plugin_mod = plugin_mod[1:]
     matching_test_modules = matching_test_modules.union(set(glob.glob(os.path.join(
         type_base_subdir,
         plugin_dir,
@@ -1267,10 +1318,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             if args.fail_on_core_rewrite:
                 if collection != '_core':
                     continue
-            else:
-                if collection.startswith('_'):
-                    # these are info only collections
-                    continue
+            elif collection.startswith('_'):
+                # these are info only collections
+                continue
 
             collection_dir = os.path.join(collections_base_dir, 'ansible_collections', namespace, collection)
 
@@ -1311,18 +1361,20 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
                     src = os.path.join(checkout_path, relative_src_plugin_path)
 
-                    # TODO: collections are now scheduled to handle deprecations and aliases, until we get an implementation
-                    # we are just treating them as normal files for now (previously we were avoiding them).
+                    do_preserve_subdirs = ((args.preserve_module_subdirs and plugin_type == 'modules') or plugin_type in ALWAYS_PRESERVE_SUBDIRS)
+                    plugin_path_chunk = plugin if do_preserve_subdirs else os.path.basename(plugin)
 
-                    #if os.path.basename(plugin).startswith('_') and os.path.basename(plugin) != '__init__.py':
-                    #    if os.path.islink(src):
-                    #        logger.info("Removing plugin alias from checkout and skipping: %s (%s in %s.%s)",
-                    #                     plugin, plugin_type, namespace, collection)
-                    #        remove(src)
-                    #    else:
-                    #        logger.error("We should not be migrating deprecated plugins, skipping: %s (%s in %s.%s)",
-                    #                     plugin, plugin_type, namespace, collection)
-                    #    continue
+                    # use pname as 'pinal name' so we can handle deprecated content
+                    pname = os.path.splitext(os.path.basename(plugin))[0]
+                    if pname.startswith('_') and pname != '__init__' and plugin_type != 'module_utils':
+                        oldname = pname
+                        pname = pname[1:]
+                        deprecate(namespace, collection, plugin_type, pname)
+                        plugin_path_chunk = plugin_path_chunk.replace(oldname, pname)
+
+                    relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
+
+                    # TODO: use pname to check module_defaults and add to action_groups.yml
 
                     remove(src, namespace, collection)
 
@@ -1331,10 +1383,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         if os.path.exists(init_py_path):
                             remove(init_py_path, namespace, collection)
 
-                    do_preserve_subdirs = ((args.preserve_module_subdirs and plugin_type == 'modules') or plugin_type in ALWAYS_PRESERVE_SUBDIRS)
-                    plugin_path_chunk = plugin if do_preserve_subdirs else os.path.basename(plugin)
-                    relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
-
                     migrated_to_collection[relative_src_plugin_path] = relative_dest_plugin_path
 
                     dest = os.path.join(collection_dir, relative_dest_plugin_path)
@@ -1342,18 +1390,13 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         os.makedirs(os.path.dirname(dest), exist_ok=True)
 
                     if os.path.islink(src):
-                        process_symlink(plugin_type, plugins, dest, src)
-                        # don't rewrite symlinks, original file should already be handled
-                        continue
-                    elif not src.endswith('.py'):
-                        # its not all python files, copy and go to next
-                        # TODO: handle powershell import rewrites
-                        shutil.copyfile(src, dest)
-                        continue
-                    elif plugin_type == 'modules' and os.path.basename(src) == '__init__.py':
-                        # __init__.py in lib/ansible/modules are empty so just copy them over
+                        process_symlink(spec, plugins, plugin_type, dest, src)
+                    elif not src.endswith('.py') or (plugin_type == 'modules' and os.path.basename(src) == '__init__.py'):
+                        # Just copy and skip processing for both 'non python' and
+                        # __init__.py in lib/ansible/modules are empty.
                         # this saves us from doing all the processing on them and
                         # also from giving false positives in unit tests discovery
+                        # TODO: eventualy handle powershell?
                         logger.info('Copying %s -> %s', src, dest)
                         shutil.copyfile(src, dest)
                         continue
@@ -1368,29 +1411,24 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         # skip rest for 'not really plugins'
                         continue
 
-                    integration_test_dirs.extend(discover_integration_tests(checkout_path, plugin_type, plugin))
+                    # use undeprecated name to find tests
+                    integration_test_dirs.extend(discover_integration_tests(checkout_path, plugin_type, pname))
 
                     # process unit tests
-                    plugin_unit_tests_copy_map = create_unit_tests_copy_map(
-                        checkout_path, plugin_type, plugin,
-                    )
+                    plugin_unit_tests_copy_map = create_unit_tests_copy_map(checkout_path, plugin_type, plugin)
                     unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
             if not args.skip_tests:
                 copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path, namespace, collection)
                 migrated_to_collection.update(unit_tests_copy_map)
 
-                inject_init_into_tree(
-                    os.path.join(collection_dir, 'tests', 'unit'),
-                )
+                inject_init_into_tree(os.path.join(collection_dir, 'tests', 'unit'))
 
                 unit_deps += rewrite_unit_tests(collection_dir, collection, spec, namespace, args)
 
                 inject_gitignore_into_tests(collection_dir)
 
-                inject_ignore_into_sanity_tests(
-                    checkout_path, collection_dir, migrated_to_collection,
-                )
+                inject_ignore_into_sanity_tests(checkout_path, collection_dir, migrated_to_collection)
                 inject_requirements_into_sanity_tests(checkout_path, collection_dir)
 
                 # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
@@ -1410,33 +1448,25 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 'coll_name': collection,
                 'gh_org': target_github_org,
             }
-            inject_readme_into_collection(
-                collection_dir,
-                ctx=j2_ctx,
-            )
-            inject_github_actions_workflow_into_collection(
-                collection_dir,
-                ctx=j2_ctx,
-            )
+            inject_readme_into_collection(collection_dir, ctx=j2_ctx)
+            inject_github_actions_workflow_into_collection(collection_dir, ctx=j2_ctx)
 
             # write collection metadata
-            write_yaml_into_file_as_is(
-                os.path.join(collection_dir, 'galaxy.yml'),
-                galaxy_metadata,
-            )
+            write_yaml_into_file_as_is(os.path.join(collection_dir, 'galaxy.yml'), galaxy_metadata)
 
             # init git repo
             subprocess.check_call(('git', 'init'), cwd=collection_dir)
             subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
-            subprocess.check_call(
-                ('git', 'commit', '-m', 'Initial commit', '--allow-empty'),
-                cwd=collection_dir,
-            )
+            subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
 
-            mark_moved_resources(
-                checkout_path, namespace, collection, migrated_to_collection,
-            )
+            mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
 
+    # handle deprecations and aliases
+    coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
+    actually_deprecate(coll_dir)
+    actually_alias(coll_dir)
+
+    # remove from src repo if required
     if args.move_plugins:
         actually_remove(checkout_path)
 
@@ -1467,8 +1497,9 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
     }
 
 
-def process_symlink(plugin_type, plugins, dest, src):
+def process_symlink(spec, plugins, plugin_type, dest, src):
     """Recreate plugin module symlinks."""
+
     real_src = os.readlink(src)
 
     # remove destination if it already exists
@@ -1481,19 +1512,25 @@ def process_symlink(plugin_type, plugins, dest, src):
         shutil.copyfile(src, dest, follow_symlinks=False)
         return
 
+    # check target is in current collection
     target = real_src[3:]
     found = any(p.endswith(target) for p in plugins)
 
-    if not found:
+    if found:
+        if plugin_type == 'module_utils':
+            target = real_src
+        else:
+            target = os.path.basename(real_src)
+
+        with working_directory(os.path.dirname(dest)):
+            os.symlink(os.path.basename(target), os.path.basename(dest))
+    else:
+        # TODO: we fail now, but after exceptoin is draft on how to handle
         raise LookupError('Found symlink "%s" to target "%s" that is not in same collection.' % (src, target))
 
-    if plugin_type == 'module_utils':
-        target = real_src
-    else:
-        target = os.path.basename(real_src)
-
-    with working_directory(os.path.dirname(dest)):
-        os.symlink(os.path.basename(target), os.path.basename(dest))
+        # target is in other collection, needs to be aliased
+        source = 'unknown' # TODO: find source collection in spec, then construct FQCN
+        alias(namespace, collection, plugin, source)
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
@@ -1684,15 +1721,14 @@ def integration_tests_add_to_deps(collection, dep_collection):
 def discover_integration_tests(checkout_dir, plugin_type, plugin_name):
     targets_dir = os.path.join(checkout_dir, 'test/integration/targets')
     # 'cloud/amazon/ec2_eip.py' -> 'ec2_eip'
-    plugin_name_base = os.path.basename(os.path.splitext(plugin_name)[0])
-    integration_tests_files = glob.glob(os.path.join(targets_dir, plugin_name_base))
+    integration_tests_files = glob.glob(os.path.join(targets_dir, plugin_name))
     # test/integration/targets/filter_random_mac
-    integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name_base}')))
+    integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name}')))
     # aliased integration tests
     # https://github.com/ansible-community/collection_migration/issues/326
     # FIXME? is it safe to assume that all modules for aliased integration test will end up
     # in the same collection and so we can remove them now?
-    integration_tests_files.extend(get_processed_aliases(checkout_dir).get(plugin_name_base, []))
+    integration_tests_files.extend(get_processed_aliases(checkout_dir).get(plugin_name, []))
 
     # (filename, marked_for_removal)
     # we do not mark integration tests dependencies (meta/main.yml) for removal,
