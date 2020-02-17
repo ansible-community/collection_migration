@@ -465,7 +465,10 @@ def get_plugins_from_collection(ns, collection, plugin_type, spec):
 
 
 def get_plugin_fqcn(namespace, collection, plugin_name):
-    return '%s.%s.%s' % (namespace, collection, plugin_name)
+    # this is how we assemble FQCN before doing rewrites, so just before rewriting
+    # strip leading '_' from a collection name if present since it is not a part of the collection name
+    # but an internal identification of 'info collection only'
+    return '%s.%s.%s' % (namespace, collection.lstrip('_'), plugin_name)
 
 
 def get_rewritable_collections(namespace, spec):
