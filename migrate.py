@@ -623,16 +623,16 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
 
 
 def rewrite_docs_fragments(docs, collection, spec, namespace, args):
-    fragments = docs.get('extends_documentation_fragment', [])
-    if not fragments:
-        return [], []
+    old_fragments = docs.get('extends_documentation_fragment', [])
+    if not old_fragments:
+        return [], [], []
 
-    if not isinstance(fragments, list):
-        fragments = [fragments]
+    if not isinstance(old_fragments, list):
+        old_fragments = [old_fragments]
 
     deps = []
     new_fragments = []
-    for fragment in fragments:
+    for fragment in old_fragments:
         # some doc_fragments use subsections (e.g. vmware.vcenter_documentation)
         fragment_name, _dot, _rest = fragment.partition('.')
         try:
@@ -659,7 +659,7 @@ def rewrite_docs_fragments(docs, collection, spec, namespace, args):
         if (namespace, collection) != (fragment_namespace, fragment_collection):
             deps.append((fragment_namespace, fragment_collection))
 
-    return deps, new_fragments
+    return deps, old_fragments, new_fragments
 
 
 def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
@@ -677,22 +677,31 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     docs_parsed_dict = yaml.safe_load(doc_val.to_python().strip('\n'))
     docs_parsed_list = doc_val.to_python().split('\n')
 
-    deps, new_fragments = rewrite_docs_fragments(docs_parsed_dict, collection, spec, namespace, args)
+    deps, old_fragments, new_fragments = rewrite_docs_fragments(docs_parsed_dict, collection, spec, namespace, args)
 
     # https://github.com/ansible-community/collection_migration/issues/81
     # unfortunately, with PyYAML, the resulting DOCUMENTATION ended up in syntax errors when running sanity tests
     # to prevent that, use the original string split into list for rewrites
     new_docs = []
     in_extends = False
+    changed = False
     for line in docs_parsed_list:
         # remove version_added, it does not apply to collection in its current state
         if 'version_added' in line:
+            changed = True
             continue
 
-        # remove extends_documentation_fragment, it will be replaced with rewritten one below
         if 'extends_documentation_fragment' in line:
-            in_extends = True
-            continue
+            # rewrite fragments
+            if new_fragments and bool(set(old_fragments).difference(new_fragments)):
+                indent = ' ' * (len(line) - len(line.lstrip()))
+                new_docs.append(line.split(':')[0] + ':')
+                for new_fragment in new_fragments:
+                    new_docs.append('%s- %s' % (indent, new_fragment))
+                new_docs.append('')
+                in_extends = True
+                changed = True
+                continue
         if in_extends and '-' in line:
             continue
         else:
@@ -700,11 +709,8 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
 
         new_docs.append(line)
 
-    if new_fragments:
-        new_docs.append('extends_documentation_fragment:')
-        for new_fragment in new_fragments:
-            new_docs.append('- %s' % new_fragment)
-        new_docs.append('')
+    if not changed:
+        return []
 
     doc_str_tmpl = RAW_STR_TMPL if doc_val.type == 'raw_string' else STR_TMPL
     # `doc_val` holds a baron representation of the string node
