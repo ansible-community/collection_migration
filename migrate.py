@@ -259,12 +259,14 @@ def checkout_repo(
 
 ### FILE utils
 
-def alias(namespace, collection, plugin, source):
+def alias(namespace, collection, ptype, plugin, source):
     global ALIAS
     if not namespace in ALIAS:
         ALIAS[namespace] = {}
     if not collection in ALIAS[namespace]:
         ALIAS[namespace][collection] = {}
+    if not ptype in ALIAS[namespace][collection]:
+        ALIAS[namespace][collection][ptype] = {}
     ALIAS[namespace][collection][plugin] = source
 
 def deprecate(namespace, collection, ptype, plugin):
@@ -283,16 +285,25 @@ def remove(path, namespace, collection):
     REMOVE[namespace][collection].add(path)
 
 
-def actually_alias(checkout_path):
+def actually_alias(coll_dir, spec):
     global ALIAS
     for namespace in ALIAS.keys():
         for collection in ALIAS[namespace].keys():
+            resolved = {}
+            meta = os.path.join(coll_dir, namespace, collection, 'meta')
 
-            meta = os.path.join(checkout_path, namespace, collection, 'meta')
             if not os.path.exists(meta):
                 os.mkdir(meta)
 
-            write_yaml_into_file_as_is(os.path.join(meta, 'aliases.yml'), ALIAS[namespace][collection])
+            for ptype in ALIAS[namespace][collection].keys():
+                resolved[ptype] = {}
+
+                for plugin in ALIAS[namespace][collection][ptype].keys():
+                    source = ALIAS[namespace][collection][ptype][plugin]
+                    source_namespace, source_collection= get_plugin_collection(source, ptype, spec)
+                    resolved[ptype][plugin] = get_plugin_fqcn(source_namespace, source_collection, source)
+
+        write_yaml_into_file_as_is(os.path.join(meta, 'aliases.yml'), resolved)
 
 
 def actually_deprecate(checkout_path):
@@ -1499,7 +1510,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
     # handle deprecations and aliases
     coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
     actually_deprecate(coll_dir)
-    actually_alias(coll_dir)
+    actually_alias(coll_dir, spec)
 
     # remove from src repo if required
     if args.move_plugins:
@@ -1565,7 +1576,7 @@ def process_symlink(spec, plugins, plugin_type, dest, src):
 
         # target is in other collection, needs to be aliased
         source = 'unknown' # TODO: find source collection in spec, then construct FQCN
-        alias(namespace, collection, plugin, source)
+        alias(namespace, collection, plugin_type, plugin, source)
 
 
 def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
