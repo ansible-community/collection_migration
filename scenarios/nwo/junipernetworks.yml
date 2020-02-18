@@ -5,6 +5,10 @@ junos:
   - junos.py
   doc_fragments:
   - junos.py
+  integration:
+  - junos_*/*
+  - junos_*/*/*
+  - junos_*/*/*/*
   module_utils:
   - network/junos/*
   - network/junos/*/*
