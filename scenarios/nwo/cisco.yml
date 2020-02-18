@@ -86,6 +86,10 @@ ios:
   - ios.py
   doc_fragments:
   - ios.py
+  integration:
+  - ios_*/*
+  - ios_*/*/*
+  - ios_*/*/*/*
   module_utils:
   - network/ios/*
   - network/ios/*/*
@@ -103,6 +107,10 @@ iosxr:
   - iosxr.py
   doc_fragments:
   - iosxr.py
+  integration:
+  - iosxr_*/*
+  - iosxr_*/*/*
+  - iosxr_*/*/*/*
   module_utils:
   - network/iosxr/*
   - network/iosxr/*/*
@@ -191,6 +199,10 @@ nxos:
   - nxos.py
   httpapi:
   - nxos.py
+  integration:
+  - nxos_*/*
+  - nxos_*/*/*
+  - nxos_*/*/*/*
   module_utils:
   - network/nxos/*
   - network/nxos/*/*
