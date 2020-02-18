@@ -1,0 +1,23 @@
+labelPRBasedOnFilePath:
+  BCS:
+  - scenarios/bcs/*
+  mintest:
+  - scenarios/mintest/*
+  NWO:
+  - scenarios/nwo/*
+  migrate:
+  - gh.py
+  - migrate.py
+  - rsa_utils.py
+  - template_utils.py
+  - undolinks.sh
+  CI/CD:
+  - .github/workflows/*.yml
+  templates:
+  - resources/*
+  dependencies:
+  - requirements.in
+  - requirements.txt
+  documentation:
+  - **/*.md
+  - **/*.rst
