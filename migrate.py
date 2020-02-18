@@ -54,7 +54,8 @@ DEVEL_BRANCH = 'devel'
 
 ALL_THE_FILES = set()
 
-CLEANUP_FILES = set(['lib/ansible/config/module_defaults.yml'])
+#CLEANUP_FILES = set(['lib/ansible/config/module_defaults.yml'])
+CLEANUP_FILES = set()
 
 COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/unit', 'integration': 'test/integration/targets'}
