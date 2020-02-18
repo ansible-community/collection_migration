@@ -1458,7 +1458,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 inject_gitignore_into_tests(collection_dir)
 
-                inject_ignore_into_sanity_tests(checkout_path, collection_dir, migrated_to_collection)
                 inject_requirements_into_sanity_tests(checkout_path, collection_dir)
 
                 # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
@@ -1487,6 +1486,15 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     write_yaml_into_file_as_is(os.path.join(collection_dir, 'tests', 'requirements.yml'), test_metadata)
 
                 integration_tests_deps = set()
+
+                inject_ignore_into_sanity_tests(
+                    # NOTE: This must be kept in the end of the block
+                    # NOTE: and migrated_to_collection mustn't be
+                    # NOTE: updated after this invocation.
+                    # Ref: ansible-community/collection_migration#364
+                    checkout_path, collection_dir,
+                    migrated_to_collection,
+                )
 
             inject_gitignore_into_collection(collection_dir)
             j2_ctx = {
