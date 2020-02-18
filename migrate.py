@@ -1509,7 +1509,7 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
         'readme': 'README.md',
         'authors': None,
         'description': None,
-        'license': None,
+        'license': 'GPL-3.0-or-later',
         'license_file': None,
         'tags': None,
         'dependencies': {},
