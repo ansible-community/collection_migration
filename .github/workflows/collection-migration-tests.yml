@@ -96,7 +96,6 @@ jobs:
         -s "scenarios/${{ matrix.migration-scenario }}"
         --refresh "${{ env.CORE_REPO_REF }}"
         --skip-publish
-        --convert-symlinks
     - name: >-
         Create the tarballs dir for migrated Ansible Core
         and collections
