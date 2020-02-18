@@ -2917,6 +2917,8 @@ windows:
   - windows/win_domain_group.py
   - windows/win_domain_group_membership.ps1
   - windows/win_domain_group_membership.py
+  - windows/win_domain_object_info.ps1
+  - windows/win_domain_object_info.py
   - windows/win_domain_user.ps1
   - windows/win_domain_user.py
   - windows/win_dotnet_ngen.ps1
