@@ -7,6 +7,10 @@ eos:
   - eos.py
   httpapi:
   - eos.py
+  integration:
+  - eos_*/*
+  - eos_*/*/*
+  - eos_*/*/*/*
   module_utils:
   - network/eos/*
   - network/eos/*/*
