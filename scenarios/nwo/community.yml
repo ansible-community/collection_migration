@@ -1674,6 +1674,7 @@ general:
   - net_tools/ip_netns.py
   - net_tools/ipify_facts.py
   - net_tools/ipinfoio_facts.py
+  - net_tools/ipwcli_dns.py
   - net_tools/ldap/__init__.py
   - net_tools/ldap/_ldap_attr.py
   - net_tools/ldap/ldap_attrs.py
