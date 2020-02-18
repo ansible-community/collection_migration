@@ -463,5 +463,7 @@ windows:
   - windows/win_user.py
   - windows/win_user_right.ps1
   - windows/win_user_right.py
+  - windows/win_wait_for.ps1
+  - windows/win_wait_for.py
   - windows/win_whoami.ps1
   - windows/win_whoami.py

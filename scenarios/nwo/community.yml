@@ -3017,8 +3017,6 @@ windows:
   - windows/win_unzip.py
   - windows/win_user_profile.ps1
   - windows/win_user_profile.py
-  - windows/win_wait_for.ps1
-  - windows/win_wait_for.py
   - windows/win_wait_for_process.ps1
   - windows/win_wait_for_process.py
   - windows/win_wakeonlan.ps1
