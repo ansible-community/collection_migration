@@ -499,13 +499,8 @@ general:
   - virtualbox.py
   - vultr.py
   integration:
-  - mariadb_replication/tasks/mariadb_replication_initial.yml
-  - mariadb_replication/tasks/mariadb_replication_connection_name.yml
-  - mariadb_replication/tasks/mariadb_master_use_gtid.yml
-  - mariadb_replication/tasks/main.yml
-  - mariadb_replication/meta/main.yml
-  - mariadb_replication/defaults/main.yml
-  - mariadb_replication/aliases
+  - mariadb_replication/*
+  - mariadb_replication/*/*
   inventory_scripts:
   - abiquo.ini
   - abiquo.py
