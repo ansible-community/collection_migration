@@ -2282,6 +2282,7 @@ general:
   - packaging/os/installp.py
   - packaging/os/layman.py
   - packaging/os/macports.py
+  - packaging/os/mas.py
   - packaging/os/openbsd_pkg.py
   - packaging/os/opkg.py
   - packaging/os/pacman.py
