@@ -393,12 +393,12 @@ def read_ansible_yaml_file(path):
 
 
 def write_yaml_into_file_as_is(path, data):
-    yaml_text = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    yaml_text = yaml.dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False, width=1024)
     write_text_into_file(path, yaml_text)
 
 
 def write_ansible_yaml_into_file_as_is(path, data):
-    yaml_text = yaml.dump(data, Dumper=AnsibleDumper, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    yaml_text = yaml.dump(data, Dumper=AnsibleDumper, allow_unicode=True, default_flow_style=False, sort_keys=False, width=1024)
     write_text_into_file(path, yaml_text)
 
 
