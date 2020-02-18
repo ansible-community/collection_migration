@@ -1,0 +1,8 @@
+bcs:
+    - scenarios/bcs/*
+mintest:
+    - scenarios/mintest/*
+nwo:
+    - scenarios/nwo/*
+migrate:
+    - migrate.py
