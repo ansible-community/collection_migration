@@ -25,6 +25,8 @@ from string import Template
 from typing import Any, Dict, Iterable, Set, Union
 
 from ansible import constants as C
+from ansible.errors import AnsibleParserError
+from ansible.parsing.mod_args import ModuleArgsParser
 from ansible.parsing.yaml.dumper import AnsibleDumper
 from ansible.parsing.yaml.loader import AnsibleLoader
 from ansible.utils.collection_loader import AnsibleCollectionLoader
@@ -2003,6 +2005,32 @@ def _rewrite_yaml_mapping(el, namespace, collection, spec, args, dest, checkout_
 
 def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, dest):
     translate = []
+
+    if all(isinstance(key, str) for key in el.keys()):
+        try:
+            module_name, _, _ = ModuleArgsParser(el).parse()
+        except AnsibleParserError:
+            module_name = None
+
+        if module_name:
+            for ns in spec.keys():
+                for coll in get_rewritable_collections(ns, spec):
+                    if collection == coll:
+                        # https://github.com/ansible-community/collection_migration/issues/156
+                        continue
+
+                    if module_name not in get_plugins_from_collection(ns, coll, 'modules', spec):
+                        continue
+
+                    new_module_name = get_plugin_fqcn(ns, coll, module_name)
+                    msg = 'Rewriting to %s' % new_module_name
+                    if args.fail_on_core_rewrite:
+                        raise RuntimeError(msg)
+
+                    logger.debug(msg)
+                    translate.append((new_module_name, module_name))
+                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
+
     for key in el.keys():
         if key not in KEYWORDS_TO_PLUGIN_MAP and is_reserved_name(key):
             continue
@@ -2028,25 +2056,6 @@ def _rewrite_yaml_mapping_keys_non_vars(el, namespace, collection, spec, args, d
                 integration_tests_add_to_deps((namespace, collection), (plugin_namespace, plugin_collection))
             except LookupError:
                 pass
-
-        if isinstance(el[key], Mapping):
-            for ns in spec.keys():
-                for coll in get_rewritable_collections(ns, spec):
-                    if collection == coll:
-                        # https://github.com/ansible-community/collection_migration/issues/156
-                        continue
-
-                    if key not in get_plugins_from_collection(ns, coll, 'modules', spec):
-                        continue
-
-                    new_module_name = get_plugin_fqcn(ns, coll, key)
-                    msg = 'Rewriting to %s' % new_module_name
-                    if args.fail_on_core_rewrite:
-                        raise RuntimeError(msg)
-
-                    logger.debug(msg)
-                    translate.append((new_module_name, key))
-                    integration_tests_add_to_deps((namespace, collection), (ns, coll))
 
         if key in KEYWORDS_TO_PLUGIN_MAP:
             _rewrite_yaml_mapping_value(namespace, collection, el, key, KEYWORDS_TO_PLUGIN_MAP[key], spec, args, dest)
