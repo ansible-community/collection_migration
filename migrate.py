@@ -945,7 +945,8 @@ def rewrite_py(src, dest, collection, spec, namespace, args, plugin_type=None):
     with fst_rewrite_session(src, dest) as mod_fst:
         import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
 
-        if not plugin_type or plugin_type in C.CONFIGURABLE_PLUGINS:
+        # DOCUMENTABLE_PLUGINS contains `module`, we use `modules` (plural) so adding that too
+        if not plugin_type or plugin_type in C.DOCUMENTABLE_PLUGINS + ('doc_fragments', 'modules'):
             try:
                 docs_deps = rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args)
             except LookupError as err:
