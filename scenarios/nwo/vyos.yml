@@ -5,6 +5,10 @@ vyos:
   - vyos.py
   doc_fragments:
   - vyos.py
+  integration:
+  - vyos_*/*
+  - vyos_*/*/*
+  - vyos_*/*/*/*
   module_utils:
   - network/vyos/*
   - network/vyos/*/*
