@@ -319,7 +319,8 @@ def actually_remove(checkout_path):
         actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path)
 
     # other cleanup
-    subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
+    if CLEANUP_FILES:
+        subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
     subprocess.check_call(('git', 'commit', '-m', f'migration final cleanup', '--allow-empty'), cwd=checkout_path)
 
 
