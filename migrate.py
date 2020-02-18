@@ -318,6 +318,15 @@ def actually_remove(checkout_path):
     for coll_fqdn, paths in coll_paths.items():
         actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path)
 
+    # cleanup __init__.py
+    mod_root = os.path.join(checkout_path, PLUGIN_EXCEPTION_PATHS['modules'])
+    for emptydir in os.walk(mod_root, topdown=False):
+
+        if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
+            reldir = emptydir[0].replace(checkout_path, '')
+            init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
+            subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+
     # other cleanup
     if CLEANUP_FILES:
         subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
@@ -1391,11 +1400,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     # TODO: use pname to check module_defaults and add to action_groups.yml
 
                     remove(src, namespace, collection)
-
-                    if plugin_type in ('modules',) and '/' in plugin:
-                        init_py_path = os.path.join(os.path.dirname(src), '__init__.py')
-                        if os.path.exists(init_py_path):
-                            remove(init_py_path, namespace, collection)
 
                     migrated_to_collection[relative_src_plugin_path] = relative_dest_plugin_path
 
