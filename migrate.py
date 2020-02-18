@@ -20,6 +20,7 @@ import yaml
 
 from collections import defaultdict, Counter
 from collections.abc import Mapping
+from copy import deepcopy
 from string import Template
 from typing import Any, Dict, Iterable, Set, Union
 
@@ -1972,8 +1973,15 @@ def rewrite_ini_section(config, key_map, section, namespace, collection, spec, a
 
 def rewrite_yaml(src, dest, namespace, collection, spec, args, checkout_dir):
     contents = read_ansible_yaml_file(src)
+    contents_orig = deepcopy(contents)
+
     _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir)
-    write_ansible_yaml_into_file_as_is(dest, contents)
+
+    # if there are no changes than just copy the file to preserve YAML formatting
+    if contents == contents_orig:
+        shutil.copy2(src, dest)
+    else:
+        write_ansible_yaml_into_file_as_is(dest, contents)
 
 
 def _rewrite_yaml(contents, namespace, collection, spec, args, dest, checkout_dir):
