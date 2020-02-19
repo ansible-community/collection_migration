@@ -72,12 +72,33 @@ windows:
   - win_registry.py
 ```
 
-Some existing scenarios are already provided in the repo, `bare` and
-`minimal` being the most useful ones as they can generate (with `-m`
-option) an ansible repo w/o most of the plugins (`bare` has none,
-`minimal` has the ones we have considered Ansible requires to
-minimally function).
+Some existing scenarios are already provided in the repo, `stdlib` and `mintest`
+ being the most useful ones as they can generate (with `-m` option)
+ an ansible repo w/o most of the plugins (`stdlib` has none,
+`mintest` has the ones we have considered Ansible requires to be minimally testable).
 
+Per collection options
+----------------------
+
+A new `_options` key was introduced for per colleciotn settings, subkeys are:
+```
+  mycol:
+	_options:
+		flatmap: False
+		# Preserves subdirs for modules and makes it a 'flatmap type collection'
+
+		version: '0.1.0'
+		# Semantic version string for collection version
+
+		licence: GPL-3.0-or-later
+		# SPEX license string
+
+		license_file: COPYING
+		# file containing license in repo, this will be a GPLv3 copy from migration change as needed.
+
+		tags:
+		# list of galaxy tags desired for this collection
+```
 
 Performing the migration
 ------------------------
@@ -89,6 +110,7 @@ need to execute somehting like this:
 (.venv) $ python3.7 -m migrate -s scenarios/minimal
 ```
 
+The migrate script has a `--help` for other options.
 
 Generating a bare scenario
 --------------------------
@@ -117,7 +139,7 @@ Things to be aware of
   result in various sanity and/or other tests failures.
   E.g. `action plugin has no matching module to provide documentation`
   (`action-plugin-docs`).
-  
+
 Definitions for the 2.10 Ansible Release
 ----------------------------------------
 
@@ -125,20 +147,9 @@ There are a few terms that are important to the understanding of the
 Ansible 2.10 release, that impact and indicate how ansible will be
 structured, and distributed.
 
-stdlib
-: The bare essentials needed to make Ansible functional (needs feature list),
-  while providing no ability to perform work against a target host.
-  This will largely be a release or distribution with little to no plugins or modules.
-  - current state: needs work, currently we remove all plugins but that
-	 leaves Ansible in unusable state, needs a lot of work to start adding
-	 things back until the 'base functionality'is working again.
-
 base
-: This uses stdlib as it's foundation, while also including a small number
-  or plugins and modules that roughly track the 2.9 definition of "core"
-  supported plugins and modules. This will provide a limited functionality
-  to support a standard use case that may involve bootstrapping a host,
-  to a point where additionall collections can then be used.
-  - current state: not really derived off stdlib as that is currently unusable,
-	using bcs scenario as 'candidate' and keeping base itself as a symlinnk to
-	easily change across candidates.
+: This includes a small number of plugins and modules that roughly track
+  the 2.9 definition of "core" supported plugins and modules.
+  This will provide a limited functionality to support a standard use case
+  that may involve bootstrapping a host, to a point where additionall
+  collections can then be used.
