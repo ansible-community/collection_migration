@@ -1497,6 +1497,7 @@ general:
   - crypto/openssl_privatekey.py
   - crypto/openssl_privatekey_info.py
   - crypto/openssl_publickey.py
+  - crypto/x509_crl.py
   - database/__init__.py
   - database/aerospike/__init__.py
   - database/aerospike/aerospike_migrations.py
