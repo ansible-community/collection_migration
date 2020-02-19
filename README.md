@@ -109,8 +109,8 @@ stdlib
   while providing no ability to perform work against a target host.
   This will largely be a release or distribution with little to no plugins or modules.
   - current state: needs work, currently we remove all plugins but that
-	 leaves Ansible in unusable state, needs a lot of work to start adding
-	 things back until the 'base functionality'is working again.
+     leaves Ansible in unusable state, needs a lot of work to start adding
+     things back until the 'base functionality'is working again.
 
 base
 : This uses stdlib as it's foundation, while also including a small number
@@ -119,5 +119,5 @@ base
   to support a standard use case that may involve bootstrapping a host,
   to a point where additionall collections can then be used.
   - current state: not really derived off stdlib as that is currently unusable,
-	using bcs scenario as 'candidate' and keeping base itself as a symlinnk to
-	easily change across candidates.
+    using bcs scenario as 'candidate' and keeping base itself as a symlinnk to
+    easily change across candidates.
