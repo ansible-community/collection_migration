@@ -218,7 +218,7 @@ class UpdateNWO:
                     continue
 
         # keep init files in base unless otherwise specified
-        if plugin_basename == "__init__.py" and not matched_rules:
+        if plugin_basename == '__init__.py' and not matched_rules:
             iparts = plugin_relpath.split('/')
             if len(iparts) in [1] or iparts[0] in ['csharp', 'common', 'facts', 'powershell']:
                 return (
@@ -489,11 +489,11 @@ class UpdateNWO:
                     ruamel.yaml.dump(nd, f, Dumper=ruamel.yaml.RoundTripDumper)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--usecache', action='store_true')
-    parser.add_argument('--nobotmeta', action='store_true', help="ignore botmeta processing")
-    parser.add_argument('--writeall', action='store_true', help="write out all specs instead of just community")
+    parser.add_argument('--nobotmeta', action='store_true', help='ignore botmeta processing')
+    parser.add_argument('--writeall', action='store_true', help='write out all specs instead of just community')
     args = parser.parse_args()
 
     nwo = UpdateNWO()

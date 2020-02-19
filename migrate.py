@@ -445,9 +445,9 @@ def load_spec_file(spec_file):
     spec = read_yaml_file(spec_file)  # TODO: capture yamlerror?
 
     if not isinstance(spec, Mapping):
-        sys.exit("Invalid format for spec file, expected a dictionary and got %s" % type(spec))
+        sys.exit('Invalid format for spec file, expected a dictionary and got %s' % type(spec))
     elif not spec:
-        sys.exit("Cannot use spec file, ended up with empty spec")
+        sys.exit('Cannot use spec file, ended up with empty spec')
 
     return spec
 
@@ -1399,7 +1399,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 # process each plugin
                 for plugin in plugins:
                     if os.path.splitext(plugin)[1] in BAD_EXT:
-                        raise Exception("We should not be migrating compiled files: %s" % plugin)
+                        raise Exception('We should not be migrating compiled files: %s' % plugin)
 
                     # TODO: currently requires 'full name of file', but should work w/o extension?
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
@@ -1790,7 +1790,7 @@ def integration_tests_add_to_deps(collection, dep_collection):
     global integration_tests_deps
 
     if dep_collection not in integration_tests_deps:
-        logger.info("Adding %s.%s as a dep for %s.%s", dep_collection[0], dep_collection[1], collection[0], collection[1])
+        logger.info('Adding %s.%s as a dep for %s.%s', dep_collection[0], dep_collection[1], collection[0], collection[1])
 
     integration_tests_deps.add(dep_collection)
 
@@ -2300,7 +2300,7 @@ def setup_options(parser):
     parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
     parser.add_argument('--convert-symlinks', action='store_true', dest='convert_symlinks', default=False,
                         help='Convert symlinks to data copies to allow aliases to exist in different collections from original.',)
-    parser.add_argument('--limit', dest='limits', action='append', help="process only matching fqns [namespace.name] or fqcns which contain this substring")
+    parser.add_argument('--limit', dest='limits', action='append', help='process only matching fqns [namespace.name] or fqcns which contain this substring')
 
 
 def main():
@@ -2392,5 +2392,5 @@ def main():
 os.makedirs(VARDIR, exist_ok=True)
 logzero.logfile(LOGFILE, loglevel=logging.WARNING)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

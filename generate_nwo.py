@@ -1019,7 +1019,7 @@ class GalaxyIndexer:
 
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--usecache', action='store_true')
     args = parser.parse_args()

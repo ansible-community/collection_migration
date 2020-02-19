@@ -445,5 +445,5 @@ class StatusQuo:
                     f.write(fdata)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     StatusQuo.run()
