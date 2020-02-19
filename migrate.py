@@ -50,6 +50,7 @@ from template_utils import render_template_into
 # https://github.com/ansible/ansible/blob/100fe52860f45238ee8ca9e3019d1129ad043c68/hacking/fix_test_syntax.py#L62
 FILTER_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)\|(\s*)(\w+))')
 TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
+DEFAULT_VERSION = '0.1.0'
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
@@ -457,7 +458,13 @@ def resolve_spec(spec, checkoutdir):
     files_to_collections = defaultdict(list)
     for ns in spec.keys():
         for coll in spec[ns].keys():
+
             for ptype in spec[ns][coll].keys():
+
+                if ptype == '_options':
+                    # not a valid module type, but hijacked to put per colleciton options
+                    continue
+
                 if ptype not in VALID_SPEC_ENTRIES:
                     raise Exception('Invalid plugin type: %s, expected one of %s' % (ptype, VALID_SPEC_ENTRIES))
                 plugin_base = os.path.join(checkoutdir, PLUGIN_EXCEPTION_PATHS.get(ptype, os.path.join('lib', 'ansible', 'plugins', ptype)))
@@ -609,7 +616,7 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
         imp.value = f'.{imp.value.dumps()!s}'
 
 
-def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
+def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, options):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
@@ -683,7 +690,7 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
 
             val[:token_length] = new
 
-            if plugin_type == 'modules' and not args.preserve_module_subdirs:
+            if plugin_type == 'modules' and not (args.preserve_module_subdirs or options.get('flatmap')):
                 plugin_subdirs_len = len(plugin_name.split('/')[:-1])
                 new_len = len(new)
                 del val[new_len:new_len+plugin_subdirs_len]
@@ -811,7 +818,7 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     return deps
 
 
-def rewrite_imports(mod_fst, collection, spec, namespace, args):
+def rewrite_imports(mod_fst, collection, spec, namespace, args, options):
     """Rewrite imports map."""
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
@@ -823,7 +830,7 @@ def rewrite_imports(mod_fst, collection, spec, namespace, args):
         ('units', ): unit_tests_path,
     }
 
-    return rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, args)
+    return rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, args, options)
 
 
 def match_import_src(imp_src, import_map):
@@ -846,7 +853,7 @@ def match_import_src(imp_src, import_map):
     raise LookupError(f"Couldn't find a replacement for {imp_src!s}")
 
 
-def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, args):
+def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, args, options):
     """Replace imports in the python module FST."""
     deps = []
     for imp in mod_fst.find_all(('import', 'from_import')):
@@ -938,7 +945,7 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
 
         imp_src[:token_length] = exchange  # replace the import
 
-        if plugin_type == 'modules' and not args.preserve_module_subdirs:
+        if plugin_type == 'modules' and not (args.preserve_module_subdirs or options.get('flatmap')):
             plugin_subdirs_len = len(plugin_name.split('/')[:-1])
             exchange_len = len(exchange)
             del imp_src[exchange_len:exchange_len+plugin_subdirs_len]
@@ -951,10 +958,10 @@ def rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, arg
     return deps
 
 
-def rewrite_py(src, dest, collection, spec, namespace, args, plugin_type=None):
+def rewrite_py(src, dest, collection, spec, namespace, args, options, plugin_type=None):
 
     with fst_rewrite_session(src, dest) as mod_fst:
-        import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args)
+        import_deps = rewrite_imports(mod_fst, collection, spec, namespace, args, options)
 
         # DOCUMENTABLE_PLUGINS contains `module`, we use `modules` (plural) so adding that too
         if not plugin_type or plugin_type in C.DOCUMENTABLE_PLUGINS + ('doc_fragments', 'modules'):
@@ -1366,6 +1373,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 # these are info only collections
                 continue
 
+            options = spec[namespace][collection].pop('_options', {})
+
             collection_dir = os.path.join(collections_base_dir, 'ansible_collections', namespace, collection)
 
             if args.refresh and os.path.exists(collection_dir):
@@ -1375,7 +1384,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                 os.makedirs(collection_dir)
 
             # create the data for galaxy.yml
-            galaxy_metadata = init_galaxy_metadata(collection, namespace, target_github_org)
+            galaxy_metadata = init_galaxy_metadata(collection, namespace, target_github_org, options)
+            if options.get('flatmap'):
+                galaxy_metadata['type'] = 'flatmap'
 
             # process each plugin type
             for plugin_type, plugins in spec[namespace][collection].items():
@@ -1405,7 +1416,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     relative_src_plugin_path = os.path.join(src_plugin_base, plugin)
                     src = os.path.join(checkout_path, relative_src_plugin_path)
 
-                    do_preserve_subdirs = ((args.preserve_module_subdirs and plugin_type == 'modules') or plugin_type in ALWAYS_PRESERVE_SUBDIRS)
+                    do_preserve_subdirs = (((args.preserve_module_subdirs or options.get('flatmap')) and plugin_type == 'modules')
+                                          or plugin_type in ALWAYS_PRESERVE_SUBDIRS)
                     plugin_path_chunk = plugin if do_preserve_subdirs else os.path.basename(plugin)
 
                     # use pname as 'pinal name' so we can handle deprecated content
@@ -1450,7 +1462,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     logger.info('Processing %s -> %s', src, dest)
 
-                    deps = rewrite_py(src, dest, collection, spec, namespace, args, plugin_type=plugin_type)
+                    deps = rewrite_py(src, dest, collection, spec, namespace, args, options, plugin_type=plugin_type)
                     import_deps += deps[0]
                     docs_deps += deps[1]
 
@@ -1465,13 +1477,17 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     plugin_unit_tests_copy_map = create_unit_tests_copy_map(checkout_path, plugin_type, plugin)
                     unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
+            # copy license file
+            lfile = options.get('license_file', 'COPYING')
+            shutil.copyfile(os.path.join(checkout_path, 'COPYING'), os.path.join(collection_dir, lfile))
+
             if not args.skip_tests:
                 copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path, namespace, collection)
                 migrated_to_collection.update(unit_tests_copy_map)
 
                 inject_init_into_tree(os.path.join(collection_dir, 'tests', 'unit'))
 
-                unit_deps += rewrite_unit_tests(collection_dir, collection, spec, namespace, args)
+                unit_deps += rewrite_unit_tests(collection_dir, collection, spec, namespace, args, options)
 
                 inject_gitignore_into_tests(collection_dir)
 
@@ -1479,7 +1495,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
                 try:
-                    migrated_integration_test_files = rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args)
+                    migrated_integration_test_files = rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args, options)
                     migrated_to_collection.update(migrated_integration_test_files)
                 except yaml.composer.ComposerError as e:
                     logger.error(e)
@@ -1548,7 +1564,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
         actually_remove(checkout_path)
 
 
-def init_galaxy_metadata(collection, namespace, target_github_org):
+def init_galaxy_metadata(collection, namespace, target_github_org, options):
     """Return the initial Galaxy collection metadata object."""
     github_repo_slug = f'{target_github_org}/{namespace}.{collection}'
     github_repo_http_url = f'https://github.com/{github_repo_slug}'
@@ -1556,13 +1572,13 @@ def init_galaxy_metadata(collection, namespace, target_github_org):
     return {
         'namespace': namespace,
         'name': collection,
-        'version': '1.0.0',  # TODO: add to spec, args?
+        'version': options.get('version', DEFAULT_VERSION),
         'readme': 'README.md',
         'authors': None,
         'description': None,
-        'license': 'GPL-3.0-or-later',
-        'license_file': None,
-        'tags': None,
+        'license': options.get('license', 'GPL-3.0-or-later'),
+        'license_file': options.get('license_file', 'COPYING'),
+        'tags': options.get('tags', None),
         'dependencies': {},
         'repository': github_repo_ssh_url,
         'documentation': f'{github_repo_http_url}/tree/master/docs',
@@ -1610,7 +1626,7 @@ def process_symlink(spec, plugins, plugin_type, dest, src):
         alias(namespace, collection, plugin_type, plugin, source)
 
 
-def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
+def rewrite_unit_tests(collection_dir, collection, spec, namespace, args, options):
     """Rewrite imports and apply patches to unit tests."""
     deps = []
 
@@ -1619,15 +1635,9 @@ def rewrite_unit_tests(collection_dir, collection, spec, namespace, args):
             for dp, dn, fn in os.walk(os.path.join(collection_dir, 'tests', 'unit'))
     ):
         with fst_rewrite_session(file_path, file_path) as unit_test_module_fst:
-            deps += rewrite_imports(
-                unit_test_module_fst, collection, spec, namespace, args,
-            )
-            deps += rewrite_unit_tests_patch(
-                unit_test_module_fst, collection, spec, namespace, args,
-            )
-            normalize_implicit_relative_imports_in_unit_tests(
-                unit_test_module_fst, file_path,
-            )
+            deps += rewrite_imports(unit_test_module_fst, collection, spec, namespace, args, options)
+            deps += rewrite_unit_tests_patch(unit_test_module_fst, collection, spec, namespace, args, options)
+            normalize_implicit_relative_imports_in_unit_tests(unit_test_module_fst, file_path)
 
     return deps
 
@@ -1637,7 +1647,7 @@ def add_deps_to_metadata(deps, galaxy_metadata):
     for dep_ns, dep_coll in deps:
         dep = '%s.%s' % (dep_ns, dep_coll)
         # FIXME hardcoded version
-        galaxy_metadata['dependencies'][dep] = '>=1.0'
+        galaxy_metadata['dependencies'][dep] = '>=%s' % DEFAULT_VERSION
 
 
 def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
@@ -1656,9 +1666,7 @@ def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
     logger.debug('Using SSH key %s...', rsa_key.public_openssh)
     with rsa_key.ssh_agent as ssh_agent:
         for collection_dir, repo_name in collection_paths_except_core:
-            galaxy_yml = read_yaml_file(
-                os.path.join(collection_dir, 'galaxy.yml'),
-            )
+            galaxy_yml = read_yaml_file(os.path.join(collection_dir, 'galaxy.yml'))
             git_repo_url = galaxy_yml['repository']
             coll_home_url = galaxy_yml['repository']
             git_repo_url_repr = '...'.join((
@@ -1881,7 +1889,7 @@ def process_needs_target(checkout_dir, fname):
     return deps
 
 
-def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args):
+def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace, collection, spec, args, options):
     # FIXME module_defaults groups
     logger.info('Processing integration tests for %s.%s', namespace, collection)
 
@@ -1905,7 +1913,7 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
                 if ext in BAD_EXT:
                     continue
                 elif ext in ('.py',):
-                    import_deps, docs_deps = rewrite_py(src, dest, collection, spec, namespace, args)
+                    import_deps, docs_deps = rewrite_py(src, dest, collection, spec, namespace, args, options)
 
                     for dep_ns, dep_coll in import_deps + docs_deps:
                         integration_tests_add_to_deps((namespace, collection), (dep_ns, dep_coll))

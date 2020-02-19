@@ -211,6 +211,9 @@ amazon:
   - cloud/amazon/sts_assume_role.py
   - cloud/amazon/sts_session_token.py
 general:
+  _options:
+    version: '2.9.5'
+    flatmap: True
   action:
   - aireos.py
   - aruba.py
