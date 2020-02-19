@@ -1,0 +1,40 @@
+---
+repos:
+- repo: git://github.com/asottile/add-trailing-comma
+  rev: v1.5.0
+  hooks:
+  - id: add-trailing-comma
+
+- repo: git://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.1.7
+  hooks:
+  - id: remove-tabs
+
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  rev: v2.5.0
+  hooks:
+  # Side-effects:
+  - id: trailing-whitespace
+    args:
+    - --markdown-linebreak-ext=md
+  - id: double-quote-string-fixer
+  - id: end-of-file-fixer
+  - id: requirements-txt-fixer
+    exclude: >-
+      ^requirements(_nwo)?\.txt$
+
+  # Non-modifying checks:
+  - id: check-merge-conflict
+  - id: check-added-large-files
+  - id: check-byte-order-marker
+  - id: check-case-conflict
+  - id: check-json
+  - id: check-symlinks
+  - id: check-yaml
+    # args:
+    # - --unsafe
+  - id: detect-private-key
+
+  # Heavy checks:
+  - id: check-ast
+  - id: debug-statements
