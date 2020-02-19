@@ -1326,6 +1326,14 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
     # make initial YAML transformation to minimize the diff
     mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
+    # get module defaults
+    module_defaults = {}
+    md_file = os.path.join(checkout_path, 'lib/ansible/config/module_defaults.yml')
+    with open(md_file, 'rb') as md:
+        md_full = yaml.safe_load(md) or {}
+        module_defaults = md_full.get('groupings', {})
+
+    # main loop over spec
     for namespace in spec.keys():
         for collection in spec[namespace].keys():
 
@@ -1343,6 +1351,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     logger.info('%s.%s did not match filters, skipping' % (namespace, collection))
                     continue
 
+            action_defaults = {}
             import_deps = []
             docs_deps = []
             unit_deps = []
@@ -1409,12 +1418,20 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
 
-                    # TODO: use pname to check module_defaults and add to action_groups.yml
+                    # use pname to check module_defaults and add to action_groups.yml
+                    if pname in module_defaults:
+                        for groupname in module_defaults[pname]:
+                            if groupname not in action_defaults:
+                                action_defaults[groupname] = []
+                            action_defaults[groupname].append(pname)
 
+                    # add plugin to remove
                     remove(src, namespace, collection)
 
+                    # mark botmeta as migrated
                     migrated_to_collection[relative_src_plugin_path] = relative_dest_plugin_path
 
+                    # prep destnation
                     dest = os.path.join(collection_dir, relative_dest_plugin_path)
                     if do_preserve_subdirs:
                         os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -1507,6 +1524,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             # write collection metadata
             write_yaml_into_file_as_is(os.path.join(collection_dir, 'galaxy.yml'), galaxy_metadata)
+            # write action defaults if needed
+            if action_defaults:
+                metadir = os.path.join(collection_dir,'meta')
+                if not os.path.exists(metadir):
+                    os.mkdir(metadir)
+                write_yaml_into_file_as_is(os.path.join(metadir, 'action_groups.yml'), action_defaults)
 
             # init git repo
             subprocess.check_call(('git', 'init'), cwd=collection_dir)
