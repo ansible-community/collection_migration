@@ -426,6 +426,7 @@ netcommon:
   - netconf.py
   - network_agnostic.py
   filter:
+  - ipaddr.py
   - network.py
   httpapi:
   - restconf.py

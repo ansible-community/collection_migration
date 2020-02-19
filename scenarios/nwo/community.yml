@@ -404,7 +404,6 @@ general:
   - zabbix.py
   filter:
   - gcp_kms_filters.py
-  - ipaddr.py
   - json_query.py
   - random_mac.py
   httpapi:
