@@ -25,7 +25,7 @@ def _is_not_404_response(gh_err_resp):
 
     logger.info(
         'Expected failure: should retry' if is_404
-        else 'Unexpected failure: should fail loudly',
+        else 'Unexpected failure: should fail loudly'
     )
     logger.error(
         'Error: %r; status: %r; args: %s.',
@@ -122,7 +122,7 @@ class GitHubOrgClient:
                 'Repo %s has been created',
                 f'https://github.com'
                 f'/{self.github_org_name}'
-                f'/{repo_name}.git',
+                f'/{repo_name}.git'
             )
 
     @retry_on_not_found

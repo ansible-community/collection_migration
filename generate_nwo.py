@@ -96,7 +96,7 @@ ghrepos = [
     # redhat
     #   foreman/candlepin/etc
     # tower
-    'https://opendev.org/openstack/ansible-collections-openstack',
+    'https://opendev.org/openstack/ansible-collections-openstack'
 ]
 
 partners = [
@@ -116,7 +116,7 @@ partners = [
     'netbox_community',
     ('openstack', 'cloud'),
     ('sensu', 'sensu_go'),
-    'servicenow',
+    'servicenow'
 ]
 
 non_partners = [
@@ -132,7 +132,7 @@ non_partners = [
     'rrey',
     'schmots1',
     'sh4d1',
-    'testing',
+    'testing'
 ]
 
 def captured_return(result, **kwargs):
@@ -186,7 +186,7 @@ class StatusQuo:
         'netbox_community',
         ('openstack', 'cloud'),
         ('sensu', 'sensu_go'),
-        'servicenow',
+        'servicenow'
     ]
 
     non_partners = [
@@ -202,7 +202,7 @@ class StatusQuo:
         'rrey',
         'schmots1',
         'sh4d1',
-        'testing',
+        'testing'
     ]
 
     synonyms = {
@@ -420,7 +420,7 @@ class StatusQuo:
         pdata = {
             'orphaned': self.orphaned,
             'pluginfiles': self.pluginfiles,
-            'collections': self.collections,
+            'collections': self.collections
         }
         with open(self.cachefile, 'wb') as f:
             pickle.dump(pdata, f, pickle.HIGHEST_PROTOCOL)
@@ -635,12 +635,12 @@ class StatusQuo:
             if topic and topic.endswith('.misc'):
                 self.pluginfiles[idx][2] = topic
 
-        # guess the rest
+        # guess the rest 
         logger.info('guessing all the lefovers')
         for idx,x in enumerate(self.pluginfiles):
             if x[2]:
                 continue
-
+            
             # this screws everything up ...
             if x[-1] == 'common.py':
                 continue
@@ -722,7 +722,7 @@ class StatusQuo:
             else:
                 #import epdb; epdb.st()
                 continue
-
+            
             self.collections[topic][ptype].append(spec_path)
 
         #self.collections['_orphaned'] = sorted(self.collections['_orphaned'])
@@ -885,14 +885,14 @@ class GalaxyIndexer:
                 rr = requests.get(tarurl, stream=True)
                 with open(tarfn, 'wb') as f:
                     f.write(rr.raw.read())
-
+            
             # extract
             efp = os.path.join(self.collections_path, ckey[0], ckey[1])
             if not os.path.exists(efp):
                 logger.debug('unzip %s' % efp)
                 namespace_path = os.path.dirname(efp)
                 if not os.path.exists(namespace_path):
-                    os.makedirs(namespace_path)
+                    os.makedirs(namespace_path)                
                 with tarfile.open(tarfn, 'r:gz') as f:
                     f.extractall(path=efp)
             self.collections[ckey]['filepath'] = efp
@@ -951,7 +951,7 @@ class GalaxyIndexer:
                     'namespace': {'name': ckey[0]},
                     'href': repo,
                     'plugins': {},
-                    'filepath': os.path.dirname(gf),
+                    'filepath': os.path.dirname(gf)
                 }
             self.index_plugins_in_collection(os.path.dirname(gf), ckey)
 
@@ -970,7 +970,7 @@ class GalaxyIndexer:
                     'namespace': {'name': ckey[0]},
                     'href': repo,
                     'plugins': {},
-                    'filepath': os.path.dirname(mf),
+                    'filepath': os.path.dirname(mf)
                 }
             self.index_plugins_in_collection(os.path.dirname(mf), ckey)
 
@@ -998,7 +998,7 @@ class GalaxyIndexer:
                         if fqn not in candidates:
                             candidates[fqn] = {}
                         if ptype not in candidates[fqn]:
-                            candidates[fqn][ptype] = []
+                            candidates[fqn][ptype] = [] 
                         candidates[fqn][ptype].append(pfile)
 
         '''
@@ -1019,7 +1019,7 @@ class GalaxyIndexer:
 
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--usecache', action='store_true')
     args = parser.parse_args()
@@ -1033,3 +1033,4 @@ if __name__ == '__main__':
 
     sq = StatusQuo()
     sq.run(usecache=args.usecache, galaxy_indexer=gi, base_scenario_file='scenarios/bcs/ansible.yml')
+

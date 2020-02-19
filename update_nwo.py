@@ -2,7 +2,7 @@
 
 #################################################################
 # update_nwo.py - recreates scenarios/nwo with current plugins
-#
+# 
 # instructions:
 #   1) virtualenv --python=$(which python3) venv
 #   2) source venv/bin/activate
@@ -83,11 +83,11 @@ class UpdateNWO:
         # ansibot magic
         gitrepo = GitRepoWrapper(
             cachedir=self.cachedir,
-            repo=self.url,
+            repo=self.url
         )
         self.component_matcher = AnsibleComponentMatcher(
             gitrepo=gitrepo,
-            email_cache={},
+            email_cache={}
         )
 
         self.get_plugins()
@@ -103,7 +103,7 @@ class UpdateNWO:
 
         ''' Make a set of matching rules based on current scenario files '''
 
-        sfiles = glob.glob('scenarios/%s/*.yml' % self.SCENARIO)
+        sfiles = glob.glob('scenarios/%s/*.yml' % self.SCENARIO) 
         sfiles = sorted(set(sfiles))
 
         for sfile in sfiles:
@@ -123,7 +123,7 @@ class UpdateNWO:
                             'matcher': pfile,
                             'namespace': namespace,
                             'name': name,
-                            'source': sfile,
+                            'source': sfile
                         })
 
     def map_botmeta_migrations_to_rules(self):
@@ -155,7 +155,7 @@ class UpdateNWO:
                     'name': name,
                     'namespace': namespace,
                     'plugin_type': plugin_type,
-                    'source': 'BOTMETA.yml',
+                    'source': 'BOTMETA.yml'
                 }
                 self.rules.insert(0, rule)
                 rules_added += 1
@@ -218,29 +218,29 @@ class UpdateNWO:
                     continue
 
         # keep init files in base unless otherwise specified
-        if plugin_basename == '__init__.py' and not matched_rules:
+        if plugin_basename == "__init__.py" and not matched_rules:
             iparts = plugin_relpath.split('/')
             if len(iparts) in [1] or iparts[0] in ['csharp', 'common', 'facts', 'powershell']:
                 return (
                     'ansible',
-                    '_core',
+                    '_core', 
                     {
                         'plugin_type': plugin_type,
                         'matcher': plugin_relpath,
                         'namespace': 'ansible',
-                        'name': '_core',
-                    },
+                        'name': '_core'
+                    }
                 )
 
         # pick the "best" rule?
         if len(matched_rules) == 1:
-            return (matched_rules[0]['namespace'], matched_rules[0]['name'], matched_rules[0])
+            return (matched_rules[0]['namespace'], matched_rules[0]['name'], matched_rules[0])        
         elif len(matched_rules) > 1:
             # use most specific match?
             for mr in matched_rules:
                 mpaths = mr['matcher'].split('/')
                 if len(mpaths) == len(ppaths):
-                    return (mr['namespace'], mr['name'], mr)
+                    return (mr['namespace'], mr['name'], mr)        
 
         # default to community dumping ground
         return (
@@ -250,8 +250,8 @@ class UpdateNWO:
                 'plugin_type': plugin_type,
                 'matcher': 'unclaimed!',
                 'namespace': self.DUMPING_GROUND[0],
-                'name': self.DUMPING_GROUND[1],
-            },
+                'name': self.DUMPING_GROUND[1]
+            }
         )
 
     def get_plugins(self):
@@ -349,26 +349,24 @@ class UpdateNWO:
         self.pluginfiles = sorted(self.pluginfiles, key=lambda x: x[3])
 
     def make_compiled_csv(self):
-
+        
         ''' Make the human readable aggregated spreadsheet '''
 
-        fn = os.path.join(self.scenario_output_dir, 'compiled.csv')
+        fn = os.path.join(self.scenario_output_dir, 'compiled.csv')        
         logger.info('compiling %s' % fn)
         with open(fn, 'w') as csvfile:
             spamwriter = csv.writer(csvfile)
-            spamwriter.writerow(
-                [
-                    'filename',
-                    'fqn',
-                    'namespace',
-                    'name',
-                    'current_support_level',
-                    'new_support_level',
-                    'botmeta_migrated_to',
-                    'scenario_file',
-                    'scenario_plugin_type',
-                    'matched_line',
-                ],
+            spamwriter.writerow([
+                'filename',
+                'fqn',
+                'namespace',
+                'name',
+                'current_support_level',
+                'new_support_level',
+                'botmeta_migrated_to',
+                'scenario_file',
+                'scenario_plugin_type',
+                'matched_line']
             )
 
             for pf in self.pluginfiles:
@@ -400,7 +398,7 @@ class UpdateNWO:
                     migrated_to,
                     'scenarios/nwo/%s.yml' % ns,
                     pf[4]['plugin_type'],
-                    pf[4]['matcher'],
+                    pf[4]['matcher']
                 ]
                 if ns == 'community' and name == 'general':
                     row[7] = 'unclaimed!'
@@ -421,7 +419,7 @@ class UpdateNWO:
             name = x[-1]['name']
             ckey = (ns, name)
             ptype = x[0]
-            matcher = x[-1]['matcher']
+            matcher = x[-1]['matcher']            
 
             # use the relative path for unmatched community files
             if 'unclaimed' in matcher:
@@ -485,17 +483,17 @@ class UpdateNWO:
                                 nd[name][ptype] = sorted(set(nd[name][ptype]))
 
                     #if namespace == 'cisco':
-                    #    import epdb; epdb.st()
+                    #    import epdb; epdb.st() 
 
                     #ruamel.yaml.dump(this_data, f, Dumper=ruamel.yaml.RoundTripDumper)
                     ruamel.yaml.dump(nd, f, Dumper=ruamel.yaml.RoundTripDumper)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--usecache', action='store_true')
-    parser.add_argument('--nobotmeta', action='store_true', help='ignore botmeta processing')
-    parser.add_argument('--writeall', action='store_true', help='write out all specs instead of just community')
+    parser.add_argument('--nobotmeta', action='store_true', help="ignore botmeta processing")
+    parser.add_argument('--writeall', action='store_true', help="write out all specs instead of just community")
     args = parser.parse_args()
 
     nwo = UpdateNWO()

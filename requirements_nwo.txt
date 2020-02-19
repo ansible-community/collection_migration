@@ -14,3 +14,4 @@ fuzzywuzzy
 python-LevenShtein
 sqlalchemy
 git+git://github.com/ansible/ansibullbot
+
