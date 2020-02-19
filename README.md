@@ -25,6 +25,27 @@ as the CI uses, make sure to add `-c requirements.txt`
 in the end of that last command.
 
 
+Contributing
+------------
+
+When making PRs, check for the CI green status. Occasionally, it's
+red status has nothing to do with your contribution but most of the
+time it does. Ask questions if something looks weird.
+
+There's a separate linting job in the CI now. It essencially runs the
+[`pre-commit`](https://pre-commit.com) tool. Besides checks, it is
+also able to do minor code formatting.
+If you see any related failures, `pip install pre-commit` locally
+and run `pre-commit run --all-files`. In case this generates file
+changes, you can safely commit those. But if after that there's
+still linter offences present, fix them manually.
+
+*Note:* Some of the CI steps are set up to ignore failures, like
+running `ansible-test [sanity|units]` against the migrated collection
+artifacts. This is because the migration script is not ideal but we
+still want to have a log of how it's going.
+
+
 Migration scenario
 ------------------
 
