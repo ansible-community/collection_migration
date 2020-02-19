@@ -1613,8 +1613,6 @@ misc:
     - vexata.py
     - xenserver.py
     - zabbix.py
-    - a10.py
-    - cloudstack.py
     inventory:
     - foreman.py
     - linode.py
@@ -1652,6 +1650,12 @@ misc:
     - timer.py
     - unixy.py
     - yaml.py
+    doc_fragments:
+    - a10.py
+    - acme.py
+    - cloudstack.py
+    - digital_ocean.py
+    - docker.py
     connection:
     - docker.py
     - buildah.py
