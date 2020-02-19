@@ -50,6 +50,7 @@ from template_utils import render_template_into
 # https://github.com/ansible/ansible/blob/100fe52860f45238ee8ca9e3019d1129ad043c68/hacking/fix_test_syntax.py#L62
 FILTER_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)\|(\s*)(\w+))')
 TEST_RE = re.compile(r'((.+?)\s*([\w \.\'"]+)(\s*)is(\s*)(\w+))')
+DEFAULT_VERSION = '0.1.0'
 
 DEVEL_URL = 'https://github.com/ansible/ansible.git'
 DEVEL_BRANCH = 'devel'
@@ -1571,7 +1572,7 @@ def init_galaxy_metadata(collection, namespace, target_github_org, options):
     return {
         'namespace': namespace,
         'name': collection,
-        'version': options.get('version', '0.1.0'),
+        'version': options.get('version', DEFAULT_VERSION),
         'readme': 'README.md',
         'authors': None,
         'description': None,
@@ -1646,7 +1647,7 @@ def add_deps_to_metadata(deps, galaxy_metadata):
     for dep_ns, dep_coll in deps:
         dep = '%s.%s' % (dep_ns, dep_coll)
         # FIXME hardcoded version
-        galaxy_metadata['dependencies'][dep] = '>=1.0'
+        galaxy_metadata['dependencies'][dep] = '>=%s' % DEFAULT_VERSION
 
 
 def publish_to_github(collections_target_dir, spec, github_api, rsa_key):
