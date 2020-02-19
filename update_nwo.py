@@ -83,11 +83,11 @@ class UpdateNWO:
         # ansibot magic
         gitrepo = GitRepoWrapper(
             cachedir=self.cachedir,
-            repo=self.url
+            repo=self.url,
         )
         self.component_matcher = AnsibleComponentMatcher(
             gitrepo=gitrepo,
-            email_cache={}
+            email_cache={},
         )
 
         self.get_plugins()
@@ -123,7 +123,7 @@ class UpdateNWO:
                             'matcher': pfile,
                             'namespace': namespace,
                             'name': name,
-                            'source': sfile
+                            'source': sfile,
                         })
 
     def map_botmeta_migrations_to_rules(self):
@@ -155,7 +155,7 @@ class UpdateNWO:
                     'name': name,
                     'namespace': namespace,
                     'plugin_type': plugin_type,
-                    'source': 'BOTMETA.yml'
+                    'source': 'BOTMETA.yml',
                 }
                 self.rules.insert(0, rule)
                 rules_added += 1
@@ -228,8 +228,8 @@ class UpdateNWO:
                         'plugin_type': plugin_type,
                         'matcher': plugin_relpath,
                         'namespace': 'ansible',
-                        'name': '_core'
-                    }
+                        'name': '_core',
+                    },
                 )
 
         # pick the "best" rule?
@@ -250,8 +250,8 @@ class UpdateNWO:
                 'plugin_type': plugin_type,
                 'matcher': 'unclaimed!',
                 'namespace': self.DUMPING_GROUND[0],
-                'name': self.DUMPING_GROUND[1]
-            }
+                'name': self.DUMPING_GROUND[1],
+            },
         )
 
     def get_plugins(self):
@@ -356,17 +356,19 @@ class UpdateNWO:
         logger.info('compiling %s' % fn)
         with open(fn, 'w') as csvfile:
             spamwriter = csv.writer(csvfile)
-            spamwriter.writerow([
-                'filename',
-                'fqn',
-                'namespace',
-                'name',
-                'current_support_level',
-                'new_support_level',
-                'botmeta_migrated_to',
-                'scenario_file',
-                'scenario_plugin_type',
-                'matched_line']
+            spamwriter.writerow(
+                [
+                    'filename',
+                    'fqn',
+                    'namespace',
+                    'name',
+                    'current_support_level',
+                    'new_support_level',
+                    'botmeta_migrated_to',
+                    'scenario_file',
+                    'scenario_plugin_type',
+                    'matched_line',
+                ],
             )
 
             for pf in self.pluginfiles:
@@ -398,7 +400,7 @@ class UpdateNWO:
                     migrated_to,
                     'scenarios/nwo/%s.yml' % ns,
                     pf[4]['plugin_type'],
-                    pf[4]['matcher']
+                    pf[4]['matcher'],
                 ]
                 if ns == 'community' and name == 'general':
                     row[7] = 'unclaimed!'

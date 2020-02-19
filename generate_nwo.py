@@ -96,7 +96,7 @@ ghrepos = [
     # redhat
     #   foreman/candlepin/etc
     # tower
-    'https://opendev.org/openstack/ansible-collections-openstack'
+    'https://opendev.org/openstack/ansible-collections-openstack',
 ]
 
 partners = [
@@ -116,7 +116,7 @@ partners = [
     'netbox_community',
     ('openstack', 'cloud'),
     ('sensu', 'sensu_go'),
-    'servicenow'
+    'servicenow',
 ]
 
 non_partners = [
@@ -132,7 +132,7 @@ non_partners = [
     'rrey',
     'schmots1',
     'sh4d1',
-    'testing'
+    'testing',
 ]
 
 def captured_return(result, **kwargs):
@@ -186,7 +186,7 @@ class StatusQuo:
         'netbox_community',
         ('openstack', 'cloud'),
         ('sensu', 'sensu_go'),
-        'servicenow'
+        'servicenow',
     ]
 
     non_partners = [
@@ -202,7 +202,7 @@ class StatusQuo:
         'rrey',
         'schmots1',
         'sh4d1',
-        'testing'
+        'testing',
     ]
 
     synonyms = {
@@ -420,7 +420,7 @@ class StatusQuo:
         pdata = {
             'orphaned': self.orphaned,
             'pluginfiles': self.pluginfiles,
-            'collections': self.collections
+            'collections': self.collections,
         }
         with open(self.cachefile, 'wb') as f:
             pickle.dump(pdata, f, pickle.HIGHEST_PROTOCOL)
@@ -951,7 +951,7 @@ class GalaxyIndexer:
                     'namespace': {'name': ckey[0]},
                     'href': repo,
                     'plugins': {},
-                    'filepath': os.path.dirname(gf)
+                    'filepath': os.path.dirname(gf),
                 }
             self.index_plugins_in_collection(os.path.dirname(gf), ckey)
 
@@ -970,7 +970,7 @@ class GalaxyIndexer:
                     'namespace': {'name': ckey[0]},
                     'href': repo,
                     'plugins': {},
-                    'filepath': os.path.dirname(mf)
+                    'filepath': os.path.dirname(mf),
                 }
             self.index_plugins_in_collection(os.path.dirname(mf), ckey)
 

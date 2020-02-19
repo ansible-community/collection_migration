@@ -579,7 +579,7 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
     """Locate implicit imports and prepend them with dot."""
     cur_pkg_dir = os.path.dirname(file_path)
     make_pkg_subpath = functools.partial(os.path.join, cur_pkg_dir)
-    for imp in mod_fst.find_all(('from_import', )):
+    for imp in mod_fst.find_all(('from_import',)):
         if not imp.value:  # from . import something
             continue
 
@@ -613,21 +613,22 @@ def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args):
     # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
-    unit_tests_path = tests_path + ('unit', )
+    unit_tests_path = tests_path + ('unit',)
     import_map = {
-        ('ansible', 'modules'): plugins_path + ('modules', ),
-        ('ansible', 'module_utils'): plugins_path + ('module_utils', ),
+        ('ansible', 'modules'): plugins_path + ('modules',),
+        ('ansible', 'module_utils'): plugins_path + ('module_utils',),
         ('ansible', 'plugins'): plugins_path,
-        ('units', ): unit_tests_path,
+        ('units',): unit_tests_path,
     }
 
     patches = (
-        mod_fst('string',
-                lambda x:
-                    'ansible.modules' in x.dumps() or
-                    'ansible.module_utils' in x.dumps() or
-                    'ansible.plugins' in x.dumps() or
-                    'units' in x.dumps()
+        mod_fst(
+            'string',
+                    lambda x:
+                        'ansible.modules' in x.dumps() or
+                        'ansible.module_utils' in x.dumps() or
+                        'ansible.plugins' in x.dumps() or
+                        'units' in x.dumps(),
         )
     )
 
@@ -815,12 +816,12 @@ def rewrite_imports(mod_fst, collection, spec, namespace, args):
     """Rewrite imports map."""
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
-    unit_tests_path = tests_path + ('unit', )
+    unit_tests_path = tests_path + ('unit',)
     import_map = {
-        ('ansible', 'modules'): plugins_path + ('modules', ),
-        ('ansible', 'module_utils'): plugins_path + ('module_utils', ),
+        ('ansible', 'modules'): plugins_path + ('modules',),
+        ('ansible', 'module_utils'): plugins_path + ('module_utils',),
         ('ansible', 'plugins'): plugins_path,
-        ('units', ): unit_tests_path,
+        ('units',): unit_tests_path,
     }
 
     return rewrite_imports_in_fst(mod_fst, import_map, collection, spec, namespace, args)
@@ -1091,7 +1092,7 @@ def inject_requirements_into_unit_tests(checkout_path, collection_dir):
 
 def inject_requirements_into_sanity_tests(checkout_path, collection_dir):
     """Inject sanity tests Python dependencies into collection."""
-    coll_sanity_tests_dir = os.path.join(collection_dir, 'tests', 'sanity',)
+    coll_sanity_tests_dir = os.path.join(collection_dir, 'tests', 'sanity')
     original_sanity_tests_req_file = os.path.join(checkout_path, 'test', 'sanity', 'requirements.txt')
 
     os.makedirs(coll_sanity_tests_dir, exist_ok=True)
@@ -1122,20 +1123,30 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
 
     # Find all test modules with the same ending as the current plugin
     plugin_dir, plugin_mod = os.path.split(plugin)
-    matching_test_modules = set(glob.glob(os.path.join(
-        type_base_subdir,
-        plugin_dir,
-        f'*{plugin_mod}',
-    )))
+    matching_test_modules = set(
+        glob.glob(
+            os.path.join(
+                type_base_subdir,
+                plugin_dir,
+                f'*{plugin_mod}',
+            ),
+        ),
+    )
     # plugin_mod might also be a directory, scan subdirs
     plugin_mod = os.path.splitext(plugin_mod)[0]
     if plugin_mod.startswith('_'):
         plugin_mod = plugin_mod[1:]
-    matching_test_modules = matching_test_modules.union(set(glob.glob(os.path.join(
-        type_base_subdir,
-        plugin_dir,
-        f'*{plugin_mod}/**',
-    ), recursive=True)))
+    matching_test_modules = matching_test_modules.union(
+        set(
+            glob.glob(
+                os.path.join(
+                    type_base_subdir,
+                    plugin_dir,
+                    f'*{plugin_mod}/**',
+                ), recursive=True,
+            ),
+        ),
+    )
     matching_test_modules = set(f for f in matching_test_modules if not os.path.isdir(f))
 
     # Path(matching_test_modules[0]).relative_to(Path(checkout_path))
@@ -1174,7 +1185,7 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
 
             logger.info(
                 'Located %s...',
-                target_file
+                target_file,
             )
             yield target_file
 
@@ -1274,10 +1285,12 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
                 for test_artifact_path in related_test_fixtures
             )
 
-    copy_map.update(itertools.chain(
-        discover_file_migrations(conftest_modules),
-        discover_file_migrations(matching_test_modules, find_related=True),
-    ))
+    copy_map.update(
+        itertools.chain(
+            discover_file_migrations(conftest_modules),
+            discover_file_migrations(matching_test_modules, find_related=True),
+        ),
+    )
 
     return copy_map
 
@@ -1891,9 +1904,11 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
             for filename in filenames:
                 src = os.path.join(dirpath, filename)
 
-                dest_dir = os.path.join(collection_dir,
-                                        'tests',
-                                        os.path.relpath(dirpath, os.path.join(checkout_dir, 'test')))
+                dest_dir = os.path.join(
+                    collection_dir,
+                    'tests',
+                    os.path.relpath(dirpath, os.path.join(checkout_dir, 'test')),
+                )
                 if not os.path.exists(dest_dir):
                     os.makedirs(dest_dir)
                 dest = os.path.join(dest_dir, filename)
@@ -1979,7 +1994,7 @@ def rewrite_ini(src, dest, namespace, collection, spec, args):
         'inventory': {
             'cache_plugin': 'cache',
             'enable_plugins': 'inventory',
-        }
+        },
     }
 
     config = configparser.ConfigParser()
@@ -2283,23 +2298,31 @@ def setup_options(parser):
     parser.add_argument('-r', '--refresh', action='store', nargs='?', const=True, dest='refresh', default=False, help='force refreshing local Ansible checkout, optionally check out specific commitish')
     parser.add_argument('-t', '--target-dir', dest='vardir', default=VARDIR, help='target directory for resulting collections and rpm')
     parser.add_argument('-p', '--preserve-module-subdirs', action='store_true', dest='preserve_module_subdirs', default=False, help='preserve module subdirs per spec')
-    parser.add_argument('--github-app-id', action='store', type=int, dest='github_app_id', default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,
-                        help='Use this GitHub App ID for GH auth',)
-    parser.add_argument('--github-app-key-path', action='store', type=str, dest='github_app_key_path',
-                        default=None if 'GITHUB_PRIVATE_KEY' in os.environ else '~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
-                        help='Use this PEM key file for GH auth. Altertanively, put its contents into `GITHUB_PRIVATE_KEY` env var.',)
-    parser.add_argument('--target-github-org', action='store', type=str, dest='target_github_org', default='ansible-collection-migration', help='Push migrated collections to this GH org',)
+    parser.add_argument(
+        '--github-app-id', action='store', type=int, dest='github_app_id', default=None if 'GITHUB_APP_IDENTIFIER' in os.environ else 41435,
+        help='Use this GitHub App ID for GH auth',
+    )
+    parser.add_argument(
+        '--github-app-key-path', action='store', type=str, dest='github_app_key_path',
+        default=None if 'GITHUB_PRIVATE_KEY' in os.environ else '~/Downloads/ansible-migrator.2019-09-18.private-key.pem',
+        help='Use this PEM key file for GH auth. Altertanively, put its contents into `GITHUB_PRIVATE_KEY` env var.',
+    )
+    parser.add_argument('--target-github-org', action='store', type=str, dest='target_github_org', default='ansible-collection-migration', help='Push migrated collections to this GH org')
     parser.add_argument('-P', '--publish-to-github', action='store_true', dest='publish_to_github', default=False, help='Push all migrated collections to their Git remotes')
     parser.add_argument('-m', '--move-plugins', action='store_true', dest='move_plugins', default=False, help='remove plugins from source instead of just copying them')
     parser.add_argument('-M', '--push-migrated-core', action='store_true', dest='push_migrated_core', default=False, help='Push migrated core to the Git repo')
-    parser.add_argument('-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
-                        help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running'
-                             ' migration against the list of files kept in core: spec must contain the "_core" collection.')
+    parser.add_argument(
+        '-f', '--fail-on-core-rewrite', action='store_true', dest='fail_on_core_rewrite', default=False,
+        help='Fail on core rewrite. E.g. to verify core does not depend on the collections by running'
+             ' migration against the list of files kept in core: spec must contain the "_core" collection.',
+    )
     parser.add_argument('-R', '--skip-tests', action='store_true', dest='skip_tests', default=False, help='Skip tests and rewrite the runtime code only.')
-    parser.add_argument('--skip-migration', action='store_true', dest='skip_migration', default=False, help='Skip creating migrated collections.',)
-    parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.',)
-    parser.add_argument('--convert-symlinks', action='store_true', dest='convert_symlinks', default=False,
-                        help='Convert symlinks to data copies to allow aliases to exist in different collections from original.',)
+    parser.add_argument('--skip-migration', action='store_true', dest='skip_migration', default=False, help='Skip creating migrated collections.')
+    parser.add_argument('--skip-publish', action='store_true', dest='skip_publish', default=False, help='Skip publishing migrated collections and core repositories.')
+    parser.add_argument(
+        '--convert-symlinks', action='store_true', dest='convert_symlinks', default=False,
+        help='Convert symlinks to data copies to allow aliases to exist in different collections from original.',
+    )
     parser.add_argument('--limit', dest='limits', action='append', help='process only matching fqns [namespace.name] or fqcns which contain this substring')
 
 
@@ -2356,10 +2379,10 @@ def main():
         print(yaml.dump(core))
 
         global manual_check
-        print('======= Could not rewrite the following, ' 'please check manually =======\n',)
+        print('======= Could not rewrite the following, ' 'please check manually =======\n')
         print(yaml.dump(dict(manual_check)))
 
-        print(f'See {LOGFILE} for any warnings/errors ' 'that were logged during migration.',)
+        print(f'See {LOGFILE} for any warnings/errors ' 'that were logged during migration.')
 
     if args.skip_publish:
         logger.info('Skipping the publish step...')
