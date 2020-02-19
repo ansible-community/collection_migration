@@ -28,7 +28,7 @@ in the end of that last command.
 Contributing
 ------------
 
-When making PRs, check for the CI green status. Occasionally, it's
+When making PRs, check for the CI green status. Occasionally, its
 red status has nothing to do with your contribution but most of the
 time it does. Ask questions if something looks weird.
 
