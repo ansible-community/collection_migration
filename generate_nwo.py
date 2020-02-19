@@ -635,12 +635,12 @@ class StatusQuo:
             if topic and topic.endswith('.misc'):
                 self.pluginfiles[idx][2] = topic
 
-        # guess the rest 
+        # guess the rest
         logger.info('guessing all the lefovers')
         for idx,x in enumerate(self.pluginfiles):
             if x[2]:
                 continue
-            
+
             # this screws everything up ...
             if x[-1] == 'common.py':
                 continue
@@ -722,7 +722,7 @@ class StatusQuo:
             else:
                 #import epdb; epdb.st()
                 continue
-            
+
             self.collections[topic][ptype].append(spec_path)
 
         #self.collections['_orphaned'] = sorted(self.collections['_orphaned'])
@@ -885,14 +885,14 @@ class GalaxyIndexer:
                 rr = requests.get(tarurl, stream=True)
                 with open(tarfn, 'wb') as f:
                     f.write(rr.raw.read())
-            
+
             # extract
             efp = os.path.join(self.collections_path, ckey[0], ckey[1])
             if not os.path.exists(efp):
                 logger.debug('unzip %s' % efp)
                 namespace_path = os.path.dirname(efp)
                 if not os.path.exists(namespace_path):
-                    os.makedirs(namespace_path)                
+                    os.makedirs(namespace_path)
                 with tarfile.open(tarfn, 'r:gz') as f:
                     f.extractall(path=efp)
             self.collections[ckey]['filepath'] = efp
@@ -998,7 +998,7 @@ class GalaxyIndexer:
                         if fqn not in candidates:
                             candidates[fqn] = {}
                         if ptype not in candidates[fqn]:
-                            candidates[fqn][ptype] = [] 
+                            candidates[fqn][ptype] = []
                         candidates[fqn][ptype].append(pfile)
 
         '''

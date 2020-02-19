@@ -96,7 +96,7 @@ Things to be aware of
   result in various sanity and/or other tests failures.
   E.g. `action plugin has no matching module to provide documentation`
   (`action-plugin-docs`).
-  
+
 Definitions for the 2.10 Ansible Release
 ----------------------------------------
 

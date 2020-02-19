@@ -336,7 +336,7 @@ class StatusQuo:
                 topic = self._guess_topic(fp)
                 self.pluginfiles.append([ptype, fn, topic, fp])
 
-        # guess the rest 
+        # guess the rest
         for idx,x in enumerate(self.pluginfiles):
             if x[2]:
                 continue
@@ -400,7 +400,7 @@ class StatusQuo:
                 spec_path = os.path.join('contrib', 'inventory', os.path.basename(spec_path))
             else:
                 import epdb; epdb.st()
-            
+
             #self.collections[topic][ptype].append(x[1])
             self.collections[topic][ptype].append(spec_path)
             #import epdb; epdb.st()

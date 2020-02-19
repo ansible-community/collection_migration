@@ -2,7 +2,7 @@
 
 #################################################################
 # update_nwo.py - recreates scenarios/nwo with current plugins
-# 
+#
 # instructions:
 #   1) virtualenv --python=$(which python3) venv
 #   2) source venv/bin/activate
@@ -103,7 +103,7 @@ class UpdateNWO:
 
         ''' Make a set of matching rules based on current scenario files '''
 
-        sfiles = glob.glob('scenarios/%s/*.yml' % self.SCENARIO) 
+        sfiles = glob.glob('scenarios/%s/*.yml' % self.SCENARIO)
         sfiles = sorted(set(sfiles))
 
         for sfile in sfiles:
@@ -223,7 +223,7 @@ class UpdateNWO:
             if len(iparts) in [1] or iparts[0] in ['csharp', 'common', 'facts', 'powershell']:
                 return (
                     'ansible',
-                    '_core', 
+                    '_core',
                     {
                         'plugin_type': plugin_type,
                         'matcher': plugin_relpath,
@@ -234,13 +234,13 @@ class UpdateNWO:
 
         # pick the "best" rule?
         if len(matched_rules) == 1:
-            return (matched_rules[0]['namespace'], matched_rules[0]['name'], matched_rules[0])        
+            return (matched_rules[0]['namespace'], matched_rules[0]['name'], matched_rules[0])
         elif len(matched_rules) > 1:
             # use most specific match?
             for mr in matched_rules:
                 mpaths = mr['matcher'].split('/')
                 if len(mpaths) == len(ppaths):
-                    return (mr['namespace'], mr['name'], mr)        
+                    return (mr['namespace'], mr['name'], mr)
 
         # default to community dumping ground
         return (
@@ -349,10 +349,10 @@ class UpdateNWO:
         self.pluginfiles = sorted(self.pluginfiles, key=lambda x: x[3])
 
     def make_compiled_csv(self):
-        
+
         ''' Make the human readable aggregated spreadsheet '''
 
-        fn = os.path.join(self.scenario_output_dir, 'compiled.csv')        
+        fn = os.path.join(self.scenario_output_dir, 'compiled.csv')
         logger.info('compiling %s' % fn)
         with open(fn, 'w') as csvfile:
             spamwriter = csv.writer(csvfile)
@@ -419,7 +419,7 @@ class UpdateNWO:
             name = x[-1]['name']
             ckey = (ns, name)
             ptype = x[0]
-            matcher = x[-1]['matcher']            
+            matcher = x[-1]['matcher']
 
             # use the relative path for unmatched community files
             if 'unclaimed' in matcher:
@@ -483,7 +483,7 @@ class UpdateNWO:
                                 nd[name][ptype] = sorted(set(nd[name][ptype]))
 
                     #if namespace == 'cisco':
-                    #    import epdb; epdb.st() 
+                    #    import epdb; epdb.st()
 
                     #ruamel.yaml.dump(this_data, f, Dumper=ruamel.yaml.RoundTripDumper)
                     ruamel.yaml.dump(nd, f, Dumper=ruamel.yaml.RoundTripDumper)
