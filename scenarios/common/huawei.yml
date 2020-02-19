@@ -14,8 +14,6 @@ _cloudengine:
     - network/cloudengine/*
     modules:
     - network/cloudengine/*
-    terminal:
-    - ce.py
 _cloud:
     doc_fragments:
     - hwc.py
