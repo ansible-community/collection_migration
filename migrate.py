@@ -1476,6 +1476,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     plugin_unit_tests_copy_map = create_unit_tests_copy_map(checkout_path, plugin_type, plugin)
                     unit_tests_copy_map.update(plugin_unit_tests_copy_map)
 
+            # copy license file
+            lfile = options.get('license_file', 'COPYING')
+            shutil.copyfile(os.path.join(checkout_path, 'COPYING'), os.path.join(collection_dir, lfile))
+
             if not args.skip_tests:
                 copy_unit_tests(unit_tests_copy_map, collection_dir, checkout_path, namespace, collection)
                 migrated_to_collection.update(unit_tests_copy_map)
