@@ -2,4 +2,3 @@ _pagerduty:
     modules:
     - monitoring/pagerduty.py
     - monitoring/pagerduty_alert.py
-

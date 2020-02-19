@@ -1033,4 +1033,3 @@ if __name__ == "__main__":
 
     sq = StatusQuo()
     sq.run(usecache=args.usecache, galaxy_indexer=gi, base_scenario_file='scenarios/bcs/ansible.yml')
-
