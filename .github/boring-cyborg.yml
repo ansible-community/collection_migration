@@ -19,5 +19,5 @@ labelPRBasedOnFilePath:
   - requirements.in
   - requirements.txt
   documentation:
-  - **/*.md
-  - **/*.rst
+  - "**/*.md"
+  - "**/*.rst"
