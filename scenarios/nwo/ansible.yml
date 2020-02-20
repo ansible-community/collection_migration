@@ -475,6 +475,8 @@ windows:
   - windows/win_acl.py
   - windows/win_acl_inheritance.ps1
   - windows/win_acl_inheritance.py
+  - windows/win_certificate_store.ps1
+  - windows/win_certificate_store.py
   - windows/win_command.ps1
   - windows/win_command.py
   - windows/win_copy.ps1

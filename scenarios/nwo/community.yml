@@ -2818,8 +2818,6 @@ windows:
   - windows/win_auto_logon.py
   - windows/win_certificate_info.ps1
   - windows/win_certificate_info.py
-  - windows/win_certificate_store.ps1
-  - windows/win_certificate_store.py
   - windows/win_chocolatey.ps1
   - windows/win_chocolatey.py
   - windows/win_chocolatey_config.ps1
