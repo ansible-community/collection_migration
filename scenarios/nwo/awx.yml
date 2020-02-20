@@ -1,4 +1,6 @@
 awx:
+  doc_fragments:
+  - tower.py
   inventory:
   - tower.py
   module_utils:

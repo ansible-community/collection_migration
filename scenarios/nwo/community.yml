@@ -396,7 +396,6 @@ general:
   - scaleway.py
   - skydive.py
   - sros.py
-  - tower.py
   - utm.py
   - vexata.py
   - vultr.py
