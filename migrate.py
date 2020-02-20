@@ -1510,10 +1510,10 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         'integration_tests_dependencies': [],
                         'unit_tests_dependencies': [],
                     }
-                    for dep_ns, dep_coll in integration_tests_deps:
+                    for dep_ns, dep_coll in set(integration_tests_deps):
                         dep = '%s.%s' % (dep_ns, dep_coll)
                         test_metadata['integration_tests_dependencies'].append(dep)
-                    for dep_ns, dep_coll in unit_deps:
+                    for dep_ns, dep_coll in set(unit_deps):
                         dep = '%s.%s' % (dep_ns, dep_coll)
                         test_metadata['unit_tests_dependencies'].append(dep)
                     write_yaml_into_file_as_is(os.path.join(collection_dir, 'tests', 'requirements.yml'), test_metadata)
