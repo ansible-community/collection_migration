@@ -1817,13 +1817,13 @@ def discover_integration_tests(checkout_dir, plugin_type, plugin_name):
 
     # (filename, marked_for_removal)
     # we do not mark integration tests dependencies (meta/main.yml) for removal,
-    # see process_needs_target function below
+    # see process_integration_tests_deps function below
     files = [(filename, True) for filename in integration_tests_files]
 
     deps = []
     for fname, dummy_to_remove in files:
         logger.info('Found integration tests for %s %s in %s', plugin_type, plugin_name, fname)
-        deps.extend(process_needs_target(checkout_dir, fname))
+        deps.extend(process_integration_tests_deps(checkout_dir, fname))
 
     return files + deps
 
@@ -1858,9 +1858,9 @@ def get_processed_aliases(checkout_dir):
     return res
 
 
-def process_needs_target(checkout_dir, fname):
+def process_integration_tests_deps(checkout_dir, target_dir):
     deps = []
-    dep_file = os.path.join(fname, 'meta', 'main.yml')
+    dep_file = os.path.join(target_dir, 'meta', 'main.yml')
     if os.path.exists(dep_file):
         content = read_yaml_file(dep_file)
         if content:
@@ -1869,11 +1869,11 @@ def process_needs_target(checkout_dir, fname):
                 if isinstance(dep, dict):
                     dep = dep.get('role')
                 dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
-                logger.info('Adding integration tests dependency target %s for %s', dep_fname, fname)
+                logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
                 deps.append((dep_fname, False))
-                deps.extend(process_needs_target(checkout_dir, dep_fname))
+                deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
 
-    aliases_file = os.path.join(fname, 'aliases')
+    aliases_file = os.path.join(target_dir, 'aliases')
     if os.path.exists(aliases_file):
         content = read_text_from_file(aliases_file)
         for alias in content.split('\n'):
@@ -1882,9 +1882,23 @@ def process_needs_target(checkout_dir, fname):
             dep = alias.split('/')[-1]
             dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
             if os.path.exists(dep_fname):
-                logger.info('Adding integration tests dependency target %s for %s', dep_fname, fname)
+                logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
                 deps.append((dep_fname, False))
-                deps.extend(process_needs_target(checkout_dir, dep_fname))
+                deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
+
+    for dirpath, dirnames, filenames in os.walk(target_dir):
+        for filename in filenames:
+            full_path = os.path.join(target_dir, filename)
+            if os.path.islink(full_path):
+                real_path = os.path.realpath(full_path)
+                parts = real_path.split('/')
+                index = parts.index('targets')
+                dep = parts[index+1]
+                dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
+                if os.path.exists(dep_fname):
+                    logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
+                    deps.append((dep_fname, False))
+                    deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
 
     return deps
 
@@ -1912,6 +1926,15 @@ def rewrite_integration_tests(test_dirs, checkout_dir, collection_dir, namespace
 
                 if ext in BAD_EXT:
                     continue
+                elif os.path.islink(src):
+                    # https://github.com/ansible-community/collection_migration/issues/411
+                    # All symbolic links will either be within the same target or to another
+                    # target which is in the same collection, so converting the symbolic
+                    # links to files is unnecessary.
+                    real_src = os.readlink(src)
+                    if os.path.exists(dest):
+                        os.remove(dest)
+                    os.symlink(real_src, dest)
                 elif ext in ('.py',):
                     import_deps, docs_deps = rewrite_py(src, dest, collection, spec, namespace, args, options)
 
