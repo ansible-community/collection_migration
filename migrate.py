@@ -762,6 +762,16 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
 
     deps, old_fragments, new_fragments = rewrite_docs_fragments(docs_parsed_dict, collection, spec, namespace, args)
 
+    options = docs_parsed_dict.get('options', {})
+    if not isinstance(options, Mapping):
+        # lib/ansible/plugins/doc_fragments/emc.py
+        options = {}
+
+    option_name_empty = []
+    for name, data in options.items():
+        if len(data.keys()) == 1 and data.get('version_added', False):
+            option_name_empty.append(name)
+
     # https://github.com/ansible-community/collection_migration/issues/81
     # unfortunately, with PyYAML, the resulting DOCUMENTATION ended up in syntax errors when running sanity tests
     # to prevent that, use the original string split into list for rewrites
@@ -769,6 +779,10 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     in_extends = False
     changed = False
     for line in docs_parsed_list:
+        # https://github.com/ansible-community/collection_migration/issues/431
+        if any(line.strip() == ('%s:' % option_name) for option_name in option_name_empty):
+            continue
+
         # remove version_added, it does not apply to collection in its current state
         if 'version_added' in line:
             changed = True
