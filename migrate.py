@@ -1756,9 +1756,10 @@ def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collec
         transformed_path_key_map[transformed_key] = k
 
     for migrated_resource in migrated_to_collection:
-        macro_path = transformed_path_key_map.get(
-            migrated_resource, migrated_resource,
-        )
+        macro_path = transformed_path_key_map.get(migrated_resource)
+        if macro_path is None:
+            # try without file extension
+            macro_path = transformed_path_key_map.get(os.path.splitext(migrated_resource)[0], migrated_resource)
 
         migrated_secion = botmeta_files.get(macro_path)
         if not migrated_secion:
