@@ -1574,6 +1574,7 @@ general:
   - monitoring/zabbix/zabbix_group.py
   - monitoring/zabbix/zabbix_group_info.py
   - monitoring/zabbix/zabbix_host.py
+  - monitoring/zabbix/zabbix_host_events_info.py
   - monitoring/zabbix/zabbix_host_info.py
   - monitoring/zabbix/zabbix_hostmacro.py
   - monitoring/zabbix/zabbix_maintenance.py
