@@ -530,7 +530,7 @@ def get_plugin_collection(plugin_name, plugin_type, spec):
         for collection in spec[ns].keys():
             if spec[ns][collection]: # avoid empty collections
                 plugins = spec[ns][collection].get(plugin_type, [])
-                if plugin_name + '.py' in plugins:
+                if any(plugin.endswith(plugin_name + '.py') for plugin in plugins):
                     return ns, collection
 
     # keep info
@@ -760,8 +760,10 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
     docs_parsed_dict = yaml.safe_load(doc_val.to_python().strip('\n'))
     docs_parsed_list = doc_val.to_python().split('\n')
 
+    # docs fragments prep
     deps, old_fragments, new_fragments = rewrite_docs_fragments(docs_parsed_dict, collection, spec, namespace, args)
 
+    # version_added prep
     options = docs_parsed_dict.get('options', {})
     if not isinstance(options, Mapping):
         # lib/ansible/plugins/doc_fragments/emc.py
@@ -772,11 +774,25 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
         if len(data.keys()) == 1 and data.get('version_added', False):
             option_name_empty.append(name)
 
+    # seealso prep
+    seealso_rewrite_map = {}
+    for seealso in docs_parsed_dict.get('seealso', []):
+        module_name = seealso.get('module')
+        if not module_name:
+            continue
+        try:
+            module_namespace, module_collection = get_plugin_collection(module_name, 'modules', spec)
+            seealso_rewrite_map[module_name] = get_plugin_fqcn(module_namespace, module_collection, module_name)
+        except LookupError:
+            continue
+
     # https://github.com/ansible-community/collection_migration/issues/81
     # unfortunately, with PyYAML, the resulting DOCUMENTATION ended up in syntax errors when running sanity tests
     # to prevent that, use the original string split into list for rewrites
     new_docs = []
     in_extends = False
+    in_seealso = False
+    seealso_indent = -1
     changed = False
     for line in docs_parsed_list:
         # https://github.com/ansible-community/collection_migration/issues/431
@@ -788,6 +804,7 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
             changed = True
             continue
 
+        # extends_documentation_fragment rewrite
         if 'extends_documentation_fragment' in line:
             # rewrite fragments
             if new_fragments and bool(set(old_fragments).difference(new_fragments)):
@@ -803,6 +820,24 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
             continue
         else:
             in_extends = False
+
+        # seealso rewrite
+        if 'seealso:' in line and seealso_rewrite_map:
+            seealso_indent = len(line) - len(line.lstrip())
+            in_seealso = True
+        else:
+            indent = len(line) - len(line.lstrip())
+            if not in_seealso:
+                pass
+            elif seealso_indent == indent and not line.strip().startswith('-') and line.strip().endswith(':'):
+                in_seealso = False
+            elif in_seealso and 'module:' in line:
+                module_name = line.split(':')[-1].strip()
+                new_module_name = seealso_rewrite_map.get(module_name)
+                if new_module_name:
+                    new_line = line.replace(module_name, new_module_name)
+                    new_docs.append(new_line)
+                    continue
 
         new_docs.append(line)
 
