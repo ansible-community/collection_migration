@@ -143,6 +143,7 @@ amazon:
   - cloud/amazon/ecs_service.py
   - cloud/amazon/ecs_service_info.py
   - cloud/amazon/ecs_tag.py
+  - cloud/amazon/ec2_tag_info.py
   - cloud/amazon/ecs_task.py
   - cloud/amazon/ecs_taskdefinition.py
   - cloud/amazon/ecs_taskdefinition_info.py
