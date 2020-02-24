@@ -270,6 +270,7 @@ def alias(namespace, collection, ptype, plugin, source):
         ALIAS[namespace][collection][ptype] = {}
     ALIAS[namespace][collection][plugin] = source
 
+
 def deprecate(namespace, collection, ptype, plugin):
     global DEPRECATE
     if not namespace in DEPRECATE:
@@ -280,6 +281,7 @@ def deprecate(namespace, collection, ptype, plugin):
         DEPRECATE[namespace][collection][ptype] = []
 
     DEPRECATE[namespace][collection][ptype].append(plugin)
+
 
 def remove(path, namespace, collection):
     global REMOVE
@@ -318,6 +320,52 @@ def actually_deprecate(checkout_path):
 
             write_yaml_into_file_as_is(os.path.join(meta, 'deprecated.yml'), DEPRECATE[namespace][collection])
 
+
+def cleanup_targets(checkout_path):
+    dep_targets = {}
+    targets_dir = os.path.join(checkout_path, 'test/integration/targets/')
+    for target in os.listdir(targets_dir):
+        target_dir = os.path.join(targets_dir, target)
+        if not os.path.isdir(target_dir):
+            continue
+        target_relpath = os.path.relpath(target_dir, checkout_path)
+        aliases_file = os.path.join(target_dir, 'aliases')
+        if os.path.basename(target_dir).startswith(('setup_', 'prepare_')):
+            if target_relpath not in dep_targets:
+                dep_targets[target_relpath] = set()
+        elif os.path.exists(aliases_file):
+            for line in read_text_from_file(aliases_file).splitlines():
+                if line.strip() == 'hidden':
+                    if target_relpath not in dep_targets:
+                        dep_targets[target_relpath] = set()
+                    break
+
+    for target in os.listdir(targets_dir):
+        target_dir = os.path.join(targets_dir, target)
+        if not os.path.isdir(target_dir):
+            continue
+        target_relpath = os.path.relpath(target_dir, checkout_path)
+        deps = process_integration_tests_deps(checkout_path, os.path.join(targets_dir, target), log=False)
+        for dep in deps:
+            dep_relpath = os.path.relpath(dep[0], checkout_path)
+            if dep_relpath in dep_targets:
+                dep_targets[dep_relpath].add(target_relpath)
+
+    to_remove = set()
+    while True:
+        added = False
+        for target, used_by in dep_targets.items():
+            if not used_by or used_by.issubset(to_remove):
+                if target not in to_remove:
+                    to_remove.add(target)
+                    added = True
+        if not added:
+            break
+
+    if to_remove:
+        subprocess.check_call(('git', 'rm', '-r', '-f', *to_remove), cwd=checkout_path)
+
+
 def actually_remove(checkout_path):
     global REMOVE
 
@@ -329,6 +377,9 @@ def actually_remove(checkout_path):
     paths_counter = Counter(itertools.chain.from_iterable(coll_paths.values()))
     for coll_fqdn, paths in coll_paths.items():
         actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path)
+
+    # cleanup integration tests targets
+    cleanup_targets(checkout_path)
 
     # cleanup __init__.py
     mod_root = os.path.join(checkout_path, PLUGIN_EXCEPTION_PATHS['modules'])
@@ -617,7 +668,6 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
 
 
 def rewrite_unit_tests_patch(mod_fst, collection, spec, namespace, args, options):
-    # FIXME duplicate code from imports rewrite
     plugins_path = ('ansible_collections', namespace, collection, 'plugins')
     tests_path = ('ansible_collections', namespace, collection, 'tests')
     unit_tests_path = tests_path + ('unit', )
@@ -1542,7 +1592,6 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                 inject_requirements_into_sanity_tests(checkout_path, collection_dir)
 
-                # FIXME need to hack PyYAML to preserve formatting (not how much it's possible or how much it is work) or use e.g. ruamel.yaml
                 try:
                     migrated_integration_test_files = rewrite_integration_tests(integration_test_dirs, checkout_path, collection_dir, namespace, collection, spec, args, options)
                     migrated_to_collection.update(migrated_integration_test_files)
@@ -1695,7 +1744,6 @@ def add_deps_to_metadata(deps, galaxy_metadata):
     """Augment galaxy metadata with the dependencies."""
     for dep_ns, dep_coll in deps:
         dep = '%s.%s' % (dep_ns, dep_coll)
-        # FIXME hardcoded version
         galaxy_metadata['dependencies'][dep] = '>=%s' % DEFAULT_VERSION
 
 
@@ -1861,13 +1909,12 @@ def discover_integration_tests(checkout_dir, plugin_type, plugin_name):
     integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name}')))
     # aliased integration tests
     # https://github.com/ansible-community/collection_migration/issues/326
-    # FIXME? is it safe to assume that all modules for aliased integration test will end up
-    # in the same collection and so we can remove them now?
     integration_tests_files.extend(get_processed_aliases(checkout_dir).get(plugin_name, []))
 
     # (filename, marked_for_removal)
-    # we do not mark integration tests dependencies (meta/main.yml) for removal,
-    # see process_integration_tests_deps function below
+    # we do not mark integration tests dependencies (meta/main.yml) for removal yet as at this point
+    # we do not know if they are used by some other target, we do the cleanup at the end of the migration
+    # see process_integration_tests_deps and actually_remove functions
     files = [(filename, True) for filename in integration_tests_files]
 
     deps = []
@@ -1908,20 +1955,24 @@ def get_processed_aliases(checkout_dir):
     return res
 
 
-def process_integration_tests_deps(checkout_dir, target_dir):
+def process_integration_tests_deps(checkout_dir, target_dir, log=True):
     deps = []
-    dep_file = os.path.join(target_dir, 'meta', 'main.yml')
-    if os.path.exists(dep_file):
-        content = read_yaml_file(dep_file)
-        if content:
-            meta_deps = content.get('dependencies', {}) or {}
-            for dep in meta_deps:
-                if isinstance(dep, dict):
-                    dep = dep.get('role')
-                dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
-                logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
-                deps.append((dep_fname, False))
-                deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
+
+    dep_files = [os.path.join(target_dir, 'meta', 'main.yml'), os.path.join(target_dir, 'meta', 'main.yaml')]
+    for dep_file in dep_files:
+        if os.path.exists(dep_file):
+            content = read_yaml_file(dep_file)
+            if content:
+                meta_deps = content.get('dependencies', {}) or {}
+                for dep in meta_deps:
+                    if isinstance(dep, dict):
+                        dep = dep.get('role')
+                    dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
+                    if log:
+                        logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
+                    deps.append((dep_fname, False))
+                    deps.extend(process_integration_tests_deps(checkout_dir, dep_fname, log=log))
+            break
 
     aliases_file = os.path.join(target_dir, 'aliases')
     if os.path.exists(aliases_file):
@@ -1932,9 +1983,10 @@ def process_integration_tests_deps(checkout_dir, target_dir):
             dep = alias.split('/')[-1]
             dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
             if os.path.exists(dep_fname):
-                logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
+                if log:
+                    logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
                 deps.append((dep_fname, False))
-                deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
+                deps.extend(process_integration_tests_deps(checkout_dir, dep_fname, log=log))
 
     for dirpath, dirnames, filenames in os.walk(target_dir):
         for filename in filenames:
@@ -1946,9 +1998,10 @@ def process_integration_tests_deps(checkout_dir, target_dir):
                 dep = parts[index+1]
                 dep_fname = os.path.join(checkout_dir, 'test/integration/targets', dep)
                 if os.path.exists(dep_fname):
-                    logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
+                    if log:
+                        logger.info('Adding integration tests dependency target %s for %s', dep_fname, target_dir)
                     deps.append((dep_fname, False))
-                    deps.extend(process_integration_tests_deps(checkout_dir, dep_fname))
+                    deps.extend(process_integration_tests_deps(checkout_dir, dep_fname, log=log))
 
     return deps
 
