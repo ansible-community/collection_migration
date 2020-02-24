@@ -266,9 +266,11 @@ def alias(namespace, collection, ptype, plugin, source):
         ALIAS[namespace] = {}
     if not collection in ALIAS[namespace]:
         ALIAS[namespace][collection] = {}
-    if not ptype in ALIAS[namespace][collection]:
+    if ptype not in ALIAS[namespace][collection]:
         ALIAS[namespace][collection][ptype] = {}
-    ALIAS[namespace][collection][plugin] = source
+
+    source_namespace, source_collection= get_plugin_collection(source, ptype, spec)
+    ALIAS[namespace][collection][ptype][plugin]= {'redirect' : get_plugin_fqcn(source_namespace, source_collection, source)}
 
 def deprecate(namespace, collection, ptype, plugin):
     global DEPRECATE
@@ -286,37 +288,61 @@ def remove(path, namespace, collection):
     REMOVE[namespace][collection].add(path)
 
 
-def actually_alias(coll_dir, spec):
-    global ALIAS
-    for namespace in ALIAS.keys():
-        for collection in ALIAS[namespace].keys():
-            resolved = {}
-            meta = os.path.join(coll_dir, namespace, collection, 'meta')
+def write_core_routing(resolved, checkout_dir):
 
-            if not os.path.exists(meta):
-                os.mkdir(meta)
+    routing_file = os.path.join('lib/ansible/config', 'routing.yml')
+    write_yaml_into_file_as_is(os.path.join(checkout_dir, routing_file), {'plugin_routing': resolved})
+
+    subprocess.check_call(('git', 'add', routing_file), cwd=checkout_dir)
+    subprocess.check_call(('git', 'commit', '-m', 'Added routing file', '--allow-empty'), cwd=checkout_dir)
+
+
+def write_collection_routing(coll_dir, namespace, collection):
+
+    global ALIAS, DEPRECATE
+
+    write = False
+    routing = {'plugin_routing': {}}
+    meta = os.path.join(coll_dir, namespace, collection, 'meta')
+
+    if namespace in ALIAS:
+        if collection in ALIAS[namespace]:
 
             for ptype in ALIAS[namespace][collection].keys():
-                resolved[ptype] = {}
+
+                if ptype not in routing['plugin_routing'][pytype]:
+                    routing['plugin_routing'][ptype] = {}
 
                 for plugin in ALIAS[namespace][collection][ptype].keys():
-                    source = ALIAS[namespace][collection][ptype][plugin]
-                    source_namespace, source_collection= get_plugin_collection(source, ptype, spec)
-                    resolved[ptype][plugin] = get_plugin_fqcn(source_namespace, source_collection, source)
+                    if not write:
+                        write = True
+                    routing['plugin_routing'][ptype][plugin] = {'redirect: ', ALIAS[namespace][collection][ptype][plugin]}
 
-        write_yaml_into_file_as_is(os.path.join(meta, 'aliases.yml'), resolved)
+            del ALIAS[namespace][collection]
 
+    if namespace in DEPRECATE:
+        if collection in DEPRECATE[namespace]:
+            for ptype in DEPRECATE[namespace][collection].keys():
 
-def actually_deprecate(checkout_path):
-    global DEPRECATE
-    for namespace in DEPRECATE.keys():
-        for collection in DEPRECATE[namespace].keys():
+                if ptype not in routing['plugin_routing']:
+                    routing['plugin_routing'][ptype] = {}
 
-            meta = os.path.join(checkout_path, namespace, collection, 'meta')
-            if not os.path.exists(meta):
-                os.mkdir(meta)
+                    for plugin in DEPRECATE[namespace][collection][ptype]:
+                        if not write:
+                            write = True
 
-            write_yaml_into_file_as_is(os.path.join(meta, 'deprecated.yml'), DEPRECATE[namespace][collection])
+                        if plugin not in routing['plugin_routing'][ptype]:
+                            routing['plugin_routing'][ptype][plugin] = {}
+
+                        routing['plugin_routing'][ptype][plugin].update({'deprecation': {'removal_date': 'TBD', 'warning_text': 'see plugin documentation for details'}})
+
+            del DEPRECATE[namespace][collection]
+
+    if write:
+        if not os.path.exists(meta):
+            os.mkdir(meta)
+        write_yaml_into_file_as_is(os.path.join(meta, 'routing.yml'), routing)
+
 
 def actually_remove(checkout_path):
     global REMOVE
@@ -331,13 +357,17 @@ def actually_remove(checkout_path):
         actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path)
 
     # cleanup __init__.py
-    mod_root = os.path.join(checkout_path, PLUGIN_EXCEPTION_PATHS['modules'])
-    for emptydir in os.walk(mod_root, topdown=False):
+    for plugin_type in VALID_SPEC_ENTRIES:
+        for mod_root in PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type)):
 
-        if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
-            reldir = emptydir[0].replace(checkout_path, '')
-            init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
-            subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+            for emptydir in os.walk(mod_root, topdown=False):
+
+                if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
+                    # if only init in dir and init is 0 bytes, remove
+                    if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
+                        reldir = emptydir[0].replace(checkout_path, '')
+                        init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
+                        subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
 
     # other cleanup
     if CLEANUP_FILES:
@@ -1354,8 +1384,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
         md_full = yaml.safe_load(md) or {}
         module_defaults = md_full.get('groupings', {})
 
+    # to build routing in core
+    resolved = {}
+
     # main loop over spec
     for namespace in spec.keys():
+
         for collection in spec[namespace].keys():
 
             if args.limits:
@@ -1404,9 +1438,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             # process each plugin type
             for plugin_type, plugins in spec[namespace][collection].items():
+
                 if not plugins:
                     logger.error('Empty plugin_type: %s in spec for %s.%s', plugin_type, namespace, collection)
                     continue
+
+                resolved[plugin_type] = {}
 
                 # get src plugin path
                 src_plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
@@ -1443,6 +1480,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                         plugin_path_chunk = plugin_path_chunk.replace(oldname, pname)
 
                     relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
+
+                    resolved[plugin_type][pname] = {'redirect': get_plugin_fqcn(namespace, collection, pname)}
 
                     # use pname to check module_defaults and add to action_groups.yml
                     if pname in module_defaults:
@@ -1568,10 +1607,12 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
 
-    # handle deprecations and aliases
-    coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
-    actually_deprecate(coll_dir)
-    actually_alias(coll_dir, spec)
+            # handle deprecations and aliases, per collection
+            coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
+            write_collection_routing(coll_dir, namespace, collection)
+
+    # handle aliases in core
+    write_core_routing(resolved, checkout_path)
 
     # remove from src repo if required
     if args.move_plugins:
