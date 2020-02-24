@@ -358,16 +358,16 @@ def actually_remove(checkout_path):
 
     # cleanup __init__.py
     for plugin_type in VALID_SPEC_ENTRIES:
-        for mod_root in PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type)):
+        mod_root = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
 
-            for emptydir in os.walk(mod_root, topdown=False):
+        for emptydir in os.walk(os.path.join(checkout_path, mod_root), topdown=False):
 
-                if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
-                    # if only init in dir and init is 0 bytes, remove
-                    if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
-                        reldir = emptydir[0].replace(checkout_path, '')
-                        init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
-                        subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+            if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
+                # if only init in dir and init is 0 bytes, remove
+                if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
+                    reldir = emptydir[0].replace(checkout_path, '')
+                    init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
+                    subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
 
     # other cleanup
     if CLEANUP_FILES:
@@ -1375,7 +1375,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
         shutil.rmtree(collections_base_dir)
 
     # make initial YAML transformation to minimize the diff
-    mark_moved_resources(checkout_path, 'N/A', 'init', {})
+    #mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
     # get module defaults
     module_defaults = {}
@@ -1605,7 +1605,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
             subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
 
-            mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
+            #mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
 
             # handle deprecations and aliases, per collection
             coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
@@ -1768,9 +1768,7 @@ def push_migrated_core(devel_path, github_api, rsa_key, spec_dir):
         ensure_cmd_succeeded(ssh_agent, git_force_push_cmd, devel_path)
 
 
-def assert_migrating_git_tracked_resources(
-        migrated_to_collection: Union[Iterable[str], Dict[str, Any]],
-):
+def assert_migrating_git_tracked_resources(migrated_to_collection: Union[Iterable[str], Dict[str, Any]]):
     """Make sure that non-tracked files aren't scheduled for migration.
 
     :param migrated_to_collection: Iterable of paths relative \
@@ -1829,18 +1827,8 @@ def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collec
     write_yaml_into_file_as_is(botmeta_checkout_path, botmeta)
 
     # Commit changes to the migrated Git repo
-    subprocess.check_call(
-        ('git', 'add', f'{botmeta_rel_path!s}'),
-        cwd=checkout_dir,
-    )
-    subprocess.check_call(
-        (
-            'git', 'commit',
-            '-m', f'Mark migrated {collection}',
-            '--allow-empty',
-        ),
-        cwd=checkout_dir,
-    )
+    subprocess.check_call(('git', 'add', f'{botmeta_rel_path!s}'), cwd=checkout_dir)
+    subprocess.check_call(('git', 'commit', '-m', f'Mark migrated {collection}', '--allow-empty'), cwd=checkout_dir)
 
 
 ### Rewrite integration tests
