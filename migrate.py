@@ -611,7 +611,7 @@ def get_plugin_collection(plugin_name, plugin_type, spec):
         for collection in spec[ns].keys():
             if spec[ns][collection]: # avoid empty collections
                 plugins = spec[ns][collection].get(plugin_type, [])
-                if any(plugin.endswith(plugin_name + '.py') for plugin in plugins):
+                if plugin_name + '.py' in plugins:
                     return ns, collection
 
     # keep info
@@ -861,8 +861,21 @@ def rewrite_plugin_documentation(mod_fst, collection, spec, namespace, args):
         if not module_name:
             continue
         try:
-            module_namespace, module_collection = get_plugin_collection(module_name, 'modules', spec)
-            seealso_rewrite_map[module_name] = get_plugin_fqcn(module_namespace, module_collection, module_name)
+            for ns in spec.keys():
+                for coll in get_rewritable_collections(ns, spec):
+                    if collection == coll:
+                        # https://github.com/ansible-community/collection_migration/issues/156
+                        continue
+
+                    if module_name not in get_plugins_from_collection(ns, coll, 'modules', spec):
+                        continue
+
+                    new_module_name = get_plugin_fqcn(ns, coll, module_name)
+                    msg = 'Rewriting to %s' % new_module_name
+                    if args.fail_on_core_rewrite:
+                        raise RuntimeError(msg)
+
+                    seealso_rewrite_map[module_name] = new_module_name
         except LookupError:
             continue
 
