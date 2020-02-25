@@ -429,7 +429,9 @@ general:
   integration:
   - mariadb_replication/*
   - mariadb_replication/*/*
+  - script_inventory_foreman/*
   inventory_scripts:
+  - azure_rm.*
   - abiquo.ini
   - abiquo.py
   - apache-libcloud.py
@@ -452,7 +454,10 @@ general:
   - docker.py
   - docker.yml
   - fleet.py
+  - foreman.*
   - freeipa.py
+  - gce.*
+  - infoblox.*
   - jail.py
   - landscape.py
   - libcloud.ini
@@ -471,6 +476,7 @@ general:
   - nsot.py
   - nsot.yaml
   - openshift.py
+  - openstack*
   - openvz.py
   - ovirt4.py
   - ovirt.ini
@@ -2565,6 +2571,9 @@ general:
   - slxos.py
   - sros.py
   - voss.py
+  vault:
+  - azure_vault.*
+  - vault-keyring*
 grafana:
   callback:
   - grafana_annotations.py
