@@ -550,6 +550,7 @@ def resolve_spec(spec, checkoutdir):
                     raise Exception('Invalid plugin type: %s, expected one of %s' % (ptype, VALID_SPEC_ENTRIES))
                 plugin_base = os.path.join(checkoutdir, PLUGIN_EXCEPTION_PATHS.get(ptype, os.path.join('lib', 'ansible', 'plugins', ptype)))
                 replace_base = '%s/' % plugin_base
+                new_ptype = []
                 for entry in spec[ns][coll][ptype]:
                     if r'*' in entry or r'?' in entry:
                         files = glob.glob(os.path.join(plugin_base, entry))
@@ -560,10 +561,11 @@ def resolve_spec(spec, checkoutdir):
                             if ptype != 'module_utils' and fname.endswith('__init__.py') or not os.path.isfile(fname):
                                 continue
                             fname = fname.replace(replace_base, '')
-                            spec[ns][coll][ptype].insert(0, fname)
+                            new_ptype.append(fname)
+                    else:
+                        new_ptype.append(entry)
 
-                        # clean out glob entry
-                        spec[ns][coll][ptype].remove(entry)
+                spec[ns][coll][ptype] = new_ptype
 
                 # NOTE now that spec for plugins of ptype has been finalized, we can iterate again and add files for the dupe check
                 for entry in spec[ns][coll][ptype]:
