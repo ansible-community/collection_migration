@@ -2636,8 +2636,13 @@ vmware:
   - vmware_rest_client.py
   httpapi:
   - vmware.py
+  integration:
+  - script_inventory_vmware_inventory/*
   inventory:
   - vmware_vm_inventory.py
+  inventory_scripts:
+  - vmware.*
+  - vmware_inventory.*
   module_utils:
   - vca.py
   - vmware.py
