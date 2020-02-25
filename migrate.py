@@ -1539,7 +1539,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     logger.error('Empty plugin_type: %s in spec for %s.%s', plugin_type, namespace, collection)
                     continue
 
-                if plugin_type not in resolved:
+                if plugin_type not in resolved and plugin_type not in NOT_PLUGINS:
                     resolved[plugin_type] = {}
 
                 # get src plugin path
