@@ -97,7 +97,7 @@ VALID_SPEC_ENTRIES = frozenset({
     'inventory_scripts',
 })
 
-NOT_PLUGINS = frozenset(set(['inventory_scripts', 'unit', 'integration']))
+NOT_PLUGINS = frozenset(set(['inventory_scripts', 'unit', 'integration', 'vault']))
 
 ALWAYS_PRESERVE_SUBDIRS = frozenset(['module_utils', 'unit', 'integration'])
 
@@ -320,8 +320,6 @@ def write_collection_routing(coll_dir, namespace, collection):
                         write = True
                     routing['plugin_routing'][ptype][plugin] = {'redirect: ', ALIAS[namespace][collection][ptype][plugin]}
 
-            del ALIAS[namespace][collection]
-
     if namespace in DEPRECATE:
         if collection in DEPRECATE[namespace]:
             for ptype in DEPRECATE[namespace][collection].keys():
@@ -337,8 +335,6 @@ def write_collection_routing(coll_dir, namespace, collection):
                             routing['plugin_routing'][ptype][plugin] = {}
 
                         routing['plugin_routing'][ptype][plugin].update({'deprecation': {'removal_date': 'TBD', 'warning_text': 'see plugin documentation for details'}})
-
-            del DEPRECATE[namespace][collection]
 
     if write:
         if not os.path.exists(meta):
@@ -1475,7 +1471,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
         shutil.rmtree(collections_base_dir)
 
     # make initial YAML transformation to minimize the diff
-    #mark_moved_resources(checkout_path, 'N/A', 'init', {})
+    mark_moved_resources(checkout_path, 'N/A', 'init', {})
 
     # get module defaults
     module_defaults = {}
@@ -1543,7 +1539,8 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     logger.error('Empty plugin_type: %s in spec for %s.%s', plugin_type, namespace, collection)
                     continue
 
-                resolved[plugin_type] = {}
+                if plugin_type not in resolved:
+                    resolved[plugin_type] = {}
 
                 # get src plugin path
                 src_plugin_base = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
@@ -1581,7 +1578,9 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
                     relative_dest_plugin_path = os.path.join(relative_dest_plugin_base, plugin_path_chunk)
 
-                    resolved[plugin_type][pname] = {'redirect': get_plugin_fqcn(namespace, collection, pname)}
+                    # add to core routing.yml, skip init files
+                    if os.path.basename(src) != '__init__.py' and plugin_type not in NOT_PLUGINS:
+                        resolved[plugin_type][pname] = {'redirect': get_plugin_fqcn(namespace, collection, pname)}
 
                     # use pname to check module_defaults and add to action_groups.yml
                     if pname in module_defaults:
@@ -1704,7 +1703,7 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
             subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
             subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
 
-            #mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
+            mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
 
             # handle deprecations and aliases, per collection
             coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
@@ -1885,6 +1884,10 @@ def assert_migrating_git_tracked_resources(migrated_to_collection: Union[Iterabl
 
 def mark_moved_resources(checkout_dir, namespace, collection, migrated_to_collection):
     """Mark migrated paths in botmeta."""
+
+    # skip rewrite for now, testing routing.yml
+    return
+
     migrated_to_collection = {str(k): str(v) for k, v in migrated_to_collection.items()}
     logger.info('Verifying that only git-tracked files are being migrated...')
     assert_migrating_git_tracked_resources(migrated_to_collection)
