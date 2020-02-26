@@ -1,0 +1,9 @@
+skydive:
+  doc_fragments:
+  - skydive.py
+  lookup:
+  - skydive.py
+  module_utils:
+  - network/skydive/*
+  modules:
+  - network/skydive/*

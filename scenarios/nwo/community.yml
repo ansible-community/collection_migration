@@ -401,7 +401,6 @@ general:
   - rabbitmq.py
   - rackspace.py
   - scaleway.py
-  - skydive.py
   - sros.py
   - utm.py
   - vexata.py
@@ -545,7 +544,6 @@ general:
   - rabbitmq.py
   - redis.py
   - shelvefile.py
-  - skydive.py
   module_utils:
   - acme.py
   - alicloud_ecs.py
@@ -717,8 +715,6 @@ general:
   - network/panos/panos.py
   - network/routeros/__init__.py
   - network/routeros/routeros.py
-  - network/skydive/__init__.py
-  - network/skydive/api.py
   - network/slxos/__init__.py
   - network/slxos/slxos.py
   - network/sros/__init__.py
@@ -2151,10 +2147,6 @@ general:
   - network/routeros/__init__.py
   - network/routeros/routeros_command.py
   - network/routeros/routeros_facts.py
-  - network/skydive/__init__.py
-  - network/skydive/skydive_capture.py
-  - network/skydive/skydive_edge.py
-  - network/skydive/skydive_node.py
   - network/slxos/__init__.py
   - network/slxos/slxos_command.py
   - network/slxos/slxos_config.py
