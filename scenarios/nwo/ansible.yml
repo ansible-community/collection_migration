@@ -414,6 +414,7 @@ netcommon:
   - net_*
   - netconf.py
   - network.py
+  - telnet.py
   become:
   - enable.py
   connection:
@@ -437,6 +438,7 @@ netcommon:
   - network/netconf/*
   - network/restconf/*
   modules:
+  - commands/telnet.py
   - network/cli/*
   - network/files/*
   - network/interface/*

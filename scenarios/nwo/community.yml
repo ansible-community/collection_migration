@@ -243,7 +243,6 @@ general:
   - slxos.py
   - sros.py
   - synchronize.py
-  - telnet.py
   - voss.py
   become:
   - doas.py
@@ -1415,7 +1414,6 @@ general:
   - clustering/pacemaker_cluster.py
   - clustering/znode.py
   - commands/__init__.py
-  - commands/telnet.py
   - crypto/__init__.py
   - crypto/acme/__init__.py
   - crypto/acme/_acme_account_facts.py
