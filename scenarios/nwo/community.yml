@@ -437,6 +437,10 @@ general:
   - mariadb_replication/*
   - mariadb_replication/*/*
   - script_inventory_foreman/*
+  - synchronize-buildah/*
+  - synchronize-buildah/*/*
+  - synchronize-buildah/*/*/*
+  - synchronize-buildah/*/*/*/*
   inventory_scripts:
   - azure_rm.*
   - abiquo.ini
