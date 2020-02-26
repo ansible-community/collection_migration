@@ -430,29 +430,14 @@ def actually_remove_from(coll_fqdn, paths, paths_counter, checkout_path):
         values = ignore.split(' ', 1)
         new_sanity_ignore[values[0]].append(values[1])
 
-    init_files = set()
     paths_to_delete = set()
     # actually remove files we marked for removal
     for path in paths:
         actual_devel_path = os.path.relpath(path, checkout_path)
-        if actual_devel_path.endswith('__init__.py'):
-            init_files.add(path)
-            continue
 
         paths_counter[path] -= 1
         if paths_counter[path] == 0:
             paths_to_delete.add(actual_devel_path)
-        new_sanity_ignore.pop(actual_devel_path, None)
-
-    # process the __init__.py files from dirs now that all files are removed,
-    # that way we can check if there are no files left in the dirs they are in
-    # so we can remove __init__.py as well
-    for init in sorted(init_files, key=lambda x: len(x.split('/')), reverse=True):
-        if os.listdir(os.path.dirname(init)) != ['__init__.py']:
-            continue
-
-        actual_devel_path = os.path.relpath(init, checkout_path)
-        paths_to_delete.add(actual_devel_path)
         new_sanity_ignore.pop(actual_devel_path, None)
 
     subprocess.check_call(('git', 'rm', '-f', *paths_to_delete), cwd=checkout_path)
