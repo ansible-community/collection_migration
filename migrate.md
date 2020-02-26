@@ -52,7 +52,8 @@ The modules and the other plugin types require some rewrites to support collecti
 
 
  - paths:
-        - The first thing to note, all runtime code is under the ``plugins/`` path, so modules, module_utils and all other plugins are in their own plugin specific directory under the plugins/ top level directory in the collection.
+        - The first thing to note, all runtime code is under the ``plugins/`` path, so modules, module_utils and
+          all other plugins are in their own plugin specific directory under the plugins/ top level directory in the collection.
           This is similar to what already exists in roles, but for modules and module_utils it is a change from the core repo.
         - tests now live under the ``tests/`` directory with ``units`` and ``integration`` subdirectories.
 
@@ -79,4 +80,55 @@ The modules and the other plugin types require some rewrites to support collecti
                 - Jinja filters and tests FQCN includes the file name where the plugin resides.
 
 
-There are many corner cases if you want to automate the points above, see the `migrate.py` script for specifics.
+		- BOTMETA.yml (discussed above for all files)
+
+		- lib/ansbile/config/routing.yml entry for 'trasnparent execution' for plugins that used to be in core, hopefully to avoid rewritting all exising playbooks.
+
+		- new meta/routing.yml in collections that now handle 'aliases across collections', deprecations, plugin removals.
+
+		- new meta/action_groups.yml in collections that now handle module_defaults 'action to group' mappings, no more need to update in core.
+
+
+Things to consider after migration.
+===================================
+
+migrate.py does not handle everything, just most of what could be automated, here is a list of things you might need to do manually aftewards.
+
+
+free form references
+--------------------
+
+Documentation, comments and other 'free form' references to plugins/modules will need manual updates, for example, `EXAMPLES` and `description` sections in plugin docs.
+
+
+git history
+-----------
+
+The existing git history is not being moved to the new repos, they all start as a new commit, we had plans to do so, but were not able to realize due to the time table.
+There are existing scripts from the last 'repo merge/splits' (ansible-modules-core/ansilbe-modules-extras) that still exist and give a blueprint on how we did preserve history in the past.
+New repo owners can use these as examples/guides if they wish to reintegrate past history into the new repos after migration (check hacking/ history in core).
+
+
+plugin/module_utils imports
+---------------------------
+
+Currently these will be broken for 3rd party plugin imports that reference files that used to live in core, there is work being done to transparently map to the new colleciton location but no code exists as of yet. Another option is to rewrite the imports to point to new collection locations. Anything that was in core should have already been rewritten to match the new locations.
+
+
+ansible-doc
+-----------
+
+Currently it can show plugin docs from collections, but not list what plugins a collection provides (also being worked on).
+ansible-galaxy recently added listing available collections and that code will be built on to list 'available plugins including collections'.
+
+
+docs.ansible.com
+----------------
+
+Docs team has a system to show plugins from chosen collections, still in testing, should be ready soon after migration.
+
+
+filters and tests docs
+----------------------
+
+These were still manualy written in docs.ansible.com and do not have any autogeneration, migration does not change this, all changes will still have to be manual.
