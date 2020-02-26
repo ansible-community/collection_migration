@@ -1,0 +1,3 @@
+openvswitch:
+  modules:
+  - network/ovs/*
