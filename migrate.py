@@ -554,7 +554,7 @@ def resolve_spec(spec, checkoutdir):
                             raise Exception('No matches for plugin type: %s, entry: %s. Searched in %s.' % (ptype, entry, os.path.join(plugin_base, entry)))
 
                         for fname in files:
-                            if ptype != 'module_utils' and fname.endswith('__init__.py') or not os.path.isfile(fname):
+                            if ptype not in NOT_PLUGINS and fname.endswith('__init__.py') or not os.path.isfile(fname):
                                 continue
                             fname = fname.replace(replace_base, '')
                             new_ptype.append(fname)
