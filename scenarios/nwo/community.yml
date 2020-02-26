@@ -1,6 +1,13 @@
 amazon:
   connection:
   - aws_ssm.py
+  integration:
+  - script_inventory_ec2/*
+  - script_inventory_ec2/*/*
+  - script_inventory_ec2/*/*/*
+  - script_inventory_ec2/*/*/*/*
+  inventory_scripts:
+  - ec2.*
   modules:
   - cloud/amazon/__init__.py
   - cloud/amazon/_aws_acm_facts.py
