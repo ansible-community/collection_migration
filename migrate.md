@@ -56,26 +56,28 @@ Tests now live under the ``tests/`` directory with ``units`` and ``integration``
 
 ## Roles
 Collection roles exist under the roles/ directory, with a couple of restrictions.
- 
+
 * They cannot have their own plugins, so  plugins in role adjacent directories will be ignored
 * Role 'dependencies' will not be installed on collection install, if using collections those dependencies should be specified in galaxy.yml
 
 ## Plugins
 
 for most plugins you need to rewrite.
- 
+
 ### documentation
 * doc_fragments: must use FQCN, examine all modules and plugins that use doc_fragments and rewrite from 'myfrag' to 'myname.mycoll.myfrag'.
-		
+
 * general docs: any references to modules and other plugins need to be rewritten to use FQCN, normally found in descriptions and examples.
 
 ### imports (also for tests).
-	
+
 * relative imports work in collections, but only if they start with a ``.`` so ``./filename`` and ``../asdfu/filestuff`` works but ``filename`` in same dir does not.
-		
+
 * module_utils: the most obvious one, you go from ``import ansible.module_utils.randomdir.myutil`` to ``import ansible_collections.myname.mycoll.randomdir.myutil``.
-		
+
 	* subclassing plugins: you need to follow the same rules in changing paths and using namespaced names.
+
+### tests
 
 * patches and mocks: mostly used in tests, these also might need rewrites with the same rules as imports follow.
 
@@ -85,6 +87,7 @@ for most plugins you need to rewrite.
   * tasks need to be rewritten to use FQCN, this includes modules, lookups, filters and any other plugin referenced that has been moved to a collection.
   * Jinja filters and tests FQCN includes the file name where the plugin resides.
 
+### other files
 
 * BOTMETA.yml (discussed above for all files)
 
