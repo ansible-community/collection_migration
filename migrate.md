@@ -141,3 +141,11 @@ filters and tests docs
 ----------------------
 
 These were still manualy written in docs.ansible.com and do not have any autogeneration, migration does not change this, all changes will still have to be manual.
+
+
+licenses
+--------
+
+Collections currently only support a single license, with migrate.py defaulting to GPLv3+, this is ok for most files in Ansible except for module_utils which have mostly been published under BSD and some other licenses. The migration does not rewrite the license information per file, so those that had their own license information will still have it, even when it contradicts the 'collection license'.
+
+Currently we don't have an official solution for this issue.
