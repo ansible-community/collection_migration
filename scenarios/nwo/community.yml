@@ -728,7 +728,6 @@ general:
   - oracle/__init__.py
   - oracle/oci_utils.py
   - ovirt.py
-  - parsing/__init__.py
   - podman/__init__.py
   - podman/common.py
   - postgres.py
