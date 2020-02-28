@@ -113,9 +113,9 @@ Documentation, comments and other 'free form' references to plugins/modules will
 git history
 -----------
 
-The existing git history is not being moved to the new repos, they all start as a new commit, we had plans to do so, but were not able to realize due to the time table.
-There are existing scripts from the last 'repo merge/splits' (ansible-modules-core/ansilbe-modules-extras) that still exist and give a blueprint on how we did preserve history in the past.
-New repo owners can use these as examples/guides if they wish to reintegrate past history into the new repos after migration (check hacking/ history in core).
+The existing git history is not being moved to the new repos by the migration, they all start as a new commit, we had plans to do so, but were not able to realize due to the time table.
+The hope was to leverage the previous experience with 'repo merge/splits' (ansible-modules-core/ansilbe-modules-extras) and use as a blueprint on how we did preserve history.
+New repo owners that want to copy history over, can do so, but currently we do not provide any tools to do so.
 
 
 plugin/module_utils imports
