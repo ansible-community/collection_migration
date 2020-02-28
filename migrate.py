@@ -41,6 +41,7 @@ import redbaron
 import backoff
 
 from gh import GitHubOrgClient
+from gitutils import find_all_the_authors, find_all_the_authors_for
 from rsa_utils import RSAKey
 from template_utils import render_template_into
 
@@ -1682,8 +1683,26 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
 
             # init git repo
             subprocess.check_call(('git', 'init'), cwd=collection_dir)
+            to_git_rel = functools.partial(
+                os.path.relpath, start=checkout_path,
+            )
+            _files, all_the_authors = find_all_the_authors_for(
+                map(to_git_rel, REMOVE[namespace][collection]),
+                checkout_path,
+            )
+            all_the_authors_trailers = '\n'.join(
+                f'Co-Authored-By: {a}'
+                for a in all_the_authors
+            )
             subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
-            subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
+            commit_msg = '\n\n'.join(
+                (
+                    'Initial commit',
+                    'See also: https://github.com/ansible-collections/overview',
+                    all_the_authors_trailers,
+                ),
+            )
+            subprocess.check_call(('git', 'commit', '-m', commit_msg, '--allow-empty'), cwd=collection_dir)
 
     # handle aliases in core
     write_core_routing(resolved, checkout_path)
