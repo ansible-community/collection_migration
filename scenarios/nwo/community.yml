@@ -29,6 +29,7 @@ amazon:
   - cloud/amazon/_ec2_vpc_nacl_facts.py
   - cloud/amazon/_ec2_vpc_nat_gateway_facts.py
   - cloud/amazon/_ec2_vpc_peering_facts.py
+  - cloud/amazon/_ec2_vpc_route_table_facts.py
   - cloud/amazon/_ec2_vpc_vgw_facts.py
   - cloud/amazon/_ec2_vpc_vpn_facts.py
   - cloud/amazon/_ecs_service_facts.py
@@ -90,6 +91,7 @@ amazon:
   - cloud/amazon/aws_waf_rule.py
   - cloud/amazon/aws_waf_web_acl.py
   - cloud/amazon/cloudformation_stack_set.py
+  - cloud/amazon/cloudformation_exports_info.py
   - cloud/amazon/cloudfront_distribution.py
   - cloud/amazon/cloudfront_info.py
   - cloud/amazon/cloudfront_invalidation.py
@@ -138,6 +140,8 @@ amazon:
   - cloud/amazon/ec2_vpc_nat_gateway_info.py
   - cloud/amazon/ec2_vpc_peer.py
   - cloud/amazon/ec2_vpc_peering_info.py
+  - cloud/amazon/ec2_vpc_route_table.py
+  - cloud/amazon/ec2_vpc_route_table_info.py
   - cloud/amazon/ec2_vpc_vgw.py
   - cloud/amazon/ec2_vpc_vgw_info.py
   - cloud/amazon/ec2_vpc_vpn.py
@@ -149,7 +153,6 @@ amazon:
   - cloud/amazon/ecs_service.py
   - cloud/amazon/ecs_service_info.py
   - cloud/amazon/ecs_tag.py
-  - cloud/amazon/ec2_tag_info.py
   - cloud/amazon/ecs_task.py
   - cloud/amazon/ecs_taskdefinition.py
   - cloud/amazon/ecs_taskdefinition_info.py

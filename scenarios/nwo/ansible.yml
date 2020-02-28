@@ -44,7 +44,6 @@ amazon:
   - cloud/amazon/_ec2_vpc_dhcp_option_facts.py
   - cloud/amazon/_ec2_vpc_net_facts.py
   - cloud/amazon/_ec2_vpc_subnet_facts.py
-  - cloud/amazon/_ec2_vpc_route_table_facts.py
   - cloud/amazon/aws_az_info.py
   - cloud/amazon/aws_caller_info.py
   - cloud/amazon/aws_s3.py
@@ -63,6 +62,7 @@ amazon:
   - cloud/amazon/ec2_snapshot.py
   - cloud/amazon/ec2_snapshot_info.py
   - cloud/amazon/ec2_tag.py
+  - cloud/amazon/ec2_tag_info.py
   - cloud/amazon/ec2_vol.py
   - cloud/amazon/ec2_vol_info.py
   - cloud/amazon/ec2_vpc_dhcp_option.py
@@ -71,8 +71,6 @@ amazon:
   - cloud/amazon/ec2_vpc_net_info.py
   - cloud/amazon/ec2_vpc_subnet.py
   - cloud/amazon/ec2_vpc_subnet_info.py
-  - cloud/amazon/ec2_vpc_route_table.py
-  - cloud/amazon/ec2_vpc_route_table_info.py
   - cloud/amazon/s3_bucket.py
 
 _core:
