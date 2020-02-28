@@ -470,7 +470,6 @@ windows:
   module_utils:
   - csharp/Ansible.Service.cs
   modules:
-  - windows/__init__.py
   - windows/async_status.ps1
   - windows/setup.ps1
   - windows/slurp.ps1
