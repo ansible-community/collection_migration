@@ -1932,10 +1932,14 @@ def integration_tests_add_to_deps(collection, dep_collection):
 
 def discover_integration_tests(checkout_dir, plugin_type, plugin_name):
     targets_dir = os.path.join(checkout_dir, 'test/integration/targets')
-    # 'cloud/amazon/ec2_eip.py' -> 'ec2_eip'
-    integration_tests_files = glob.glob(os.path.join(targets_dir, plugin_name))
-    # test/integration/targets/filter_random_mac
-    integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name}')))
+    integration_tests_files = []
+    if plugin_type in ('action', 'modules'):
+        # 'cloud/amazon/ec2_eip.py' -> 'ec2_eip'
+        integration_tests_files.extend(glob.glob(os.path.join(targets_dir, plugin_name)))
+    else:
+        # test/integration/targets/filter_random_mac
+        integration_tests_files.extend(glob.glob(os.path.join(targets_dir, f'{plugin_type}_{plugin_name}')))
+
     # aliased integration tests
     # https://github.com/ansible-community/collection_migration/issues/326
     integration_tests_files.extend(get_processed_aliases(checkout_dir).get(plugin_name, []))
