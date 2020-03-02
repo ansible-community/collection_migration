@@ -2384,10 +2384,6 @@ vmware:
   connection:
   - vmware_tools.py
   doc_fragments:
-  - VmwareRestModule.py
-  - VmwareRestModule_filters.py
-  - VmwareRestModule_full.py
-  - VmwareRestModule_state.py
   - vca.py
   - vmware.py
   - vmware_rest_client.py
@@ -2403,8 +2399,6 @@ vmware:
   module_utils:
   - vca.py
   - vmware.py
-  - vmware_httpapi/VmwareRestModule.py
-  - vmware_httpapi/__init__.py
   - vmware_rest_client.py
   - vmware_spbm.py
   modules:
@@ -2572,10 +2566,6 @@ vmware:
   - cloud/vmware/vmware_vswitch_info.py
   - cloud/vmware/vsphere_copy.py
   - cloud/vmware/vsphere_file.py
-  - cloud/vmware_httpapi/vmware_appliance_access_info.py
-  - cloud/vmware_httpapi/vmware_appliance_health_info.py
-  - cloud/vmware_httpapi/vmware_cis_category_info.py
-  - cloud/vmware_httpapi/vmware_core_info.py
 windows:
   lookup:
   - laps_password.py
