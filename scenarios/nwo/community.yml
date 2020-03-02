@@ -337,7 +337,6 @@ general:
   - zone.py
   doc_fragments:
   - a10.py
-  - acme.py
   - aireos.py
   - alicloud.py
   - aruba.py
@@ -357,7 +356,6 @@ general:
   - dimensiondata.py
   - dimensiondata_wait.py
   - docker.py
-  - ecs_credential.py
   - emc.py
   - enos.py
   - exoscale.py
@@ -547,19 +545,16 @@ general:
   - redis.py
   - shelvefile.py
   module_utils:
-  - acme.py
   - alicloud_ecs.py
   - cloud.py
   - cloudscale.py
   - cloudstack.py
-  - crypto.py
   - database.py
   - digital_ocean.py
   - dimensiondata.py
   - docker/__init__.py
   - docker/common.py
   - docker/swarm.py
-  - ecs/__init__.py
   - exoscale.py
   - f5_utils.py
   - firewalld.py
@@ -1368,30 +1363,6 @@ general:
   - clustering/etcd3.py
   - clustering/pacemaker_cluster.py
   - clustering/znode.py
-  - crypto/acme/_acme_account_facts.py
-  - crypto/acme/acme_account.py
-  - crypto/acme/acme_account_info.py
-  - crypto/acme/acme_certificate.py
-  - crypto/acme/acme_certificate_revoke.py
-  - crypto/acme/acme_challenge_cert_helper.py
-  - crypto/acme/acme_inspect.py
-  - crypto/certificate_complete_chain.py
-  - crypto/entrust/ecs_certificate.py
-  - crypto/entrust/ecs_domain.py
-  - crypto/get_certificate.py
-  - crypto/luks_device.py
-  - crypto/openssh_cert.py
-  - crypto/openssh_keypair.py
-  - crypto/openssl_certificate.py
-  - crypto/openssl_certificate_info.py
-  - crypto/openssl_csr.py
-  - crypto/openssl_csr_info.py
-  - crypto/openssl_dhparam.py
-  - crypto/openssl_pkcs12.py
-  - crypto/openssl_privatekey.py
-  - crypto/openssl_privatekey_info.py
-  - crypto/openssl_publickey.py
-  - crypto/x509_crl.py
   - database/aerospike/aerospike_migrations.py
   - database/influxdb/influxdb_database.py
   - database/influxdb/influxdb_query.py
@@ -2448,6 +2419,17 @@ kubernetes:
   - clustering/k8s/k8s_service.py
   - clustering/openshift/_openshift_raw.py
   - clustering/openshift/_openshift_scale.py
+crypto:
+  modules:
+    - crypto/*
+    - crypto/*/*
+  doc_fragments:
+    - acme.py
+    - ecs_credential.py
+  module_utils:
+    - acme.py
+    - crypto.py
+    - ecs/api.py
 mongo:
   modules:
     - database/mongodb/*

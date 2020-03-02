@@ -220,7 +220,6 @@ _core:
   - csharp/Ansible.Process.cs
   - csharp/__init__.py
   - distro/*
-  - ecs/api.py
   - facts/__init__.py
   - facts/ansible_collector.py
   - facts/collector.py
