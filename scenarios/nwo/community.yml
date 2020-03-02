@@ -2760,6 +2760,8 @@ windows:
   - windows/win_psmodule.py
   - windows/win_psrepository.ps1
   - windows/win_psrepository.py
+  - windows/win_psrepository_info.ps1
+  - windows/win_psrepository_info.py
   - windows/win_rabbitmq_plugin.ps1
   - windows/win_rabbitmq_plugin.py
   - windows/win_rds_cap.ps1
