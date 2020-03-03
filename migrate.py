@@ -57,8 +57,7 @@ DEVEL_BRANCH = 'devel'
 
 ALL_THE_FILES = set()
 
-#CLEANUP_FILES = set(['lib/ansible/config/module_defaults.yml'])
-CLEANUP_FILES = set()
+CLEANUP_FILES = set(['contrib/README.md'])
 
 COLLECTION_NAMESPACE = 'test_migrate_ns'
 PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/unit', 'integration': 'test/integration/targets'}
@@ -403,6 +402,10 @@ def actually_remove(checkout_path):
     # cleanup integration tests targets
     cleanup_targets(checkout_path)
 
+    # other cleanup
+    if CLEANUP_FILES:
+        subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
+
     # cleanup __init__.py
     for plugin_type in VALID_SPEC_ENTRIES:
         mod_root = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
@@ -416,9 +419,6 @@ def actually_remove(checkout_path):
                     init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
                     subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
 
-    # other cleanup
-    if CLEANUP_FILES:
-        subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
     subprocess.check_call(('git', 'commit', '-m', f'migration final cleanup', '--allow-empty'), cwd=checkout_path)
 
 
