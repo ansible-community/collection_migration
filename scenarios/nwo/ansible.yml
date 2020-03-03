@@ -77,6 +77,7 @@ _core:
   action:
   - __init__.py
   - add_host.py
+  - assemble.py
   - assert.py
   - async_status.py
   - command.py
@@ -318,6 +319,7 @@ _core:
   - commands/raw.py
   - commands/script.py
   - commands/shell.py
+  - files/assemble.py
   - files/blockinfile.py
   - files/copy.py
   - files/fetch.py
@@ -449,6 +451,32 @@ netcommon:
   - network/system/*
   netconf:
   - default.py
+posix:
+  action:
+  - patch.py
+  - synchronize.py
+  callback:
+  - cgroup_perf_recap.py
+  - debug.py
+  - json.py
+  - profile_roles.py
+  - profile_tasks.py
+  - skippy.py
+  - timer.py
+  module_utils:
+  - ismount.py
+  modules:
+  - files/acl.py
+  - files/synchronize.py
+  - system/at.py
+  - system/authorized_key.py
+  - system/mount.py
+  - system/seboolean.py
+  - system/selinux.py
+  - system/sysctl.py
+  shell:
+  - csh.py
+  - fish.py
 windows:
   action:
   - win_copy.py

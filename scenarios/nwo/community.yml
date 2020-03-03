@@ -228,7 +228,6 @@ general:
   - aireos.py
   - aruba.py
   - asa.py
-  - assemble.py
   - ce.py
   - ce_template.py
   - cnos.py
@@ -241,10 +240,8 @@ general:
   - ironware.py
   - nos_config.py
   - onyx_config.py
-  - patch.py
   - slxos.py
   - sros.py
-  - synchronize.py
   - voss.py
   become:
   - doas.py
@@ -264,16 +261,13 @@ general:
   callback:
   - actionable.py
   - cgroup_memory_recap.py
-  - cgroup_perf_recap.py
   - context_demo.py
   - counter_enabled.py
-  - debug.py
   - dense.py
   - foreman.py
   - full_skip.py
   - hipchat.py
   - jabber.py
-  - json.py
   - log_plays.py
   - logdna.py
   - logentries.py
@@ -282,17 +276,13 @@ general:
   - nrdp.py
   - null.py
   - osx_say.py
-  - profile_roles.py
-  - profile_tasks.py
   - say.py
   - selective.py
-  - skippy.py
   - slack.py
   - splunk.py
   - stderr.py
   - sumologic.py
   - syslog_json.py
-  - timer.py
   - unixy.py
   - yaml.py
   cliconf:
@@ -571,7 +561,6 @@ general:
   - infinibox.py
   - influxdb.py
   - ipa.py
-  - ismount.py
   - known_hosts.py
   - kubevirt.py
   - ldap.py
@@ -1358,14 +1347,11 @@ general:
   - database/vertica/vertica_role.py
   - database/vertica/vertica_schema.py
   - database/vertica/vertica_user.py
-  - files/acl.py
   - files/archive.py
-  - files/assemble.py
   - files/ini_file.py
   - files/iso_extract.py
   - files/patch.py
   - files/read_csv.py
-  - files/synchronize.py
   - files/xattr.py
   - files/xml.py
   - identity/_onepassword_facts.py
@@ -2204,8 +2190,6 @@ general:
   - system/aix_lvg.py
   - system/aix_lvol.py
   - system/alternatives.py
-  - system/at.py
-  - system/authorized_key.py
   - system/awall.py
   - system/beadm.py
   - system/capabilities.py
@@ -2228,7 +2212,6 @@ general:
   - system/make.py
   - system/mksysb.py
   - system/modprobe.py
-  - system/mount.py
   - system/nosh.py
   - system/ohai.py
   - system/open_iscsi.py
@@ -2241,15 +2224,12 @@ general:
   - system/puppet.py
   - system/python_requirements_info.py
   - system/runit.py
-  - system/seboolean.py
   - system/sefcontext.py
-  - system/selinux.py
   - system/selinux_permissive.py
   - system/selogin.py
   - system/seport.py
   - system/solaris_zone.py
   - system/svc.py
-  - system/sysctl.py
   - system/syspatch.py
   - system/timezone.py
   - system/ufw.py
@@ -2292,9 +2272,6 @@ general:
   netconf:
   - ce.py
   - sros.py
-  shell:
-  - csh.py
-  - fish.py
   terminal:
   - aireos.py
   - apconos.py
