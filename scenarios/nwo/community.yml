@@ -2357,6 +2357,20 @@ mongo:
     - mongodb.py
   lookup:
     - mongodb.py
+vmware_rest:
+  doc_fragments:
+    - VmwareRestModule.py
+    - VmwareRestModule_filters.py
+    - VmwareRestModule_full.py
+    - VmwareRestModule_state.py
+  module_utils:
+    - vmware_httpapi/VmwareRestModule.py
+    - vmware_httpapi/__init__.py
+  modules:
+    - cloud/vmware_httpapi/vmware_appliance_access_info.py
+    - cloud/vmware_httpapi/vmware_appliance_health_info.py
+    - cloud/vmware_httpapi/vmware_cis_category_info.py
+    - cloud/vmware_httpapi/vmware_core_info.py
 vmware:
   connection:
   - vmware_tools.py
