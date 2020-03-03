@@ -388,6 +388,7 @@ def cleanup_targets(checkout_path):
 
 
 def actually_remove(checkout_path):
+
     global REMOVE
 
     coll_paths = {
@@ -406,18 +407,31 @@ def actually_remove(checkout_path):
     if CLEANUP_FILES:
         subprocess.check_call(('git', 'rm', '-f', *CLEANUP_FILES), cwd=checkout_path)
 
-    # cleanup __init__.py
+    # cleanup empty single __init__.py
     for plugin_type in VALID_SPEC_ENTRIES:
         mod_root = PLUGIN_EXCEPTION_PATHS.get(plugin_type, os.path.join('lib', 'ansible', 'plugins', plugin_type))
 
+        removed = []
         for emptydir in os.walk(os.path.join(checkout_path, mod_root), topdown=False):
 
-            if '__init__.py' in emptydir[2] and len(emptydir[1]) == 0 and len(emptydir[2]) == 1:
-                # if only init in dir and init is 0 bytes, remove
-                if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
-                    reldir = emptydir[0].replace(checkout_path, '')
-                    init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
-                    subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+            if '__init__.py' in emptydir[2] and len(emptydir[2]) == 1:
+
+                dirnum = len(emptydir[1])
+                if dirnum != 0:
+                    for other in emptydir[1]:
+                        full = os.path.join(emptydir[0], other)
+                        if full in removed:
+                            dirnum -= 1
+
+                if dirnum <= 0:
+                    # if only init in dir and init is 0 bytes, remove
+                    if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
+
+                        reldir = emptydir[0].replace(checkout_path, '')
+                        init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
+                        # remove init from repo
+                        subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+                        removed.append(emptydir[0])
 
     subprocess.check_call(('git', 'commit', '-m', f'migration final cleanup', '--allow-empty'), cwd=checkout_path)
 
