@@ -12,6 +12,7 @@ f5_modules:
   - network/f5/icontrol.py
   - network/f5/ipaddress.py
   modules:
+  - network/f5/_bigip_device_facts.py
   - network/f5/bigip_apm_acl.py
   - network/f5/bigip_apm_network_access.py
   - network/f5/bigip_apm_policy_fetch.py
