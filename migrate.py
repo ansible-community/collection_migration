@@ -60,7 +60,7 @@ ALL_THE_FILES = set()
 CLEANUP_FILES = set(['contrib/README.md'])
 
 COLLECTION_NAMESPACE = 'test_migrate_ns'
-PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/unit', 'integration': 'test/integration/targets'}
+PLUGIN_EXCEPTION_PATHS = {'modules': 'lib/ansible/modules', 'module_utils': 'lib/ansible/module_utils', 'inventory_scripts': 'contrib/inventory', 'vault': 'contrib/vault', 'unit': 'test/units', 'integration': 'test/integration/targets'}
 PLUGIN_DEST_EXCEPTION_PATHS = {'inventory_scripts': 'scripts/inventory', 'vault': 'scripts/vault', 'unit': 'tests/unit', 'integration': 'tests/integration/targets'}
 
 COLLECTION_SKIP_REWRITE = ('_core',)
@@ -202,9 +202,7 @@ retry_on_permission_denied = backoff.on_exception(  # pylint: disable=invalid-na
 def ensure_cmd_succeeded(ssh_agent, cmd, cwd):
     """Perform cmd in cwd dir using a subprocess wrapper."""
     logger.info('Executing "%s"...', ' '.join(cmd))
-    cmd_out = ssh_agent.check_output(
-        cmd, stderr=subprocess.PIPE, cwd=cwd, text=True,
-    )
+    cmd_out = ssh_agent.check_output(cmd, stderr=subprocess.PIPE, cwd=cwd, text=True)
     print(cmd_out)
 
 
@@ -222,11 +220,7 @@ def add_manual_check(key, value, filename):
     manual_check[filename].append((key, value))
 
 
-def checkout_repo(
-        git_url: str, checkout_path: str,
-        *,
-        refresh: bool = False,
-) -> Set[str]:
+def checkout_repo(git_url: str, checkout_path: str, *, refresh: bool = False) -> Set[str]:
     """Fetch and optionally refresh the repo."""
     if not os.path.exists(checkout_path):
         git_clone_cmd = 'git', 'clone', git_url, checkout_path
@@ -1297,36 +1291,22 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
 
         relative_target_path = os.path.relpath(target_path, tests_root)
         if relative_target_path.startswith('..'):
-            raise ValueError(
-                f'`{target_path}` is not a part of `{tests_root}`',
-            )
+            raise ValueError(f'`{target_path}` is not a part of `{tests_root}`')
 
-        logger.info(
-            'Locating parent %s '
-            'for %s...',
-            needle_filename,
-            target_path,
-        )
+        logger.info('Locating parent %s ' 'for %s...', needle_filename, target_path)
         while relative_target_path:
             relative_target_path, _ = os.path.split(relative_target_path)
 
-            target_file = os.path.join(
-                tests_root,
-                relative_target_path,
-                needle_filename,
-            )
+            target_file = os.path.join(tests_root, relative_target_path, needle_filename)
             if not os.path.isfile(target_file):
                 continue
 
-            logger.info(
-                'Located %s...',
-                target_file
-            )
+            logger.info('Located %s...', target_file)
             yield target_file
 
     # Discover constest.py's from parent dirs:
     conftest_modules = set(
-        p
+        UnmovablePathStr(p)
         for m in matching_test_modules.copy()
         for p in find_up_the_tree(m)
     )
@@ -1383,18 +1363,12 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
         for td, tm in map(os.path.split, paths):
             relative_td = os.path.relpath(td, checkout_path)
             test_artifact_path = os.path.join(relative_td, tm)
-            yield (
-                test_artifact_path,
-                replace_path_prefix(test_artifact_path),
-            )
+            yield (test_artifact_path, replace_path_prefix(test_artifact_path))
 
             if not find_related:
                 continue
 
-            module_type = os.path.relpath(
-                relative_td,
-                unit_tests_relative_root,
-            )
+            module_type = os.path.relpath(relative_td, unit_tests_relative_root)
 
             if module_type in {'module_utils'}:
                 """Top-level dir of the module_utils unit tests."""
@@ -1431,9 +1405,7 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
 def copy_unit_tests(copy_map, collection_dir, checkout_path, namespace, collection):
     """Copy unit tests into a collection using a copy map."""
     if not copy_map:
-        logger.info(
-            'No unit tests scheduled for copying to %s', collection_dir,
-        )
+        logger.info('No unit tests scheduled for copying to %s', collection_dir)
         return
 
     for src_f, dest_f in copy_map.items():
