@@ -2557,6 +2557,8 @@ vmware:
   - cloud/vmware/vmware_vswitch_info.py
   - cloud/vmware/vsphere_copy.py
   - cloud/vmware/vsphere_file.py
+  unit:
+  - contrib/inventory/test_vmware_inventory.py
 windows:
   lookup:
   - laps_password.py
