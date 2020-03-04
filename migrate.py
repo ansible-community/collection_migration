@@ -332,8 +332,8 @@ def write_collection_routing(coll_dir, namespace, collection):
     if write:
         if not os.path.exists(meta):
             os.mkdir(meta)
-        write_yaml_into_file_as_is(os.path.join(meta, 'routing.yml'), routing)
-
+        route_file = os.path.join(meta, 'routing.yml')
+        write_yaml_into_file_as_is(route_file, routing)
 
 
 def cleanup_targets(checkout_path):
@@ -1669,16 +1669,16 @@ def assemble_collections(checkout_path, spec, args, target_github_org):
                     os.mkdir(metadir)
                 write_yaml_into_file_as_is(os.path.join(metadir, 'action_groups.yml'), action_defaults)
 
-            # init git repo
-            subprocess.check_call(('git', 'init'), cwd=collection_dir)
-            subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
-            subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
-
             mark_moved_resources(checkout_path, namespace, collection, migrated_to_collection)
 
             # handle deprecations and aliases, per collection
             coll_dir = os.path.join(collections_base_dir, 'ansible_collections')
             write_collection_routing(coll_dir, namespace, collection)
+
+            # init git repo
+            subprocess.check_call(('git', 'init'), cwd=collection_dir)
+            subprocess.check_call(('git', 'add', '.'), cwd=collection_dir)
+            subprocess.check_call(('git', 'commit', '-m', 'Initial commit', '--allow-empty'), cwd=collection_dir)
 
     # handle aliases in core
     write_core_routing(resolved, checkout_path)
