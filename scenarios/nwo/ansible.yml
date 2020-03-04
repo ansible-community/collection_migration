@@ -72,6 +72,8 @@ amazon:
   - cloud/amazon/ec2_vpc_subnet.py
   - cloud/amazon/ec2_vpc_subnet_info.py
   - cloud/amazon/s3_bucket.py
+  unit:
+  - module_utils/aws/test_aws_module.py
 
 _core:
   action:
