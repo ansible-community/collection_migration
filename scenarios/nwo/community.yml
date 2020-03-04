@@ -413,7 +413,6 @@ general:
   - hcloud.py
   - kubevirt.py
   - linode.py
-  - netbox.py
   - nmap.py
   - online.py
   - scaleway.py
