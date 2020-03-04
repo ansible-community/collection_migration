@@ -57,6 +57,8 @@ fortios:
   - network/fortios/fortios_firewall_addrgrp6.py
   - network/fortios/fortios_firewall_auth_portal.py
   - network/fortios/fortios_firewall_central_snat_map.py
+  - network/fortios/fortios_firewall_DoS_policy.py
+  - network/fortios/fortios_firewall_DoS_policy6.py
   - network/fortios/fortios_firewall_dnstranslation.py
   - network/fortios/fortios_firewall_identity_based_route.py
   - network/fortios/fortios_firewall_interface_policy.py
@@ -202,6 +204,7 @@ fortios:
   - network/fortios/fortios_spamfilter_options.py
   - network/fortios/fortios_spamfilter_profile.py
   - network/fortios/fortios_ssh_filter_profile.py
+  - network/fortios/fortios_switch_controller_802_1X_settings.py
   - network/fortios/fortios_switch_controller_custom_command.py
   - network/fortios/fortios_switch_controller_global.py
   - network/fortios/fortios_switch_controller_igmp_snooping.py
@@ -215,6 +218,7 @@ fortios:
   - network/fortios/fortios_switch_controller_qos_qos_policy.py
   - network/fortios/fortios_switch_controller_qos_queue_policy.py
   - network/fortios/fortios_switch_controller_quarantine.py
+  - network/fortios/fortios_switch_controller_security_policy_802_1X.py
   - network/fortios/fortios_switch_controller_security_policy_captive_portal.py
   - network/fortios/fortios_switch_controller_sflow.py
   - network/fortios/fortios_switch_controller_storm_control.py
