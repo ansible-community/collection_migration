@@ -1306,7 +1306,7 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
 
     # Discover constest.py's from parent dirs:
     conftest_modules = set(
-        UnmovablePathStr(p)
+        p
         for m in matching_test_modules.copy()
         for p in find_up_the_tree(m)
     )
@@ -1395,7 +1395,10 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
             )
 
     copy_map.update(itertools.chain(
-        discover_file_migrations(conftest_modules),
+        (
+            (UnmovablePathStr(k), v)
+            for k, v in discover_file_migrations(conftest_modules)
+        ),
         discover_file_migrations(matching_test_modules, find_related=True),
     ))
 
