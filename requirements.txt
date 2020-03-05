@@ -18,8 +18,9 @@ aiohttp==3.6.2 \
     --hash=sha256:ae55bac364c405caa23a4f2d6cfecc6a0daada500274ffca4a9230e7129eac59 \
     --hash=sha256:b778ce0c909a2653741cb4b1ac7015b5c130ab9c897611df43ae6a58523cb965 \
     # via octomachinery
-ansible==2.9.5 \
-    --hash=sha256:51ae50d33264eb644ecb79a0208a20569a1127ec3440e8de60eda3a2b3d9caa5
+ansible==2.9.6 \
+    --hash=sha256:59cf3a0781f89992d1dae5205b07e802dff1db205eebd238de9e503b62b8cbc9 \
+    # via -r requirements.in
 appdirs==1.4.3 \
     --hash=sha256:9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92 \
     --hash=sha256:d8b24664561d0d34ddfaec54636d502d7cea6e29c3eaf68f3df6180863e2166e \
@@ -34,7 +35,8 @@ attrs==19.3.0 \
     # via aiohttp, environ-config
 backoff==1.10.0 \
     --hash=sha256:5e73e2cbe780e1915a204799dba0a01896f45f4385e636bcca7a0614d879d0cd \
-    --hash=sha256:b8fba021fac74055ac05eb7c7bfce4723aedde6cd0a504e5326bcb0bdd6d19a4
+    --hash=sha256:b8fba021fac74055ac05eb7c7bfce4723aedde6cd0a504e5326bcb0bdd6d19a4 \
+    # via -r requirements.in
 baron==0.9 \
     --hash=sha256:05bac85913c1ebc44986f6915bf6a043ce5ce1e5c4d392a209f73845181e9452 \
     --hash=sha256:b0589f32b91cf6dc450ea6a71b4a228c433ef8756b41fabf88815a3c2d392b3a \
@@ -99,7 +101,8 @@ cryptography==2.8 \
     --hash=sha256:de96157ec73458a7f14e3d26f17f8128c959084931e8997b9e655a39c8fde9f9 \
     --hash=sha256:df6b4dca2e11865e6cfbfb708e800efb18370f5a46fd601d3755bc7f85b3a8a2 \
     --hash=sha256:ecadccc7ba52193963c0475ac9f6fa28ac01e01349a2ca48509667ef41ffd2cf \
-    --hash=sha256:fb81c17e0ebe3358486cd8cc3ad78adbae58af12fc2bf2bc0bb84e8090fa5ce8
+    --hash=sha256:fb81c17e0ebe3358486cd8cc3ad78adbae58af12fc2bf2bc0bb84e8090fa5ce8 \
+    # via -r requirements.in, ansible, octomachinery, pyjwt
 environ-config==19.1.0 \
     --hash=sha256:539a1025aeaa015eb03fdd03201517172816ce32ace377c54cbc55c1e4f24739 \
     --hash=sha256:cd5fa819f047853fb7b6c432d35976a84eacd54647a109fa2af27bafcdab7af1 \
@@ -109,17 +112,20 @@ envparse==0.2.0 \
     # via octomachinery
 gidgethub==3.3.0 \
     --hash=sha256:3692d2df48a23c87ec4a5e74053ce343bc59cea7c34488a9136754a35aeb177a \
-    --hash=sha256:4a456758a5fc8bfd581f297df90f2d09efbb830ccd209b1ceba4723705607d70
+    --hash=sha256:4a456758a5fc8bfd581f297df90f2d09efbb830ccd209b1ceba4723705607d70 \
+    # via -r requirements.in, octomachinery
 idna==2.8 \
     --hash=sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407 \
     --hash=sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c \
     # via yarl
 jinja2==2.10.3 \
     --hash=sha256:74320bb91f31270f9551d46522e33af46a80c3d619f4a4bf42b3164d30b5911f \
-    --hash=sha256:9fe95f19286cfefaa917656583d020be14e7859c6b0252588391e47db34527de
+    --hash=sha256:9fe95f19286cfefaa917656583d020be14e7859c6b0252588391e47db34527de \
+    # via -r requirements.in, ansible
 logzero==1.5.0 \
     --hash=sha256:34fa1e2e436dfa9f37e5ff8750e932bafe0c5abbb42e1f669e4cf5ce1f179142 \
-    --hash=sha256:818072e4fcb53a3f6fb4114a92f920e1135fe6f47bffd9dc2b6c4d10eedacf27
+    --hash=sha256:818072e4fcb53a3f6fb4114a92f920e1135fe6f47bffd9dc2b6c4d10eedacf27 \
+    # via -r requirements.in
 markupsafe==1.1.1 \
     --hash=sha256:00bc623926325b26bb9605ae9eae8a215691f33cae5df11ca5424f06f2d1f473 \
     --hash=sha256:09027a7803a62ca78792ad89403b1b7a73a01c8cb65909cd876f7fcebd79b161 \
@@ -171,7 +177,8 @@ multidict==4.6.1 \
     # via aiohttp, yarl
 octomachinery==0.1.2 \
     --hash=sha256:8f6e56670bd6b5095b58db9622ac012257663c67bd0d723041125bd816eb4460 \
-    --hash=sha256:a769454533d6385a40865ad9cbb9f636cec18ca1854eab8194d7cee4685c30ce
+    --hash=sha256:a769454533d6385a40865ad9cbb9f636cec18ca1854eab8194d7cee4685c30ce \
+    # via -r requirements.in
 pycparser==2.19 \
     --hash=sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3 \
     # via cffi
@@ -196,7 +203,8 @@ pyyaml==5.1.2 \
     # via ansible, octomachinery
 redbaron==0.9.2 \
     --hash=sha256:472d0739ca6b2240bb2278ae428604a75472c9c12e86c6321e8c016139c0132f \
-    --hash=sha256:d01032b6a848b5521a8d6ef72486315c2880f420956870cdd742e2b5a09b9bab
+    --hash=sha256:d01032b6a848b5521a8d6ef72486315c2880f420956870cdd742e2b5a09b9bab \
+    # via -r requirements.in
 rply==0.7.7 \
     --hash=sha256:2c8083bf2853642a0e24de9a9db3ce2d25b3153037a7298d2ff9434413744e33 \
     --hash=sha256:4d6d25703efd28fb3d5707f7b3bd4fe66c306159a5c25af10ba26d206a66d00d \
