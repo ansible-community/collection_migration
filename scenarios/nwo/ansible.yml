@@ -107,6 +107,7 @@ _core:
   - yum.py
   become:
   - __init__.py
+  - runas.py
   - su.py
   - sudo.py
   cache:
@@ -485,8 +486,6 @@ windows:
   - win_reboot.py
   - win_template.py
   - win_updates.py
-  become:
-  - runas.py
   doc_fragments:
   - url_windows.py
   integration:
