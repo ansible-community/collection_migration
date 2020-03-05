@@ -1,0 +1,11 @@
+remote:
+  lookup:
+  - cpm_metering.py
+  - cpm_status.py
+  modules:
+  - remote_management/cpm/cpm_plugconfig.py
+  - remote_management/cpm/cpm_plugcontrol.py
+  - remote_management/cpm/cpm_serial_port_config.py
+  - remote_management/cpm/cpm_serial_port_info.py
+  - remote_management/cpm/cpm_user.py
+
