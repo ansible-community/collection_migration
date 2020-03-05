@@ -263,7 +263,6 @@ general:
   - context_demo.py
   - counter_enabled.py
   - dense.py
-  - foreman.py
   - full_skip.py
   - hipchat.py
   - jabber.py
@@ -403,7 +402,6 @@ general:
   - cloudscale.py
   - docker_machine.py
   - docker_swarm.py
-  - foreman.py
   - gitlab_runners.py
   - kubevirt.py
   - linode.py

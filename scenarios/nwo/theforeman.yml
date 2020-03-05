@@ -1,0 +1,5 @@
+foreman:
+  inventory:
+  - foreman.py
+  callback:
+  - foreman.py
