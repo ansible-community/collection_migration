@@ -222,7 +222,7 @@ amazon:
   - cloud/amazon/sts_session_token.py
 general:
   _options:
-    version: '2.9.5'
+    version: '0.1.0'
     flatmap: True
   action:
   - aireos.py
