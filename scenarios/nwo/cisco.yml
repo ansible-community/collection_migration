@@ -71,6 +71,19 @@ aci:
   - network/aci/aci_vlan_pool_encap_block.py
   - network/aci/aci_vmm_credential.py
   - network/aci/aci_vrf.py
+asa:
+  module_utils:
+  - network/asa/*
+  modules:
+  - network/asa/*
+  action:
+  - asa.py
+  cliconf:
+  - asa.py
+  doc_fragments:
+  - asa.py
+  terminal:
+  - asa.py
 intersight:
   doc_fragments:
   - intersight.py
