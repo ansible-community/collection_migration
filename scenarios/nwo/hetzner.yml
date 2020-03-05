@@ -1,0 +1,9 @@
+hcloud:
+  doc_fragments:
+  - hcloud.py
+  inventory:
+  - hcloud.py
+  module_utils:
+  - hcloud.py
+  modules:
+  - cloud/hcloud/*
