@@ -6,5 +6,6 @@ netbox:
   modules:
   - net_tools/netbox/netbox_device.py
   - net_tools/netbox/netbox_ip_address.py
+  - net_tools/netbox/netbox_interface.py
   - net_tools/netbox/netbox_prefix.py
   - net_tools/netbox/netbox_site.py

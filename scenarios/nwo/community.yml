@@ -1387,7 +1387,6 @@ general:
   - net_tools/ldap/ldap_entry.py
   - net_tools/ldap/ldap_passwd.py
   - net_tools/lldp.py
-  - net_tools/netbox/netbox_interface.py
   - net_tools/netcup_dns.py
   - net_tools/nios/nios_a_record.py
   - net_tools/nios/nios_aaaa_record.py
