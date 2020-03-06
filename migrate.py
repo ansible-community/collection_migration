@@ -280,6 +280,10 @@ def deprecate(namespace, collection, ptype, plugin):
 
 def remove(path, namespace, collection):
     global REMOVE
+
+    if path == '.cache/releases/devel.git/test/units/plugins/connection/__init__.py':
+        raise Exception
+
     REMOVE[namespace][collection].add(path)
 
 
@@ -410,6 +414,7 @@ def actually_remove(checkout_path):
 
             if '__init__.py' in emptydir[2] and len(emptydir[2]) == 1:
 
+                # os.walk caches top level entries, check if we already removed these subdirs
                 dirnum = len(emptydir[1])
                 if dirnum != 0:
                     for other in emptydir[1]:
@@ -417,15 +422,15 @@ def actually_remove(checkout_path):
                         if full in removed:
                             dirnum -= 1
 
-                if dirnum <= 0:
-                    # if only init in dir and init is 0 bytes, remove
-                    if os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
+                # if only init in dir and init is 0 bytes, remove
+                if dirnum <= 0 and os.stat(os.path.join(emptydir[0], '__init__.py')).st_size == 0:
 
-                        reldir = emptydir[0].replace(checkout_path, '')
-                        init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
-                        # remove init from repo
-                        subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
-                        removed.append(emptydir[0])
+                    reldir = emptydir[0].replace(checkout_path, '')
+                    init_file = os.path.join(reldir.lstrip('/'), '__init__.py')
+
+                    # remove init from repo
+                    subprocess.check_call(('git', 'rm', init_file), cwd=checkout_path)
+                    removed.append(emptydir[0])
 
     subprocess.check_call(('git', 'commit', '-m', f'migration final cleanup', '--allow-empty'), cwd=checkout_path)
 
@@ -663,10 +668,7 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
             continue
 
         *pkg_path_parts, pkg_or_mod = tuple(t.value for t in imp.value)
-        if (
-                (pkg_path_parts and not pkg_path_parts[0])
-                or (not pkg_path_parts and pkg_or_mod == '__future__')
-        ):  # import is already absolute
+        if ((pkg_path_parts and not pkg_path_parts[0]) or (not pkg_path_parts and pkg_or_mod == '__future__')):  # import is already absolute
             continue
 
         relative_mod_path = make_pkg_subpath(*pkg_path_parts, f'{pkg_or_mod}.py')
@@ -676,9 +678,7 @@ def normalize_implicit_relative_imports_in_unit_tests(mod_fst, file_path):
         relative_pkg_init_path = make_pkg_subpath(*pkg_path_parts, pkg_or_mod, '__init__.py')
 
         possible_relative_targets = {relative_mod_path, relative_pkg_init_path}
-        relative_imp_target_exists = any(
-            os.path.exists(p) for p in possible_relative_targets
-        )
+        relative_imp_target_exists = any(os.path.exists(p) for p in possible_relative_targets)
 
         if not relative_imp_target_exists:
             continue
@@ -1251,7 +1251,6 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
     )
 
     unit_tests_relative_root = os.path.join('test', 'units')
-
     collection_unit_tests_relative_root = os.path.join('tests', 'unit')
 
     # Narrow down the search area
@@ -1399,7 +1398,10 @@ def create_unit_tests_copy_map(checkout_path, plugin_type, plugin):
             (UnmovablePathStr(k), v)
             for k, v in discover_file_migrations(conftest_modules)
         ),
-        discover_file_migrations(matching_test_modules, find_related=True),
+        (
+            (UnmovablePathStr(k), v) if os.path.basename(k) == '__init__.py' else (k, v)
+            for k, v in discover_file_migrations(matching_test_modules, find_related=True)
+        ),
     ))
 
     return copy_map
