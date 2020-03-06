@@ -1,0 +1,51 @@
+os10:
+  action:
+  - dellos10.py
+  cliconf:
+  - dellos10.py
+  doc_fragments:
+  - dellos10.py
+  integration:
+  - dellos10_*/*
+  - dellos10_*/*/*
+  - dellos10_*/*/*/*
+  module_utils:
+  - network/dellos10/*
+  modules:
+  - network/dellos10/*
+  terminal:
+  - dellos10.py
+os9:
+  action:
+  - dellos9.py
+  cliconf:
+  - dellos9.py
+  doc_fragments:
+  - dellos9.py
+  integration:
+  - dellos9_*/*
+  - dellos9_*/*/*
+  - dellos9_*/*/*/*
+  module_utils:
+  - network/dellos9/*
+  modules:
+  - network/dellos9/*
+  terminal:
+  - dellos9.py
+os6:
+  action:
+  - dellos6.py
+  cliconf:
+  - dellos6.py
+  doc_fragments:
+  - dellos6.py
+  integration:
+  - dellos6_*/*
+  - dellos6_*/*/*
+  - dellos6_*/*/*/*
+  module_utils:
+  - network/dellos6/*
+  modules:
+  - network/dellos6/*
+  terminal:
+  - dellos6.py
