@@ -300,7 +300,6 @@ general:
   - slxos.py
   - voss.py
   connection:
-  - buildah.py
   - chroot.py
   - docker.py
   - funcd.py
@@ -311,7 +310,6 @@ general:
   - lxc.py
   - lxd.py
   - oc.py
-  - podman.py
   - qubes.py
   - saltstack.py
   - zone.py
@@ -668,8 +666,6 @@ general:
   - opennebula.py
   - oracle/__init__.py
   - oracle/oci_utils.py
-  - podman/__init__.py
-  - podman/common.py
   - postgres.py
   - pure.py
   - rabbitmq.py
@@ -1009,10 +1005,6 @@ general:
   - cloud/packet/packet_sshkey.py
   - cloud/packet/packet_volume.py
   - cloud/packet/packet_volume_attachment.py
-  - cloud/podman/podman_container_info.py
-  - cloud/podman/podman_image.py
-  - cloud/podman/podman_image_info.py
-  - cloud/podman/podman_volume_info.py
   - cloud/profitbricks/profitbricks.py
   - cloud/profitbricks/profitbricks_datacenter.py
   - cloud/profitbricks/profitbricks_nic.py

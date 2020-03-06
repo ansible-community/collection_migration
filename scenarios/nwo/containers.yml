@@ -1,0 +1,22 @@
+podman:
+  connection:
+    - buildah.py
+    - podman.py
+  modules:
+    - cloud/podman/__init__.py
+    - cloud/podman/podman_container_info.py
+    - cloud/podman/podman_image_info.py
+    - cloud/podman/podman_image.py
+    - cloud/podman/podman_volume_info.py
+  module_utils:
+    - podman/common.py
+    - podman/__init__.py
+  integration:
+    - connection_podman/aliases
+    - connection_podman/runme.sh
+    - connection_podman/test_connection.inventory
+    - podman_*/*
+    - podman_*/*/*
+    - setup_podman/*
+    - setup_podman/*/*
+
