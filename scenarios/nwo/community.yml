@@ -322,8 +322,6 @@ general:
   - aruba.py
   - auth_basic.py
   - avi.py
-  - azure.py
-  - azure_tags.py
   - ce.py
   - cloudscale.py
   - cloudstack.py
@@ -704,94 +702,6 @@ general:
   - cloud/atomic/atomic_container.py
   - cloud/atomic/atomic_host.py
   - cloud/atomic/atomic_image.py
-  - cloud/azure/_azure_rm_automationaccount_facts.py
-  - cloud/azure/_azure_rm_lock_facts.py
-  - cloud/azure/_azure_rm_managed_disk.py
-  - cloud/azure/_azure_rm_managed_disk_facts.py
-  - cloud/azure/_azure_rm_resourcegroup_facts.py
-  - cloud/azure/_azure_rm_virtualmachine_extension.py
-  - cloud/azure/_azure_rm_virtualmachine_scaleset.py
-  - cloud/azure/_azure_rm_virtualmachine_scaleset_facts.py
-  - cloud/azure/azure_rm_aks_info.py
-  - cloud/azure/azure_rm_aksversion_info.py
-  - cloud/azure/azure_rm_applicationsecuritygroup_info.py
-  - cloud/azure/azure_rm_appserviceplan_info.py
-  - cloud/azure/azure_rm_automationaccount.py
-  - cloud/azure/azure_rm_automationaccount_info.py
-  - cloud/azure/azure_rm_autoscale_info.py
-  - cloud/azure/azure_rm_availabilityset_info.py
-  - cloud/azure/azure_rm_azurefirewall_info.py
-  - cloud/azure/azure_rm_cdnendpoint_info.py
-  - cloud/azure/azure_rm_cdnprofile_info.py
-  - cloud/azure/azure_rm_containerinstance_info.py
-  - cloud/azure/azure_rm_containerregistry_info.py
-  - cloud/azure/azure_rm_cosmosdbaccount_info.py
-  - cloud/azure/azure_rm_deployment_info.py
-  - cloud/azure/azure_rm_devtestlab_info.py
-  - cloud/azure/azure_rm_devtestlabarmtemplate_info.py
-  - cloud/azure/azure_rm_devtestlabartifact_info.py
-  - cloud/azure/azure_rm_devtestlabartifactsource_info.py
-  - cloud/azure/azure_rm_devtestlabcustomimage_info.py
-  - cloud/azure/azure_rm_devtestlabenvironment_info.py
-  - cloud/azure/azure_rm_devtestlabpolicy_info.py
-  - cloud/azure/azure_rm_devtestlabschedule_info.py
-  - cloud/azure/azure_rm_devtestlabvirtualmachine_info.py
-  - cloud/azure/azure_rm_devtestlabvirtualnetwork_info.py
-  - cloud/azure/azure_rm_dnsrecordset_info.py
-  - cloud/azure/azure_rm_dnszone_info.py
-  - cloud/azure/azure_rm_functionapp_info.py
-  - cloud/azure/azure_rm_hdinsightcluster_info.py
-  - cloud/azure/azure_rm_image_info.py
-  - cloud/azure/azure_rm_iotdevice.py
-  - cloud/azure/azure_rm_iotdevice_info.py
-  - cloud/azure/azure_rm_iotdevicemodule.py
-  - cloud/azure/azure_rm_iothub.py
-  - cloud/azure/azure_rm_iothub_info.py
-  - cloud/azure/azure_rm_iothubconsumergroup.py
-  - cloud/azure/azure_rm_loadbalancer_info.py
-  - cloud/azure/azure_rm_lock.py
-  - cloud/azure/azure_rm_lock_info.py
-  - cloud/azure/azure_rm_loganalyticsworkspace_info.py
-  - cloud/azure/azure_rm_manageddisk_info.py
-  - cloud/azure/azure_rm_mariadbconfiguration_info.py
-  - cloud/azure/azure_rm_mariadbdatabase_info.py
-  - cloud/azure/azure_rm_mariadbfirewallrule_info.py
-  - cloud/azure/azure_rm_mariadbserver_info.py
-  - cloud/azure/azure_rm_monitorlogprofile.py
-  - cloud/azure/azure_rm_mysqlconfiguration_info.py
-  - cloud/azure/azure_rm_mysqldatabase_info.py
-  - cloud/azure/azure_rm_mysqlfirewallrule_info.py
-  - cloud/azure/azure_rm_mysqlserver_info.py
-  - cloud/azure/azure_rm_networkinterface_info.py
-  - cloud/azure/azure_rm_postgresqlconfiguration_info.py
-  - cloud/azure/azure_rm_postgresqldatabase_info.py
-  - cloud/azure/azure_rm_postgresqlfirewallrule_info.py
-  - cloud/azure/azure_rm_postgresqlserver_info.py
-  - cloud/azure/azure_rm_publicipaddress_info.py
-  - cloud/azure/azure_rm_rediscache_info.py
-  - cloud/azure/azure_rm_resource_info.py
-  - cloud/azure/azure_rm_roleassignment_info.py
-  - cloud/azure/azure_rm_roledefinition_info.py
-  - cloud/azure/azure_rm_routetable_info.py
-  - cloud/azure/azure_rm_securitygroup_info.py
-  - cloud/azure/azure_rm_servicebus_info.py
-  - cloud/azure/azure_rm_snapshot.py
-  - cloud/azure/azure_rm_sqldatabase_info.py
-  - cloud/azure/azure_rm_sqlfirewallrule_info.py
-  - cloud/azure/azure_rm_sqlserver_info.py
-  - cloud/azure/azure_rm_storageaccount_info.py
-  - cloud/azure/azure_rm_subnet_info.py
-  - cloud/azure/azure_rm_trafficmanagerendpoint_info.py
-  - cloud/azure/azure_rm_trafficmanagerprofile_info.py
-  - cloud/azure/azure_rm_virtualmachine_info.py
-  - cloud/azure/azure_rm_virtualmachineextension_info.py
-  - cloud/azure/azure_rm_virtualmachineimage_info.py
-  - cloud/azure/azure_rm_virtualmachinescaleset_info.py
-  - cloud/azure/azure_rm_virtualmachinescalesetextension_info.py
-  - cloud/azure/azure_rm_virtualmachinescalesetinstance_info.py
-  - cloud/azure/azure_rm_virtualnetwork_info.py
-  - cloud/azure/azure_rm_virtualnetworkpeering_info.py
-  - cloud/azure/azure_rm_webapp_info.py
   - cloud/centurylink/clc_aa_policy.py
   - cloud/centurylink/clc_alert_policy.py
   - cloud/centurylink/clc_blueprint_package.py
@@ -2609,3 +2519,80 @@ windows:
   - windows/win_webpicmd.py
   - windows/win_xml.ps1
   - windows/win_xml.py
+azure: 
+  modules:
+  - cloud/azure/_azure_rm_aks_facts.py
+  - cloud/azure/_azure_rm_dnsrecordset_facts.py
+  - cloud/azure/_azure_rm_dnszone_facts.py
+  - cloud/azure/_azure_rm_networkinterface_facts.py
+  - cloud/azure/_azure_rm_publicipaddress_facts.py
+  - cloud/azure/_azure_rm_securitygroup_facts.py
+  - cloud/azure/_azure_rm_storageaccount_facts.py
+  - cloud/azure/_azure_rm_virtualmachine_facts.py
+  - cloud/azure/_azure_rm_virtualnetwork_facts.py
+  - cloud/azure/_azure_rm_roledefinition_facts.py
+  - cloud/azure/_azure_rm_autoscale_facts.py
+  - cloud/azure/_azure_rm_mysqldatabase_facts.py
+  - cloud/azure/_azure_rm_devtestlabschedule_facts.py
+  - cloud/azure/_azure_rm_virtualmachinescaleset_facts.py
+  - cloud/azure/_azure_rm_devtestlabcustomimage_facts.py
+  - cloud/azure/_azure_rm_cosmosdbaccount_facts.py
+  - cloud/azure/_azure_rm_subnet_facts.py
+  - cloud/azure/_azure_rm_aksversion_facts.py
+  - cloud/azure/_azure_rm_hdinsightcluster_facts.py
+  - cloud/azure/_azure_rm_virtualmachinescalesetextension_facts.py
+  - cloud/azure/_azure_rm_loadbalancer_facts.py
+  - cloud/azure/_azure_rm_roleassignment_facts.py
+  - cloud/azure/_azure_rm_manageddisk_facts.py
+  - cloud/azure/_azure_rm_mysqlserver_facts.py
+  - cloud/azure/_azure_rm_servicebus_facts.py
+  - cloud/azure/_azure_rm_rediscache_facts.py
+  - cloud/azure/_azure_rm_resource_facts.py
+  - cloud/azure/_azure_rm_routetable_facts.py
+  - cloud/azure/_azure_rm_virtualmachine_extension.py
+  - cloud/azure/_azure_rm_loganalyticsworkspace_facts.py
+  - cloud/azure/_azure_rm_sqldatabase_facts.py
+  - cloud/azure/_azure_rm_devtestlabartifactsource_facts.py
+  - cloud/azure/_azure_rm_deployment_facts.py
+  - cloud/azure/_azure_rm_virtualmachineextension_facts.py
+  - cloud/azure/_azure_rm_applicationsecuritygroup_facts.py
+  - cloud/azure/_azure_rm_availabilityset_facts.py
+  - cloud/azure/_azure_rm_mariadbdatabase_facts.py
+  - cloud/azure/_azure_rm_devtestlabenvironment_facts.py
+  - cloud/azure/_azure_rm_appserviceplan_facts.py
+  - cloud/azure/_azure_rm_containerinstance_facts.py
+  - cloud/azure/_azure_rm_devtestlabarmtemplate_facts.py
+  - cloud/azure/_azure_rm_devtestlabartifact_facts.py
+  - cloud/azure/_azure_rm_virtualmachinescalesetinstance_facts.py
+  - cloud/azure/_azure_rm_cdnendpoint_facts.py
+  - cloud/azure/_azure_rm_trafficmanagerprofile_facts.py
+  - cloud/azure/_azure_rm_functionapp_facts.py
+  - cloud/azure/_azure_rm_virtualmachineimage_facts.py
+  - cloud/azure/_azure_rm_mariadbconfiguration_facts.py
+  - cloud/azure/_azure_rm_virtualnetworkpeering_facts.py
+  - cloud/azure/_azure_rm_sqlserver_facts.py
+  - cloud/azure/_azure_rm_mariadbfirewallrule_facts.py
+  - cloud/azure/_azure_rm_mysqlconfiguration_facts.py
+  - cloud/azure/_azure_rm_mysqlfirewallrule_facts.py
+  - cloud/azure/_azure_rm_postgresqlfirewallrule_facts.py
+  - cloud/azure/_azure_rm_mariadbserver_facts.py
+  - cloud/azure/_azure_rm_postgresqldatabase_facts.py
+  - cloud/azure/_azure_rm_devtestlabvirtualnetwork_facts.py
+  - cloud/azure/_azure_rm_devtestlabpolicy_facts.py
+  - cloud/azure/_azure_rm_trafficmanagerendpoint_facts.py
+  - cloud/azure/_azure_rm_sqlfirewallrule_facts.py
+  - cloud/azure/_azure_rm_containerregistry_facts.py
+  - cloud/azure/_azure_rm_postgresqlconfiguration_facts.py
+  - cloud/azure/_azure_rm_postgresqlserver_facts.py
+  - cloud/azure/_azure_rm_devtestlab_facts.py
+  - cloud/azure/_azure_rm_cdnprofile_facts.py
+  - cloud/azure/_azure_rm_virtualmachine_scaleset.py
+  - cloud/azure/_azure_rm_webapp_facts.py
+  - cloud/azure/_azure_rm_devtestlabvirtualmachine_facts.py
+  - cloud/azure/_azure_rm_image_facts.py
+  - cloud/azure/_azure_rm_managed_disk.py
+  - cloud/azure/_azure_rm_automationaccount_facts.py
+  - cloud/azure/_azure_rm_lock_facts.py
+  - cloud/azure/_azure_rm_managed_disk_facts.py
+  - cloud/azure/_azure_rm_resourcegroup_facts.py
+  - cloud/azure/_azure_rm_virtualmachine_scaleset_facts.py
