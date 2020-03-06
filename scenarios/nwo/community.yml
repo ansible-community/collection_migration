@@ -1988,6 +1988,19 @@ general:
   - remote_management/redfish/redfish_config.py
   - remote_management/redfish/redfish_info.py
   - remote_management/stacki/stacki_host.py
+  - remote_management/ucs/ucs_disk_group_policy.py
+  - remote_management/ucs/ucs_dns_server.py
+  - remote_management/ucs/ucs_lan_connectivity.py
+  - remote_management/ucs/ucs_ntp_server.py
+  - remote_management/ucs/ucs_org.py
+  - remote_management/ucs/ucs_san_connectivity.py
+  - remote_management/ucs/ucs_storage_profile.py
+  - remote_management/ucs/ucs_timezone.py
+  - remote_management/ucs/ucs_vhba_template.py
+  - remote_management/ucs/ucs_vlan_find.py
+  - remote_management/ucs/ucs_vnic_template.py
+  - remote_management/ucs/ucs_vsans.py
+  - remote_management/ucs/ucs_wwn_pool.py
   - remote_management/wakeonlan.py
   - source_control/bitbucket/bitbucket_access_key.py
   - source_control/bitbucket/bitbucket_pipeline_key_pair.py
