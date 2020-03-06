@@ -2486,6 +2486,10 @@ def main():
     global ALL_THE_FILES
     ALL_THE_FILES = checkout_repo(DEVEL_URL, devel_path, refresh=args.refresh)
 
+    # Ref: https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables
+    os.environ['GIT_COMMITTER_NAME'] = os.environ['GIT_COMMITTER_NAME'] = 'Ansible Core Team'
+    os.environ['GIT_COMMITTER_EMAIL'] = os.environ['GIT_COMMITTER_EMAIL'] = 'info@ansible.com'
+
     if args.skip_migration:
         logger.info('Skipping the migration...')
     else:
