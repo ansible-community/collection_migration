@@ -85,8 +85,8 @@ jobs:
       run: python -m pip install git+https://github.com/ansible/ansible.git@${{ env.CORE_REPO_REF }}
     - name: Configure user settings in Git
       run: |
-        git config --global user.email "ansible_migration@example.com"
-        git config --global user.name "Poor B"
+        git config --global user.email "info@ansible.com"
+        git config --global user.name "Ansible Core Team"
     - name: Run migration scenario ${{ matrix.migration-scenario }}
       run: >-
         python -m
