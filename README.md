@@ -1,6 +1,34 @@
 [![GitHub Actions CI/CD build status — Collection migration smoke test suite](https://github.com/ansible-community/collection_migration/workflows/CI/CD/badge.svg?branch=master)](https://github.com/ansible-community/collection_migration/actions?query=workflow%3ACI%2FCD+branch%3Amaster)
 
 
+
+# NO LONGER NEEDED
+
+The migrate.py process was ran for the **last time on Friday 6th March 2020**.
+
+This repo is left as a record of what was done.
+
+If you need to move plugins between collections please see https://github.com/ansible-collections/overview/blob/master/README.rst#q-what-should-i-do-to-move-plugins-across-collections-during-migration
+
+
+
+
+
+
+
+
+
+# Old readme
+
+
+
+
+
+
+
+
+
+
 migrate.py
 ==========
 
